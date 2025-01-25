@@ -1,0 +1,28 @@
+# Ignore node_modules
+node_modules/
+
+# Ignore build and dist directories
+build/
+dist/
+
+# Ignore logs
+*.log
+logs/
+*.log.*
+
+# Ignore environment files
+.env
+.env.*
+
+# Ignore specific files or directories in client
+client/src/serviceWorker.js
+client/src/reportWebVitals.js
+
+# Ignore specific files or directories in server
+server/node_modules/
+server/logs/
+
+# Ignore any temporary or IDE-related files
+.DS_Store
+.idea/
+.vscode/

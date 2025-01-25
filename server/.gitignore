@@ -1,0 +1,47 @@
+# Node.js dependencies (root, client, server)
+node_modules/
+
+# Build output (root, client, server)
+build/
+dist/
+
+# Logs (root, client, server)
+*.log
+logs/
+
+# Dependency directory for client and server (pnpm or npm)
+.pnpm/
+npm-debug.log*
+
+# Environment variables files (root, client, server)
+.env
+.env.local
+.env.*.local
+
+# IDE/Editor configurations (root, client, server)
+.vscode/
+.idea/
+
+# OS generated files (root, client, server)
+.DS_Store
+Thumbs.db
+
+# Client (React app)
+client/build/
+client/node_modules/
+client/.env
+client/.cache/
+client/public/static/
+
+# Server (Node.js backend)
+server/node_modules/
+server/logs/
+server/.env
+
+# Coverage reports (root, client, server)
+coverage/
+*.lcov
+
+# Misc files and folders you may want to exclude
+*.bak
+*.swp
