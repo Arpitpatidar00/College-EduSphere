@@ -1,9 +1,7 @@
 export const EMAIL_TEMPLATES_ID = {
-  WELCOME: "template_welcome_email",
-  PASSWORD_RESET: "template_password_reset",
-  OTP_VERIFICATION: "template_otp_verification",
-  ACCOUNT_ACTIVATION: "template_account_activation",
-  VERIFY_EMAIL: "VERIFY_EMAIL",
+  USER_VERIFICATION_EMAIL: "d-f9303fa07e9d454c977386cdb1e327f7",
+  PASSWORD_RESET_EMAIL: "d-711573660ece48c8b06be80dce3548a3",
+  WELCOME_EMAIL: "SENDGRID_WELCOME_TEMPLATE_ID",
 };
 
 export const SMS_TEMPLATES = {

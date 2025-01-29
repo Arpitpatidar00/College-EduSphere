@@ -7,7 +7,7 @@ const router = Router();
 
 router.post(
   "/createPost",
-  authMiddleware,
+  // authMiddleware,
   upload.single("postImage"),
   createPost
 );

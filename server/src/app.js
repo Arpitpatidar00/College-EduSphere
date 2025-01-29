@@ -15,9 +15,10 @@ import { join, dirname } from "path";
 // @import routes
 import userRoutes from "./routes/user.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import collegeRoutes from "./routes/college.routes.js";
 
 // import userRoutes from "./routes/userProfile.routes.js";
-// import postRoutes from "./routes/post.routes.js";
+import postRoutes from "./routes/post.routes.js";
 
 // @Start App
 const app = express();
@@ -65,8 +66,9 @@ app.use(compression());
 
 app.use("/auth/user", userRoutes);
 app.use("/auth/admin", adminRoutes);
+app.use("/auth/college", collegeRoutes);
 
 // app.use("/profile", userRoutes);
-// app.use("/post", postRoutes);
+app.use("/post", postRoutes);
 
 export default app;

@@ -1,7 +1,8 @@
 import bcrypt from "bcrypt";
 import User from "../database/models/users.model.js";
-import fs from "fs";
-import path from "path";
+// import fs from "fs";
+// import path from "path";
+import cloudinary from "../config/cloudinary.config.js"; // Assuming your cloudinary config is here
 
 // Change Password Service
 export async function changePasswordSevice({
@@ -51,11 +52,11 @@ export async function updateUserDetailsService(userId, updates) {
 }
 
 // Helper function to delete file
-const deleteFile = (filePath) => {
-  if (fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath); // Deletes the file
-  }
-};
+// const deleteFile = (filePath) => {
+//   if (fs.existsSync(filePath)) {
+//     fs.unlinkSync(filePath); // Deletes the file
+//   }
+// };
 
 // Update Profile Picture Service
 export async function updateProfilePictureService(req) {
@@ -66,31 +67,13 @@ export async function updateProfilePictureService(req) {
       }
 
       const filePath = req.file.path;
-      const userId = req.body.userId;
-
-      // Find the user and check if there is an old profile picture
-      const user = await User.findById(userId);
-      if (!user) {
-        return reject({ data: null, error: "User not found" });
-      }
-
-      // If user has an existing profile picture, delete it from the uploads folder
-      if (user.profilePicture) {
-        const oldFilePath = path.resolve(
-          __dirname,
-          "../../",
-          user.profilePicture
-        );
-
-        // Check if the old file path exists, then delete it
-        deleteFile(oldFilePath);
-      }
-
-      // Update user's profile picture with the new file path
-      user.profilePicture = filePath;
-      await user.save();
-
-      resolve({ data: user, error: null });
+      console.log(filePath);
+      const result = await cloudinary.uploader.upload(filePath, {
+        folder: "profile_pictures",
+        public_id: `profile_picture_${req.body.userId}`,
+      });
+      console.log(result);
+      resolve({ data: result.secure_url, error: null });
     });
   } catch (error) {
     return { data: null, error: error.message };

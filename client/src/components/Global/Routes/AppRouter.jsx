@@ -4,10 +4,11 @@ import { BrowserRouter as Router } from "react-router-dom";
 import LoginPage from "../../../pages/Login.page";
 import HomePage from "../../../pages/Home.page";
 import { ProtectedRoute, UnProtectedRoute } from "./ProtectedRoutes";
-import Profile from "../../../pages/Profile.page"
+import Profile from "../../../pages/Profile.page";
 import EditProfile from "../../../pages/Edit.profile.page";
+import NotFoundPage from "../../../pages/NotFound.page.jsx";
 
-const AppRouter = ({toggleTheme}) => {
+const AppRouter = ({ toggleTheme }) => {
   return (
     <Router>
       <Routes>
@@ -31,9 +32,19 @@ const AppRouter = ({toggleTheme}) => {
             </>
           }
         >
-          <Route path="/home" element={<HomePage toggleTheme={toggleTheme} />} />
-          <Route path="/profile" element={<Profile toggleTheme={toggleTheme} />} />
-          <Route path="/edit-profile" element={<EditProfile toggleTheme={toggleTheme} />} />
+          <Route
+            path="/home"
+            element={<HomePage toggleTheme={toggleTheme} />}
+          />
+          <Route
+            path="/profile"
+            element={<Profile toggleTheme={toggleTheme} />}
+          />
+          <Route
+            path="/edit-profile"
+            element={<EditProfile toggleTheme={toggleTheme} />}
+          />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </Router>

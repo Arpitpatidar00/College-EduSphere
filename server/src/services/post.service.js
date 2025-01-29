@@ -3,22 +3,15 @@ import User from "../database/models/users.model.js";
 import fs from "fs";
 import path from "path";
 
-export async function createPostService(postData, userId) {
+export const createPostService = async (postData) => {
   try {
     const newPost = new Post(postData);
-    await newPost.save();
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return { data: null, error: "User not found" };
-    }
-    user.posts.push(newPost._id);
-    await user.save();
+    await newPost.save(); // Save the post with the image URL
     return { data: newPost, error: null };
   } catch (error) {
     return { data: null, error: error.message };
   }
-}
+};
 
 // Helper function to delete a file
 const deleteFile = (filePath) => {
