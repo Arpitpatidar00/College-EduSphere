@@ -4,18 +4,12 @@ import { createServer } from "http";
 
 import app from "./app.js";
 
+const log = debug("server"); // Define debug namespace
+
 const port = process.env.PORT || 4000;
 app.set("port", port);
 
 const server = createServer(app);
-
-// @ This is a middleware to accept any unknown route that is not in our current app.
-app.use((req, res) => {
-  res.status(500).json({
-    code: false,
-    message: "Invalid Api.",
-  });
-});
 
 const onError = (error) => {
   if (error.syscall !== "listen") {
@@ -40,13 +34,25 @@ const onError = (error) => {
 const onListening = () => {
   const addr = server.address();
   const bind = typeof addr === "string" ? `pipe ${addr}` : `port ${port}`;
-  debug(`\n\nDebug:\n>> Listening on ${bind}\n\n`);
+  log(`Listening on ${bind}`);
 };
 
+// Attach error and listening event handlers
 server.on("error", onError);
 server.on("listening", onListening);
 
-// @Server started:
+// Start server
 server.listen(port, () => {
   console.log(`\n\nServer Started:\n>> http://localhost:${port}\n`);
+});
+
+// ✅ Middleware for handling unknown routes (should be after `server.listen`)
+
+app.use((error, res, next) => {
+  console.error(`\n\nError:\n>> ${error.message}\n\n`);
+
+  res.status(error.status || 500).json({
+    code: false,
+    message: error.message || "Something went wrong!",
+  });
 });

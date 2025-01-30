@@ -42,6 +42,8 @@ class AuthService {
       throw new BadRequestError(`${details.email} already exists.`);
 
     const user = await Service.create({ ...details, role, isVerified: false });
+    if (!user) throw new BadRequestError(`${role} not found.`);
+
     const token = JwtService.generateAccessToken({
       id: user._id,
       email: user.email,
@@ -50,7 +52,10 @@ class AuthService {
     await EmailService.sendTemplatedEmail(
       user.email,
       EMAIL_TEMPLATES_ID.USER_VERIFICATION_EMAIL,
-      { user_name: user.firstName, verification_url: token }
+      {
+        user_name: user.firstName || user.institutionName,
+        verification_url: token,
+      }
     );
     return { user, token };
   }
@@ -58,12 +63,17 @@ class AuthService {
   static async verifyEmail(verificationToken, role) {
     const Service = AuthService.getServiceByRole(role);
     const decoded = JwtService.decodeToken(verificationToken);
-    if (!decoded || !decoded.id) throw new NotFoundError("User not found.");
+    if (!decoded || !decoded.id) {
+      throw new NotFoundError("User not found.");
+    }
 
-    const user = await Service.findById(decoded.id);
-    if (!user) throw new NotFoundError("User not found.");
-    if (user.verified) throw new BadRequestError("Email is already verified.");
-
+    const user = await Service.findBy("_id", decoded.id);
+    if (!user) {
+      throw new NotFoundError("User not found.");
+    }
+    if (user.verified) {
+      throw new BadRequestError("Email is already verified.");
+    }
     user.verified = true;
     await user.save();
 
@@ -72,6 +82,7 @@ class AuthService {
       email: user.email,
       role,
     });
+
     return { token, user };
   }
 
@@ -113,8 +124,9 @@ class AuthService {
   static async forgotPassword(email, role) {
     const Service = AuthService.getServiceByRole(role);
     const user = await Service.findBy("email", email);
-    if (!user) throw new NotFoundError("User not found.");
-
+    if (!user) {
+      throw new NotFoundError("User not found.");
+    }
     const token = JwtService.generateAccessToken({
       id: user._id,
       email: user.email,
@@ -124,9 +136,12 @@ class AuthService {
     await EmailService.sendTemplatedEmail(
       user.email,
       EMAIL_TEMPLATES_ID.PASSWORD_RESET_EMAIL,
-      { user_name: user.firstName, verification_url: resetUrl }
+      {
+        user_name: user.firstName || user.institutionName,
+        verification_url: resetUrl,
+      }
     );
-    return { success: true, message: "Password reset link sent." };
+    return { message: "Password reset link sent." };
   }
 
   static async resetPassword(newPassword, role, token) {
@@ -135,6 +150,7 @@ class AuthService {
     if (!decoded || !decoded.id) throw new NotFoundError("User not found.");
 
     const user = await Service.findBy("_id", decoded.id);
+
     if (!user) throw new NotFoundError("User not found.");
 
     user.password = newPassword;

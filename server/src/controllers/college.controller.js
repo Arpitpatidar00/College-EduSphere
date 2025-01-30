@@ -33,7 +33,7 @@ export async function signupCollegeController(req, res, next) {
       return BAD(res, "A college with this email already exists.");
     }
 
-    const { college, token } = await AuthService.signupWithEmail(
+    const { user, token } = await AuthService.signupWithEmail(
       {
         institutionName,
         email,
@@ -44,11 +44,12 @@ export async function signupCollegeController(req, res, next) {
       },
       UserType.COLLEGE
     );
-    if (!token && !college) {
+
+    if (!token && !user) {
       return BAD(res, "College cannot created.");
     }
 
-    return OK(res, { token, college }, "College created successfully.");
+    return OK(res, { token, user }, "College created successfully.");
   } catch (error) {
     console.error("Error during college signup:", error);
     next(error);
@@ -63,16 +64,16 @@ export async function loginCollegeController(req, res, next) {
       return BAD(res, "Email and password are required.");
     }
 
-    const { token, college } = await AuthService.loginWithEmailAndPassword(
+    const { user, token } = await AuthService.loginWithEmailAndPassword(
       email,
       password,
       UserType.COLLEGE
     );
-    if (!token && !college) {
+    if (!token && !user) {
       return BAD(res, "Login failed.");
     }
 
-    return OK(res, { college, token }, "Login successful.");
+    return OK(res, { user, token }, "Login successful.");
   } catch (error) {
     next(error);
   }
@@ -124,15 +125,9 @@ export async function resetCollegePasswordController(req, res, next) {
   }
 
   try {
-    const college = await AuthService.resetPassword(
-      newPassword,
-      UserType.COLLEGE,
-      token
-    );
-    if (!college) {
-      return BAD(res, "Error resetting password.");
-    }
-    return OK(res, college, "Password reset successfully.");
+    await AuthService.resetPassword(newPassword, UserType.COLLEGE, token);
+
+    return OK(res, null, "Password reset successfully.");
   } catch (error) {
     next(error);
   }
@@ -155,7 +150,7 @@ export async function changeCollegePasswordController(req, res, next) {
     if (!college) {
       return BAD(res, "Error changing password.");
     }
-    return OK(res, college, "Password changed successfully.");
+    return OK(res, null, "Password changed successfully.");
   } catch (error) {
     next(error);
   }

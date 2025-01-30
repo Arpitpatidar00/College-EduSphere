@@ -80,6 +80,10 @@ const collegeSchema = new mongoose.Schema(
       type: String,
       default: "COLLEGE",
     },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
     isActive: {
       type: Boolean,
       default: true,
