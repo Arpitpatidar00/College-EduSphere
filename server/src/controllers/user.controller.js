@@ -1,14 +1,6 @@
 import UserService from "../services/user.service.js";
 import AuthService from "../services/auth/auth.service.js";
-import {
-  OK,
-  BAD,
-  UNAUTHORIZED,
-  NOT_FOUND,
-  NotFoundError,
-  UnauthorizedError,
-  BadRequestError,
-} from "../lib/responseHelper.js";
+import { OK, BAD } from "../lib/responseHelper.js";
 import UserType from "../constants/userTypeEnum.js";
 
 export async function signupController(req, res, next) {
@@ -49,6 +41,9 @@ export async function signupController(req, res, next) {
       UserType.USER
     );
 
+    if (!user & !token) {
+      return BAD(res, "Failed to create user.");
+    }
     return OK(res, { token, user }, "User created successfully.");
   } catch (error) {
     console.error("Error during signup:", error);
@@ -70,16 +65,12 @@ export async function loginController(req, res, next) {
       UserType.USER
     );
 
+    if (!user & !token) {
+      return BAD(res, "Failed to login.");
+    }
     return OK(res, { user, token }, "Login successful.");
   } catch (error) {
-    if (error instanceof NotFoundError) {
-      return NOT_FOUND(res, error.message);
-    } else if (error instanceof UnauthorizedError) {
-      return UNAUTHORIZED(res, error.message);
-    } else if (error instanceof BadRequestError) {
-      return BAD(res, error.message);
-    }
-    next(error); // Pass other errors to middleware
+    next(error);
   }
 }
 
@@ -91,7 +82,11 @@ export async function verifyEmailController(req, res, next) {
 
   try {
     const { user } = await AuthService.verifyEmail(token, UserType.USER);
-    return OK(res, { token, user }, "Email verified successfully.");
+
+    if (!user) {
+      return BAD(res, "Failed to verify email.");
+    }
+    return OK(res, null, "Email verified successfully.");
   } catch (error) {
     next(error);
   }
@@ -106,7 +101,7 @@ export async function forgotPasswordController(req, res, next) {
   try {
     const result = await AuthService.forgotPassword(email, UserType.USER);
 
-    if (result && result.success) {
+    if (result) {
       return OK(res, null, result.message);
     }
 
@@ -149,6 +144,10 @@ export async function changePasswordController(req, res, next) {
       userId,
       UserType.USER
     );
+    if (!user) {
+      return BAD(res, "Error changing password.");
+    }
+
     return OK(res, user, "Password changed successfully.");
   } catch (error) {
     next(error);

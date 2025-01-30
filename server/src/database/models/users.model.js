@@ -43,14 +43,9 @@ const UserModel = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    followersCollectionId: {
+    follow: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Followers",
-      default: null,
-    },
-    followingCollectionId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Following",
+      ref: "Follow",
       default: null,
     },
     posts: [

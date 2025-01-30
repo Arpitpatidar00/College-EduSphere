@@ -1,36 +1,30 @@
-import { OK, BAD } from "../lib/responseHelper.js";
-import AuthService from "../services/auth/auth.service.js";
 import CollegeService from "../services/college.service.js";
+import AuthService from "../services/auth/auth.service.js";
+import { OK, BAD } from "../lib/responseHelper.js";
 import UserType from "../constants/userTypeEnum.js";
 
-// College Registration (Signup)
-export async function collegeSignupController(req, res, next) {
+export async function signupCollegeController(req, res, next) {
   const {
     institutionName,
     email,
     password,
-    description,
-    websiteURL,
     contactEmail,
     contactPhone,
     location,
-    socialMediaHandles,
-    programsOffered,
   } = req.body;
 
   if (
     !institutionName ||
     !email ||
     !password ||
-    !description ||
-    !websiteURL ||
     !contactEmail ||
     !contactPhone ||
-    !location ||
-    !socialMediaHandles ||
-    !programsOffered
+    !location
   ) {
-    return BAD(res, "All fields are required for registration.");
+    return BAD(
+      res,
+      "All fields (institutionName, email, password, contactEmail, contactPhone, location) are required."
+    );
   }
 
   try {
@@ -39,43 +33,129 @@ export async function collegeSignupController(req, res, next) {
       return BAD(res, "A college with this email already exists.");
     }
 
-    const { user, token } = await AuthService.signupWithEmail(
+    const { college, token } = await AuthService.signupWithEmail(
       {
         institutionName,
         email,
         password,
-        description,
-        websiteURL,
         contactEmail,
         contactPhone,
         location,
-        socialMediaHandles,
-        programsOffered,
       },
       UserType.COLLEGE
     );
+    if (!token && !college) {
+      return BAD(res, "College cannot created.");
+    }
 
-    return OK(res, { user, token }, "College created successfully.");
+    return OK(res, { token, college }, "College created successfully.");
+  } catch (error) {
+    console.error("Error during college signup:", error);
+    next(error);
+  }
+}
+
+export async function loginCollegeController(req, res, next) {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return BAD(res, "Email and password are required.");
+    }
+
+    const { token, college } = await AuthService.loginWithEmailAndPassword(
+      email,
+      password,
+      UserType.COLLEGE
+    );
+    if (!token && !college) {
+      return BAD(res, "Login failed.");
+    }
+
+    return OK(res, { college, token }, "Login successful.");
   } catch (error) {
     next(error);
   }
 }
 
-export async function collegeLoginController(req, res, next) {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return BAD(res, "Email and password are required.");
+export async function verifyCollegeEmailController(req, res, next) {
+  const { token } = req.query;
+  if (!token) {
+    return BAD(res, "Email and verification code are required.");
   }
 
   try {
-    const { token, user } = await AuthService.loginWithEmailAndPassword(
-      email,
-      password,
+    const { college } = await AuthService.verifyEmail(token, UserType.COLLEGE);
+    if (!college) {
+      return BAD(res, "Email verification failed.");
+    }
+    return OK(res, null, "Email verified successfully.");
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function forgotCollegePasswordController(req, res, next) {
+  const { email } = req.body;
+
+  if (!email) {
+    return BAD(res, "Email is required.");
+  }
+
+  try {
+    const result = await AuthService.forgotPassword(email, UserType.COLLEGE);
+
+    if (result) {
+      return OK(res, null, result.message);
+    }
+
+    return BAD(res, "Error sending password reset link.");
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function resetCollegePasswordController(req, res, next) {
+  const { newPassword } = req.body;
+  const { token } = req.query;
+
+  if (!token || !newPassword) {
+    return BAD(res, "Token and new password are required.");
+  }
+
+  try {
+    const college = await AuthService.resetPassword(
+      newPassword,
+      UserType.COLLEGE,
+      token
+    );
+    if (!college) {
+      return BAD(res, "Error resetting password.");
+    }
+    return OK(res, college, "Password reset successfully.");
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function changeCollegePasswordController(req, res, next) {
+  const collegeId = req?.user?._id;
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword) {
+    return BAD(res, "Old password and new password are required.");
+  }
+  try {
+    const college = await AuthService.changePassword(
+      oldPassword,
+      newPassword,
+      collegeId,
       UserType.COLLEGE
     );
-
-    return OK(res, { user, token }, "College login successful.");
+    if (!college) {
+      return BAD(res, "Error changing password.");
+    }
+    return OK(res, college, "Password changed successfully.");
   } catch (error) {
     next(error);
   }

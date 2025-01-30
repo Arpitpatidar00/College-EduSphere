@@ -6,11 +6,13 @@ const collegeSchema = new mongoose.Schema(
     institutionName: {
       type: String,
       required: true,
+      trim: true,
     },
     email: {
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
     },
     password: {
       type: String,
@@ -34,16 +36,57 @@ const collegeSchema = new mongoose.Schema(
     },
     location: {
       type: String,
-      default: "",
       required: true,
     },
     socialMediaHandles: {
-      type: [String],
-      default: [],
+      twitter: { type: String, default: "" },
+      instagram: { type: String, default: "" },
+      linkedin: { type: String, default: "" },
+      facebook: { type: String, default: "" },
+      youtube: { type: String, default: "" },
     },
     programsOffered: {
       type: [String],
       default: [],
+    },
+    departments: {
+      type: [String],
+      default: [],
+    },
+    follow: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Follow",
+    },
+    posts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+        default: null,
+      },
+    ],
+    events: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Event",
+      },
+    ],
+    announcements: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Announcement",
+      },
+    ],
+    role: {
+      type: String,
+      default: "COLLEGE",
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    dateJoined: {
+      type: Date,
+      default: Date.now,
     },
   },
   { timestamps: true }

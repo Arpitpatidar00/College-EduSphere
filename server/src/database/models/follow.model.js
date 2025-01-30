@@ -5,24 +5,36 @@ const FollowSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "User ID is required"],
+      required: true,
+      unique: true,
     },
-    following: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
     followers: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        followedAt: { type: Date, default: Date.now },
       },
     ],
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
+    following: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        followedAt: { type: Date, default: Date.now },
+      },
+    ],
+    blacklist: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        blockedAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -52,17 +52,17 @@ const PostSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    likes: [
+    totalLikes: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
     ],
-    views: {
+    totalViews: {
       type: Number,
       default: 0,
     },
-    comments: [
+    totalComments: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Comment",
@@ -82,32 +82,9 @@ const PostSchema = new mongoose.Schema(
       ref: "User",
       default: null,
     },
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-    updatedAt: {
-      type: Date,
-      default: null,
-    },
   },
   { timestamps: true }
 );
-
-PostSchema.methods.incrementLikes = async function () {
-  this.likes += 1;
-  await this.save();
-};
-
-PostSchema.methods.incrementViews = async function () {
-  this.views += 1;
-  await this.save();
-};
-
-PostSchema.methods.addComment = async function (commentId) {
-  this.comments.push(commentId);
-  await this.save();
-};
 
 PostSchema.pre("save", function (next) {
   if (this.isModified()) {

@@ -4,9 +4,11 @@ import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
+//@ for Auth
 router.post("/signup", userController.signupController);
 router.post("/login", userController.loginController);
 
+//@ for Auth Services
 router.get("/verify-email", userController.verifyEmailController);
 router.post("/forgot-password", userController.forgotPasswordController);
 router.post("/reset-password", userController.resetPasswordController);

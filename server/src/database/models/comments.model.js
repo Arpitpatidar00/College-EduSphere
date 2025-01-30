@@ -17,14 +17,6 @@ const CommentSchema = new mongoose.Schema(
       required: [true, "Comment text is required"],
       maxLength: [500, "Comment cannot exceed 500 characters"],
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-      default: null,
-    },
     isActive: {
       type: Boolean,
       default: true,
