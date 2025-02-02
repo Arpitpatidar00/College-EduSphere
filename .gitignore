@@ -37,6 +37,7 @@ client/public/static/
 server/node_modules/
 server/logs/
 server/.env
+server/.env.development
 
 # Coverage reports (root, client, server)
 coverage/
