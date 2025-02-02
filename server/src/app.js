@@ -53,7 +53,7 @@ const corsOptions = {
   origin: process.env.ORIGIN, // Replace with your frontend domain
   optionsSuccessStatus: 200,
 };
-app.use(cors(corsOptions));
+app.use(cors());
 
 // - parse frontend payloads
 app.use(urlencoded({ extended: false }));

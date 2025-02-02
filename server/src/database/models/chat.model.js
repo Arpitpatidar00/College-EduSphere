@@ -18,11 +18,11 @@ const MessageSchema = new mongoose.Schema(
       required: true,
     },
     content: {
-      type: String, // For text messages or metadata like URLs for media
+      type: String, 
       required: true,
     },
     mediaUrl: {
-      type: String, // For storing the URL of media (images, videos, etc.)
+      type: String, 
       default: null,
     },
     seenBy: [

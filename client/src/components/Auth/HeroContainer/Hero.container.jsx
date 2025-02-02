@@ -7,7 +7,7 @@ const HeroContainer = () => {
         width: "100%",
         height: "100%",
         backgroundColor: "#2D2D2A",
-        backgroundImage: "url('/assets/asideBG.png')",
+        backgroundImage: "url('assets/AuthImage.webp')",
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
       }}

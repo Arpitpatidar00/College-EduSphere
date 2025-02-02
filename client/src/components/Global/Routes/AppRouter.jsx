@@ -1,3 +1,4 @@
+// AppRouter.jsx
 import { Outlet, Route, Routes } from "react-router-dom";
 import { BrowserRouter as Router } from "react-router-dom";
 

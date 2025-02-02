@@ -1,5 +1,5 @@
-import NotFound from "../components/NotFound/Not.Found"; // Ensure the path is correct
 
+import NotFound from '../components/NotFound/Not.Found';
 const NotFoundPage = () => {
   return <NotFound />;
 };

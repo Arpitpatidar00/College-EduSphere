@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable class-methods-use-this */
 import mongoose from "mongoose";
 
@@ -11,6 +12,7 @@ class Database {
       await mongoose.connect(process.env.MONGODB_URI);
       console.log("Connection established with DB.");
     } catch (error) {
+      console.log('error: ', error);
       process.exit(1); // Optionally exit if critical
     }
   }

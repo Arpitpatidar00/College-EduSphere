@@ -1,21 +1,27 @@
+// App.jsx
 import { Box, CssBaseline } from "@mui/material";
 import AppRouter from "./components/Global/Routes/AppRouter";
 import AppProvider from "./components/Global/AppProvider/AppProvider";
-import { useState } from "react";
-import { ThemeProvider } from "@mui/material/styles";
-import { lightTheme, darkTheme } from "../public/utils/theme/Theme";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ThemeProvider, { ThemeContext } from "./themes/ThemeProvider";
+import { useContext } from "react";
+import { ThemeMode } from "./themes/themeConstants";
 
 const App = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { setThemeMode } = useContext(ThemeContext);
 
   const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
+    console.log("yas this is")
+
+    setThemeMode((prevMode) =>
+      prevMode === ThemeMode.LIGHT ? ThemeMode.DARK : ThemeMode.LIGHT
+    );
+
   };
 
   return (
-    <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
+    <ThemeProvider>
       <CssBaseline />
       <AppProvider>
         <Box component="main">

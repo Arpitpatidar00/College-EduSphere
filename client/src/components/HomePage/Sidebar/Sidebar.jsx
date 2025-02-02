@@ -1,13 +1,12 @@
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-
 import {
   Card,
   CardContent,
-  Avatar,
   Box,
-  Typography,
   IconButton,
+  Typography,
 } from "@mui/material";
 import {
   Feed,
@@ -22,6 +21,8 @@ import {
 } from "@mui/icons-material";
 import { logout } from "../../../store/slices/auth.slice.jsx";
 import { toast } from "react-toastify";
+import ProfileCard from "./ProfileCard.jsx";
+import { APP_COLORS } from "../../../enums/Colors";
 
 const Sidebar = ({ toggleTheme, isDarkMode }) => {
   const navigate = useNavigate();
@@ -38,154 +39,127 @@ const Sidebar = ({ toggleTheme, isDarkMode }) => {
   return (
     <Card
       sx={{
-        height: "100vh",
+        height: "calc(100vh - 100px)",
+        display: "flex",
         flexDirection: "column",
+        borderRadius: 4,
+        p: 2,
+        bgcolor: APP_COLORS.common.white, // Use global common white as background
+        textAlign: "center",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
-      <Box sx={{ textAlign: "center", mb: 2, mt: 2 }}>
-        <Avatar
-          src="https://randomuser.me/api/portraits/women/19.jpg"
-          sx={{ margin: "0 auto" }}
-        />
-        <Typography variant="h6" sx={{ fontFamily: "Georgia, serif" }}>
-          Sam Lanson
-        </Typography>
+      {/* Centered Profile Card */}
+      <Box
+        sx={{
+          mb: 2,
+          mt: 2,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ProfileCard />
       </Box>
 
-      {/* Navigation Links */}
-      <CardContent sx={{ flex: 1 }}>
+      {/* Navigation Links with scrollable content */}
+      <CardContent
+        sx={{
+          flex: 1,
+          maxHeight: "calc(100vh - 200px)",
+          overflowY: "auto",
+          overflowX: "hidden",
+          width: "100%",
+        }}
+      >
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <IconButton
-            onClick={() => console.log("Favorites clicked")}
-            sx={{ justifyContent: "flex-start" }}
-          >
-            <Feed sx={{ ml: 1 }} />
-            <Typography
-              variant="body2"
+          {[
+            { label: "Favorites", icon: <Feed /> },
+            { label: "Likes", icon: <Group /> },
+            { label: "Saved", icon: <Save /> },
+            { label: "Collections", icon: <Archive /> },
+            { label: "Settings", icon: <Settings /> },
+            { label: "About", icon: <Info /> },
+          ].map((item, index) => (
+            <IconButton
+              key={index}
               sx={{
-                ml: 2,
-                fontFamily: "Arial, sans-serif",
-                fontSize: "1.2rem",
+                justifyContent: "flex-start",
+                borderRadius: "8px",
+                transition: "background-color 0.3s ease",
+                "&:hover": {
+                  backgroundColor: "rgba(0, 0, 0, 0.1)", // Light hover effect
+                },
               }}
             >
-              Favorites
-            </Typography>
-          </IconButton>
-          <IconButton
-            onClick={() => console.log("Likes clicked")}
-            sx={{ justifyContent: "flex-start" }}
-          >
-            <Group sx={{ ml: 1 }} />
-            <Typography
-              variant="body2"
-              sx={{
-                ml: 2,
-                fontFamily: "Arial, sans-serif",
-                fontSize: "1.2rem",
-              }}
-            >
-              Likes
-            </Typography>
-          </IconButton>
-          <IconButton
-            onClick={() => console.log("Saved clicked")}
-            sx={{ justifyContent: "flex-start" }}
-          >
-            <Save sx={{ ml: 1 }} />
-            <Typography
-              variant="body2"
-              sx={{
-                ml: 2,
-                fontFamily: "Arial, sans-serif",
-                fontSize: "1.2rem",
-              }}
-            >
-              Saved
-            </Typography>
-          </IconButton>
-          <IconButton
-            onClick={() => console.log("Collections clicked")}
-            sx={{ justifyContent: "flex-start" }}
-          >
-            <Archive sx={{ ml: 1 }} />
-            <Typography
-              variant="body2"
-              sx={{
-                ml: 2,
-                fontFamily: "Arial, sans-serif",
-                fontSize: "1.2rem",
-              }}
-            >
-              Collections
-            </Typography>
-          </IconButton>
-          <IconButton
-            onClick={() => console.log("Settings clicked")}
-            sx={{ justifyContent: "flex-start" }}
-          >
-            <Settings sx={{ ml: 1 }} />
-            <Typography
-              variant="body2"
-              sx={{
-                ml: 2,
-                fontFamily: "Arial, sans-serif",
-                fontSize: "1.2rem",
-              }}
-            >
-              Settings
-            </Typography>
-          </IconButton>
+              {React.cloneElement(item.icon, {
+                sx: { ml: 1, color: APP_COLORS.primary[500] },
+              })}
+              <Typography
+                variant="body2"
+                sx={{
+                  ml: 2,
+                  fontFamily: "Arial, sans-serif",
+                  fontSize: "1.2rem",
+                  color: APP_COLORS.primary[500],
+                }}
+              >
+                {item.label}
+              </Typography>
+            </IconButton>
+          ))}
+
+          {/* Theme Toggle */}
           <IconButton
             onClick={toggleTheme}
-            fullWidth
-            sx={{ justifyContent: "flex-start" }}
+            sx={{
+              justifyContent: "flex-start",
+              borderRadius: "8px",
+              transition: "background-color 0.3s ease",
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.1)",
+              },
+            }}
           >
             {isDarkMode ? (
-              <Brightness7 sx={{ ml: 1 }} />
+              <Brightness7 sx={{ ml: 1, color: APP_COLORS.primary[500] }} />
             ) : (
-              <Brightness4 sx={{ ml: 1 }} />
-            )}{" "}
-            {/* Change icon based on theme */}
+              <Brightness4 sx={{ ml: 1, color: APP_COLORS.primary[500] }} />
+            )}
             <Typography
               variant="body2"
               sx={{
                 ml: 2,
                 fontFamily: "Arial, sans-serif",
                 fontSize: "1.2rem",
+                color: APP_COLORS.primary[500],
               }}
             >
               Theme
             </Typography>
           </IconButton>
-          <IconButton
-            onClick={() => console.log("About clicked")}
-            fullWidth
-            sx={{ justifyContent: "flex-start" }}
-          >
-            <Info sx={{ ml: 1 }} />
-            <Typography
-              variant="body2"
-              sx={{
-                ml: 2,
-                fontFamily: "Arial, sans-serif",
-                fontSize: "1.2rem",
-              }}
-            >
-              About
-            </Typography>
-          </IconButton>
+
+          {/* Logout Button */}
           <IconButton
             onClick={handleLogout}
-            fullWidth
-            sx={{ justifyContent: "flex-start" }}
+            sx={{
+              justifyContent: "flex-start",
+              borderRadius: "8px",
+              transition: "background-color 0.3s ease",
+              "&:hover": {
+                backgroundColor: "rgba(255, 0, 0, 0.1)", // Slight red tint on hover
+              },
+            }}
           >
-            <ExitToApp sx={{ ml: 1 }} />
+            <ExitToApp sx={{ ml: 1, color: APP_COLORS.primary[500] }} />
             <Typography
               variant="body2"
               sx={{
                 ml: 2,
                 fontFamily: "Arial, sans-serif",
                 fontSize: "1.2rem",
+                color: APP_COLORS.primary[500],
               }}
             >
               Logout
@@ -193,6 +167,7 @@ const Sidebar = ({ toggleTheme, isDarkMode }) => {
           </IconButton>
         </Box>
       </CardContent>
+
     </Card>
   );
 };

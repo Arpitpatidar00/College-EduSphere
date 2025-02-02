@@ -14,7 +14,7 @@ const PostSchema = new mongoose.Schema(
     },
     postType: {
       type: String,
-      enum: ["hackathon", "achievement", "project", "other"],
+      enum: ["hackathons", "achievement", "project", "other"],
       required: [true, "Post type is required"],
     },
     media: {
@@ -40,7 +40,7 @@ const PostSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    hackathonDetails: {
+    hackathonsDetails: {
       type: String,
       default: "",
     },
@@ -68,6 +68,10 @@ const PostSchema = new mongoose.Schema(
         ref: "Comment",
       },
     ],
+    shareCount: {
+      type: Number,
+      default: 0,
+    },
     isActive: {
       type: Boolean,
       default: true,

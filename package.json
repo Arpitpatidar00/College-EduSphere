@@ -2,6 +2,9 @@
   "name": "college-project",
   "version": "1.0.0",
   "main": "index.js",
+  "private": true,  
+  "type": "module",
+
   "scripts": {
     "dev:client": "pnpm --filter client dev",
     "dev:server": "pnpm --filter server start",
@@ -9,6 +12,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
+    "babel-plugin-module-resolver": "^5.0.2",
     "concurrently": "^8.0.0",
     "eslint": "^8.57.1",
     "eslint-config-react-app": "^7.0.1",
@@ -20,12 +24,20 @@
     "client",
     "server"
   ],
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+   "module-alias": "^2.2.3"
+  },
+  "_moduleAliases": {
+    "@config": "src/config",
+    "@database": "src/database",
+    "@controllers": "src/controllers",
+    "@models": "src/models",
+    "@routes": "src/routes"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2"
-  }
+  "description": ""
 }

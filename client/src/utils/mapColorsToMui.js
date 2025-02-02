@@ -16,4 +16,4 @@ const mapColorsToMui = (appColors) => {
   };
 };
 
-module.exports = mapColorsToMui;
+export default mapColorsToMui;

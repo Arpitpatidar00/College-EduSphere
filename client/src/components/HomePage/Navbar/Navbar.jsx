@@ -9,88 +9,86 @@ import {
   InputBase,
   Badge,
 } from "@mui/material";
-import { Search as SearchIcon } from "@mui/icons-material";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import ChatIcon from "@mui/icons-material/Chat";
+import { Search as SearchIcon, Notifications, Chat } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { APP_COLORS } from "../../../enums/Colors";
 
 const Navbar = () => {
   const navigate = useNavigate();
 
-  const handleAccountClick = () => {
-    navigate("/profile");
-  };
+  const handleAccountClick = () => navigate("/profile");
 
   return (
-    <AppBar position="static" color="default">
-      <Toolbar>
-        <Typography variant="h6" style={{ flexGrow: 1, fontFamily: 'Courier New, monospace' }}>
-          EduShere
-        </Typography>
-
-        {/* Search Box */}
-        <Box
+    <AppBar
+      position="static"
+      sx={{
+        backgroundColor: APP_COLORS.accent,
+        boxShadow: 3,
+        px: 2,
+      }}
+    >
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <Typography
+          variant="h6"
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            border: '1px solid #3f51b5', // Unified border
-            borderRadius: '4px',
-            mr: 2,
+            fontFamily: "Courier New, monospace",
+            fontWeight: "bold",
+            color: APP_COLORS.common.white,
           }}
         >
-          <InputBase
-            placeholder="Search..."
+          EduSphere
+        </Typography>
+
+        <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "flex-end" }}>
+          <Box
             sx={{
-              ml: 1,
-              mr: 1,
-              flex: 1, // Takes full width
-              backgroundColor: 'transparent', // Ensure no background
-              '&:focus': {
-                outline: 'none', // Remove default outline on focus
-              },
+              display: "flex",
+              alignItems: "center", // Fix alignment
+              borderRadius: 2,
+              bgcolor: APP_COLORS.accent,
+              px: 1,
+              py: 0.5,
+              width: "250px",
+              border: "1px solid gray",
             }}
-          />
-          <IconButton
-            sx={{
-              color: '#3f51b5',
-              '&:hover': {
-                backgroundColor: 'rgba(63, 81, 181, 0.1)', // Hover effect
-              },
-            }}
-            aria-label="search button"
           >
-            <SearchIcon />
-          </IconButton>
+            <InputBase
+              placeholder="Search..."
+              sx={{
+                flex: 1,
+                fontSize: 14,
+                px: 1,
+                color: APP_COLORS.common.white,
+              }}
+            />
+            <IconButton sx={{ color: APP_COLORS.common.white }}>
+              <SearchIcon />
+            </IconButton>
+          </Box>
         </Box>
 
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <IconButton>
-          <Badge
-              badgeContent={2} // Number of notifications
-              color="error" // Use error color for the badge
-              overlap="circular"
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-            >
-              <NotificationsIcon />
-            </Badge>            
+
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <IconButton sx={{ color: APP_COLORS.common.white }}>
+            <Badge badgeContent={2} color="error">
+              <Notifications />
+            </Badge>
           </IconButton>
-          <IconButton>
-          <Badge
-              badgeContent={2} // Number of messages
-              color="error" // Use error color for the badge
-              overlap="circular"
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-            >
-              <ChatIcon />
-            </Badge>            
+          <IconButton sx={{ color: APP_COLORS.common.white }}>
+            <Badge badgeContent={2} color="error">
+              <Chat />
+            </Badge>
           </IconButton>
-          <Button onClick={handleAccountClick}>
+          <Button
+            onClick={handleAccountClick}
+            sx={{
+              p: 0,
+              minWidth: "auto",
+              borderRadius: "50%",
+              transition: "0.3s",
+              "&:hover": { transform: "scale(1.1)" },
+            }}
+          >
             <Avatar src="https://randomuser.me/api/portraits/women/19.jpg" />
           </Button>
         </Box>

@@ -7,7 +7,7 @@ import {
   ThemeStyle,
   ThemeStyleRadius,
 } from "../enums/common";
-import { APP_COLORS } from "../constants/colors/AppColors";
+import { APP_COLORS } from "../enums/Colors";
 
 export const textLight = {
   primary: APP_COLORS.primary[500],

@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 
-dotenv.config({ path: ".env" }); // MENTION THE INSTANCE HERE TO RUN AS DEFAULT
+// Load default .env file
+dotenv.config({ path: ".env" });
 
-dotenv.config({
-  path: `.env.${process.env.environment?.trim()}`,
-});
+// Load environment-specific .env file
+dotenv.config({ path: `.env.${process.env.environment?.trim() || "development"}` });
