@@ -7,8 +7,8 @@ const ProfileCard = () => {
         <Box
             sx={{
                 width: 300,
-                border: `1px solid ${APP_COLORS.grey[200]}`, // Use global grey color for border
-                borderRadius: 2, // Numeric borderRadius; corresponds to theme.spacing factor (default: 2 * 8px = 16px)
+                border: `1px solid ${APP_COLORS.grey[200]}`,
+                borderRadius: 2,
                 p: 2,
                 display: 'flex',
                 flexDirection: 'column',
@@ -42,7 +42,7 @@ const ProfileCard = () => {
 
             <Avatar
                 alt="Alita Dizzouza"
-                src="https://i.pinimg.com/736x/b2/0b/4f/b20b4fbd883643e74cde4a67e9943ab4.jpg"
+                src="https://img.freepik.com/premium-photo/stunning-anime-girl-drawing-showcasing-beautiful-face-intricate-details_1283595-23849.jpg?w=360"
                 sx={{ width: 100, height: 100, mb: 1 }}
             />
 

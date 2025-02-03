@@ -29,7 +29,7 @@ const Posts = () => {
       content:
         "I'm thrilled to share that I've completed a graduate certificate course in project management with the president's honor roll.",
       image:
-        "https://www.piclumen.com/wp-content/uploads/2024/10/piclumen-marquee-04.webp",
+        "https://img.freepik.com/premium-photo/stunning-anime-girl-drawing-showcasing-beautiful-face-intricate-details_1283595-23849.jpg?w=360",
       likes: 120,
       comments: 35,
       shares: 10,
@@ -42,7 +42,7 @@ const Posts = () => {
       content:
         "I'm thrilled to share that I've completed a graduate certificate course in project management with the president's honor roll.",
       image:
-        "https://www.piclumen.com/wp-content/uploads/2024/10/piclumen-marquee-04.webp",
+        "https://img.freepik.com/premium-photo/anime-girl_889056-31772.jpg?w=360",
       likes: 120,
       comments: 35,
       shares: 10,
@@ -55,7 +55,7 @@ const Posts = () => {
       content:
         "I'm thrilled to share that I've completed a graduate certificate course in project management with the president's honor roll.",
       image:
-        "https://www.piclumen.com/wp-content/uploads/2024/10/piclumen-marquee-04.webp",
+        "https://img.freepik.com/premium-photo/anime-girl-rain-generative-ai_958165-28139.jpg",
       likes: 120,
       comments: 35,
       shares: 10,

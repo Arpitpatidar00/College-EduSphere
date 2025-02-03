@@ -29,7 +29,7 @@ const EditProfile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get('/api/user/profile'); 
+        const response = await axios.get('/api/user/profile');
         setUser(response.data);
       } catch (error) {
         setError('Failed to load user data.');
@@ -46,7 +46,7 @@ const EditProfile = () => {
     }
 
     try {
-      await axios.put('/api/user/change-password', { password: newPassword }); 
+      await axios.put('/api/user/change-password', { password: newPassword });
       setSuccess('Password updated successfully.');
       setNewPassword('');
       setConfirmPassword('');
@@ -134,7 +134,7 @@ const EditProfile = () => {
             {error}
           </Alert>
         </Snackbar>
-        
+
         <Snackbar open={!!success} autoHideDuration={6000} onClose={() => setSuccess('')}>
           <Alert onClose={() => setSuccess('')} severity="success" sx={{ width: '100%' }}>
             {success}

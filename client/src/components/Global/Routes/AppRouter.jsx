@@ -8,12 +8,14 @@ import { ProtectedRoute, UnProtectedRoute } from "./ProtectedRoutes";
 import Profile from "../../../pages/Profile.page";
 import EditProfile from "../../../pages/Edit.profile.page";
 import NotFoundPage from "../../../pages/NotFound.page.jsx";
+import MessagePage from '../../../pages/Message.page';
+import Navbar from '../../HomePage/Navbar/Navbar';
 
 const AppRouter = ({ toggleTheme }) => {
   return (
     <Router>
+      <Navbar />
       <Routes>
-        {/* public routes */}
         <Route
           path="/"
           element={
@@ -44,6 +46,10 @@ const AppRouter = ({ toggleTheme }) => {
           <Route
             path="/edit-profile"
             element={<EditProfile toggleTheme={toggleTheme} />}
+          />
+          <Route
+            path="/message"
+            element={<MessagePage toggleTheme={toggleTheme} />}
           />
           <Route path="*" element={<NotFoundPage />} />
         </Route>

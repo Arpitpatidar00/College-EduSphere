@@ -17,6 +17,8 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const handleAccountClick = () => navigate("/profile");
+  const handleMessageClick = () => navigate("/message");
+  const handleHomeClick = () => navigate("/home");
 
   return (
     <AppBar
@@ -29,6 +31,7 @@ const Navbar = () => {
     >
       <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Typography
+          onClick={handleHomeClick}
           variant="h6"
           sx={{
             fontFamily: "Courier New, monospace",
@@ -43,7 +46,7 @@ const Navbar = () => {
           <Box
             sx={{
               display: "flex",
-              alignItems: "center", // Fix alignment
+              alignItems: "center",
               borderRadius: 2,
               bgcolor: APP_COLORS.accent,
               px: 1,
@@ -74,7 +77,7 @@ const Navbar = () => {
               <Notifications />
             </Badge>
           </IconButton>
-          <IconButton sx={{ color: APP_COLORS.common.white }}>
+          <IconButton onClick={handleMessageClick} sx={{ color: APP_COLORS.common.white }}>
             <Badge badgeContent={2} color="error">
               <Chat />
             </Badge>
@@ -93,7 +96,7 @@ const Navbar = () => {
           </Button>
         </Box>
       </Toolbar>
-    </AppBar>
+    </AppBar >
   );
 };
 

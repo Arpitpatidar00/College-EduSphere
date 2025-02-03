@@ -44,7 +44,7 @@ const Sidebar = ({ toggleTheme, isDarkMode }) => {
         flexDirection: "column",
         borderRadius: 4,
         p: 2,
-        bgcolor: APP_COLORS.common.white, // Use global common white as background
+        bgcolor: APP_COLORS.common.white,
         textAlign: "center",
         justifyContent: "center",
         alignItems: "center",
