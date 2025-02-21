@@ -1,5 +1,5 @@
 import { mapColorsToMui } from "../enums/mapColorsToMui";
-import { APP_COLORS } from "./AppColors";
+import { APP_COLORS } from "../enums/Colors";
 import { ThemeVariants } from "../themes/themeConstants";
 
 export const MUI_COLORS = {

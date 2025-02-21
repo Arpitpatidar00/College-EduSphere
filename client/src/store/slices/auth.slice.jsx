@@ -1,12 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loginThunk } from "../thunk/auth.thunk";
+import { loginThunk, logoutThunk } from "../thunk/auth.thunk";
 
 const initialState = {
   isAuthenticated: false,
   token: "",
   tokenExpiry: "",
   user: null,
-  userRole: null,
+  role: null,
+  isLoading: false,
+  error: null,
 };
 
 const authSlice = createSlice({
@@ -16,12 +18,13 @@ const authSlice = createSlice({
     updateUserState: (state, action) => {
       state.user = action.payload;
     },
+    // This reducer can be used for immediate logout if needed.
     logout: (state) => {
       state.isAuthenticated = false;
       state.token = "";
       state.tokenExpiry = "";
       state.user = null;
-      state.userRole = null;
+      state.role = null;
     },
   },
   extraReducers: (builder) => {
@@ -40,13 +43,20 @@ const authSlice = createSlice({
       .addCase(loginThunk.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+      })
+      .addCase(logoutThunk.fulfilled, (state) => {
+        // Reset auth state on successful logout
+        state.isAuthenticated = false;
+        state.token = "";
+        state.tokenExpiry = "";
+        state.user = null;
+        state.role = null;
       });
   },
 });
 
 export const { updateUserState, logout } = authSlice.actions;
 
-// @ Selectors
 export const selectUserData = (state) => state.auth.user;
 export const selectToken = (state) => state.auth.token;
 export const selectAuthData = (state) => state.auth;

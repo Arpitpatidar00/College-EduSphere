@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import AdminService from "../admin.service.js";
-import UserService from "../user.service.js";
-import CollegeService from "../college.service.js";
+import StudentService from "../student.service.js";
+import { collegeService } from "../college.service.js";
 import JwtService from "../external/jwt.service.js";
 import SmsService from "../external/sms.service.js";
 import { EMAIL_TEMPLATES_ID } from "../../constants/email.constants.js";
@@ -173,12 +173,12 @@ class AuthService {
 
   static getServiceByRole(role) {
     switch (role) {
-      case "ADMIN":
+      case "admin":
         return AdminService;
-      case "COLLEGE":
-        return CollegeService;
-      case "USER":
-        return UserService;
+      case "college":
+        return collegeService;
+      case "student":
+        return StudentService;
       default:
         throw new BadRequestError("Invalid role provided.");
     }

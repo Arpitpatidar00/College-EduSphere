@@ -1,13 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import {
-  Card,
-  CardContent,
-  Box,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import { Card, CardContent, Box, IconButton, Typography } from "@mui/material";
 import {
   Feed,
   Group,
@@ -19,22 +13,32 @@ import {
   Info,
   ExitToApp,
 } from "@mui/icons-material";
-import { logout } from "../../../store/slices/auth.slice.jsx";
-import { toast } from "react-toastify";
 import ProfileCard from "./ProfileCard.jsx";
 import { APP_COLORS } from "../../../enums/Colors";
+import { useContext } from "react";
+import { ThemeContext } from "../../../themes/ThemeProvider";
+import { ThemeMode } from "../../../themes/themeConstants";
+import { ROUTES } from "../../Global/Routes/CommonRoutes.js";
+import { logoutThunk } from "../../../store/thunk/auth.thunk";
 
-const Sidebar = ({ toggleTheme, isDarkMode }) => {
+const Sidebar = ({ isDarkMode }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleLogout = () => {
-    localStorage.removeItem("state");
-    sessionStorage.clear();
-    dispatch(logout());
-    navigate("/login");
-    toast("User logged out successfully");
+  const handleLogout = async () => {
+    await dispatch(logoutThunk());
+    navigate(ROUTES.AUTH.STUDENT);
   };
+
+  const { setThemeMode } = useContext(ThemeContext);
+
+  const toggleTheme = () => {
+    setThemeMode((prevMode) =>
+      prevMode === ThemeMode.LIGHT ? ThemeMode.DARK : ThemeMode.LIGHT
+    );
+  };
+
+  const handleSettingClick = () => navigate("/setting");
 
   return (
     <Card
@@ -43,14 +47,11 @@ const Sidebar = ({ toggleTheme, isDarkMode }) => {
         display: "flex",
         flexDirection: "column",
         borderRadius: 4,
-        p: 2,
-        bgcolor: APP_COLORS.common.white,
         textAlign: "center",
         justifyContent: "center",
         alignItems: "center",
       }}
     >
-      {/* Centered Profile Card */}
       <Box
         sx={{
           mb: 2,
@@ -63,7 +64,6 @@ const Sidebar = ({ toggleTheme, isDarkMode }) => {
         <ProfileCard />
       </Box>
 
-      {/* Navigation Links with scrollable content */}
       <CardContent
         sx={{
           flex: 1,
@@ -79,7 +79,6 @@ const Sidebar = ({ toggleTheme, isDarkMode }) => {
             { label: "Likes", icon: <Group /> },
             { label: "Saved", icon: <Save /> },
             { label: "Collections", icon: <Archive /> },
-            { label: "Settings", icon: <Settings /> },
             { label: "About", icon: <Info /> },
           ].map((item, index) => (
             <IconButton
@@ -89,7 +88,7 @@ const Sidebar = ({ toggleTheme, isDarkMode }) => {
                 borderRadius: "8px",
                 transition: "background-color 0.3s ease",
                 "&:hover": {
-                  backgroundColor: "rgba(0, 0, 0, 0.1)", // Light hover effect
+                  backgroundColor: APP_COLORS.primary[50], // Light hover effect
                 },
               }}
             >
@@ -109,6 +108,30 @@ const Sidebar = ({ toggleTheme, isDarkMode }) => {
               </Typography>
             </IconButton>
           ))}
+          <IconButton
+            onClick={handleSettingClick}
+            sx={{
+              justifyContent: "flex-start",
+              borderRadius: "8px",
+              transition: "background-color 0.3s ease",
+              "&:hover": {
+                backgroundColor: APP_COLORS.secondary[50],
+              },
+            }}
+          >
+            <Settings sx={{ ml: 1, color: APP_COLORS.primary[500] }} />
+            <Typography
+              variant="body2"
+              sx={{
+                ml: 2,
+                fontFamily: "Arial, sans-serif",
+                fontSize: "1.2rem",
+                color: APP_COLORS.primary[500],
+              }}
+            >
+              Setting
+            </Typography>
+          </IconButton>
 
           {/* Theme Toggle */}
           <IconButton
@@ -118,7 +141,7 @@ const Sidebar = ({ toggleTheme, isDarkMode }) => {
               borderRadius: "8px",
               transition: "background-color 0.3s ease",
               "&:hover": {
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
+                backgroundColor: APP_COLORS.primary[50],
               },
             }}
           >
@@ -148,7 +171,7 @@ const Sidebar = ({ toggleTheme, isDarkMode }) => {
               borderRadius: "8px",
               transition: "background-color 0.3s ease",
               "&:hover": {
-                backgroundColor: "rgba(255, 0, 0, 0.1)", // Slight red tint on hover
+                backgroundColor: APP_COLORS.error[50], // Slight red tint on hover
               },
             }}
           >
@@ -167,7 +190,6 @@ const Sidebar = ({ toggleTheme, isDarkMode }) => {
           </IconButton>
         </Box>
       </CardContent>
-
     </Card>
   );
 };

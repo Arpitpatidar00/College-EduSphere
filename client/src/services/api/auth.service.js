@@ -1,13 +1,15 @@
-import { apiEndPoints, methodType } from "../apiEndpoint";
+import { MethodTypesEnum } from "../../enums/ApiMethord";
+import { apiEndPoints } from "../apiEndpoint";
+
 import { sendRequest } from "../apiHandler";
 import ErrorService from "../errorService";
 
-export const userLoginApi = async (body, endpoint = "userLogin") => {
+export const LoginApi = async (body, endpoint) => {
   try {
     const { code, result, message } = await sendRequest({
       url: apiEndPoints[endpoint],
       body,
-      method: methodType.POST,
+      method: MethodTypesEnum.POST,
     });
 
     if (code) {
@@ -15,18 +17,16 @@ export const userLoginApi = async (body, endpoint = "userLogin") => {
       return result;
     }
   } catch (error) {
-    console.error("Unexpected error:", error);
-    ErrorService.logError("An unexpected error occurred.");
+    ErrorService.logError("An unexpected error occurred.", error);
   }
   return null;
 };
-
-export const userSignUpApi = async (body, endpoint = "userSignup") => {
+export const SignupApi = async (body, endpoint = "studentSignup") => {
   try {
     const { code, result, message } = await sendRequest({
       url: apiEndPoints[endpoint],
       body,
-      method: "POST",
+      method: MethodTypesEnum.POST,
     });
 
     if (code) {
@@ -34,8 +34,8 @@ export const userSignUpApi = async (body, endpoint = "userSignup") => {
       return result;
     }
   } catch (error) {
-    console.error("Unexpected error:", error);
-    ErrorService.logError("An unexpected error occurred.");
+    ErrorService.logError("An unexpected error occurred.", error);
   }
   return null;
 };
+

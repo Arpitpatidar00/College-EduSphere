@@ -1,5 +1,5 @@
-import Message from "../components/HomePage/Message/Message";
 
+import Message from '../components/modules/Message/Message';
 
 const MessagePage = () => {
     return (

@@ -1,31 +1,25 @@
+// src/services/errorService.js
 import { toast } from "react-toastify";
 
 export default class ErrorService {
   static handleResponse(response) {
-    // {
-    //   code:
-    //   message:
-    //   data:
-    // }
     if (!response) return false;
-
     const { status, data } = response;
 
-    // Handling the specific success case
+    // If successful response.
     if (status === 200 && data.code === true) {
       return true;
     }
 
-    // Handling the specific case where status is 200 but code is false
+    // Status 200 but with an error.
     if (status === 200 && data.code === false) {
-      // Display an error message based on the response or a default message
       const errorMessage =
         data.message || "Operation failed. Please try again.";
       this.sendErrorMessage(errorMessage);
       return false;
     }
 
-    // Handle other HTTP statuses and error cases
+    // Client errors
     if (status >= 400 && status < 500) {
       if (status === 404) {
         this.sendWarnMessage("Invalid API");
@@ -38,23 +32,20 @@ export default class ErrorService {
       }
       return false;
     }
+
+    // Server error
     if (status === 500) {
       this.sendErrorMessage("Something went wrong!");
       return false;
     }
 
+    // Fallback for unexpected errors.
     this.sendErrorMessage(data.message || "Unexpected Error");
     return false;
   }
 
   static displayAlert(type, message = "Something went wrong") {
-    toast[type](message, {
-      position: "top-right",
-    });
-  }
-
-  static logError(msg) {
-    this.displayAlert("error", msg);
+    toast[type](message, { position: "top-right" });
   }
 
   static sendOkMessage(msg) {

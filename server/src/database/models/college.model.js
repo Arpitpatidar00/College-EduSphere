@@ -34,7 +34,19 @@ const collegeSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    location: {
+    stateId: {
+      type: String,
+      required: true,
+    },
+    cityId: {
+      type: String,
+      required: true,
+    },
+    pinCode: {
+      type: String,
+      required: true,
+    },
+    countryId: {
       type: String,
       required: true,
     },

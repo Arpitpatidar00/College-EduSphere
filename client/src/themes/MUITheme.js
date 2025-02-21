@@ -1,6 +1,7 @@
 import { createTheme } from "@mui/material/styles";
 import { APP_COLORS } from "../enums/Colors";
 import { ThemeVariants } from "../themes/themeConstants";
+import { textLight, textDark } from "./ThemeConfig";
 
 const mapColorsToMui = (colors) => ({
   main: colors[500],
@@ -26,12 +27,9 @@ export const MUITheme = {
       secondary: mapColorsToMui(APP_COLORS.secondary),
       background: {
         default: APP_COLORS.secondary[400],
+        paper: APP_COLORS.grey[50],
       },
-      text: {
-        primary: APP_COLORS.primary[500],
-        secondary: APP_COLORS.grey[800],
-        disabled: APP_COLORS.grey[500],
-      },
+      text: textLight,
     },
   }),
 
@@ -41,13 +39,10 @@ export const MUITheme = {
       primary: mapColorsToMui(APP_COLORS.primary),
       secondary: mapColorsToMui(APP_COLORS.secondary),
       background: {
-        default: APP_COLORS.grey[50],
+        default: APP_COLORS.common.black,
+        paper: APP_COLORS.primary[600],
       },
-      text: {
-        primary: APP_COLORS.primary[500],
-        secondary: APP_COLORS.grey[800],
-        disabled: APP_COLORS.grey[500],
-      },
+      text: textDark,
     },
   }),
 };

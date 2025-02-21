@@ -2,9 +2,8 @@
   "name": "college-project",
   "version": "1.0.0",
   "main": "index.js",
-  "private": true,  
+  "private": true,
   "type": "module",
-
   "scripts": {
     "dev:client": "pnpm --filter client dev",
     "dev:server": "pnpm --filter server start",
@@ -25,9 +24,11 @@
     "server"
   ],
   "dependencies": {
+    "@material-ui/core": "^4.12.4",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-   "module-alias": "^2.2.3"
+    "module-alias": "^2.2.3",
+    "react-router-dom": "^7.0.0"
   },
   "_moduleAliases": {
     "@config": "src/config",

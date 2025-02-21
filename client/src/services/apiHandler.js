@@ -1,9 +1,9 @@
+// src/services/apiHandler.js
 import { selectToken } from "../store/slices/auth.slice";
 import { makeStore } from "../store/store";
-import api from "./api.config";
-import { methodType } from "./apiEndpoint";
+import api from "./api.config"; // e.g., an Axios instance
 import ErrorService from "./errorService";
-
+import { MethodTypesEnum } from "../enums/ApiMethord";
 export const sendRequest = async ({
   url,
   body = null,
@@ -20,24 +20,26 @@ export const sendRequest = async ({
   };
 
   if (
-    reqMethod === methodType.PUT ||
-    reqMethod === methodType.PATCH ||
-    reqMethod === methodType.POST ||
-    reqMethod === methodType.DELETE
+    reqMethod === MethodTypesEnum.GET ||
+    reqMethod === MethodTypesEnum.PATCH ||
+    reqMethod === MethodTypesEnum.POST ||
+    reqMethod === MethodTypesEnum.PUT ||
+    reqMethod === MethodTypesEnum.DELETE
   ) {
     if (body) {
       config.data = body;
     }
-    // this is for the case where in post api we are sending id as query params and data as body
     if (params) {
       config.params = params;
     }
   }
 
-  if (method.toLocaleLowerCase() === methodType.GET) {
+  // For GET requests, use query parameters (here we assume body holds params).
+  if (reqMethod === MethodTypesEnum.GET) {
     config.params = body;
   }
 
+  // Set headers based on whether body is a FormData or not.
   if (body instanceof FormData) {
     config.headers = {
       "Content-Type": "multipart/form-data",
@@ -48,24 +50,26 @@ export const sendRequest = async ({
     };
   }
 
+  // Attach the Authorization header if token is available.
   if (token && auth) {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
   try {
     const response = await api(config);
-    // Use ErrorService to handle the response
+    // Handle response (for example, show toast messages if needed)
     ErrorService.handleResponse(response);
-
     return {
       ...response.data,
       status: response.status,
     };
   } catch (error) {
+    // Handle errors via ErrorService.
     ErrorService.handleResponse(error?.response);
     return {
       code: false,
       status: error?.response?.status || 500,
+      error: error?.message,
       result: null,
     };
   }

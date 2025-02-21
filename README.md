@@ -159,9 +159,9 @@ EduSphere is a social media platform designed for students, colleges, and admins
   "fullName": "John Doe",
   "email": "johndoe@example.com",
   "password": "hashed_password",
-  "role": "student", 
+  "role": "student",
   "collegeId": ObjectId,
-  "connections": [ObjectId],  
+  "connections": [ObjectId],
   "achievements": ["Won AI Hackathons", "Published Research Paper"],
   "createdAt": ISODate,
   "updatedAt": ISODate
@@ -176,8 +176,8 @@ EduSphere is a social media platform designed for students, colleges, and admins
   "name": "ABC University",
   "location": "New York",
   "adminId": ObjectId,
-  "students": [ObjectId], 
-  "events": [ObjectId],  
+  "students": [ObjectId],
+  "events": [ObjectId],
   "resources": [
     {
       "title": "AI Research Paper",
@@ -196,7 +196,7 @@ EduSphere is a social media platform designed for students, colleges, and admins
   "userId": ObjectId,
   "content": "Attended Google Developer Conference!",
   "mediaUrl": "https://example.com/photo.jpg",
-  "likes": [ObjectId],  
+  "likes": [ObjectId],
   "comments": [
     {
       "userId": ObjectId,
@@ -218,7 +218,7 @@ EduSphere is a social media platform designed for students, colleges, and admins
   "description": "A coding competition for students.",
   "date": ISODate,
   "location": "Online",
-  "participants": [ObjectId], 
+  "participants": [ObjectId],
   "createdAt": ISODate
 }
 ```

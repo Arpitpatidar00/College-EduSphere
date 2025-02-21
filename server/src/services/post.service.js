@@ -1,5 +1,5 @@
 import Post from "../database/models/posts.model.js";
-import User from "../database/models/users.model.js";
+import User from "../database/models/student.model.js";
 import fs from "fs";
 import path from "path";
 

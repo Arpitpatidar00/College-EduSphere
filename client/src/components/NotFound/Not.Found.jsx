@@ -50,7 +50,7 @@ const NotFound = () => {
         <Typography variant="h6" sx={{ fontSize: "20px", color: APP_COLORS.common, marginBottom: "16px" }}>
           Oops! The page you’re looking for doesn’t exist.
         </Typography>
-        <Typography variant="body2" sx={{ color: APP_COLORS.text.light, marginBottom: "30px" }}>
+        <Typography variant="body2" sx={{ color: APP_COLORS.common.black, marginBottom: "30px" }}>
           It may have been moved or deleted. Try going back to the homepage.
         </Typography>
         <Link to="/">
