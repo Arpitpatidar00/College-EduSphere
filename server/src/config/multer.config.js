@@ -1,31 +1,64 @@
+import { existsSync, mkdirSync } from "fs";
 import multer from "multer";
-import path from "path";
+import path, { extname, join } from "path";
 
-const storage = multer.diskStorage({
-  filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${file.originalname}`;
-    cb(null, uniqueName);
-  },
-});
+export function getImageSavePath(url, file) {
+  let modulePath = "";
 
-const fileFilter = (req, file, cb) => {
-  const fileTypes = /jpeg|jpg|png/;
-  const isValidExt = fileTypes.test(
-    path.extname(file.originalname).toLowerCase()
-  );
-  const isValidMime = fileTypes.test(file.mimetype);
-
-  if (isValidExt && isValidMime) {
-    cb(null, true);
+  if (/\/post\/(create-post|update-post)/.test(url)) {
+    modulePath = `Posts/${file.fieldname}`;
+  } else if (/\/api\/brand\/(create|update)/.test(url)) {
+    modulePath = `brand/${file.fieldname}`;
+  } else if (/\/api\/category\/(create|update)/.test(url)) {
+    modulePath = `category/${file.fieldname}`;
   } else {
-    cb(new Error("Only images are allowed!"), false);
+    modulePath = "others";
   }
+
+  return modulePath;
+}
+
+export const uploadFile = () => {
+  const storage = multer.diskStorage({
+    destination(req, file, cb) {
+      const basePath = "public/assets/";
+      const url = req.originalUrl.includes("?")
+        ? req.originalUrl.split("?")[0]
+        : req.originalUrl;
+
+      const modulePath = getImageSavePath(url, file);
+      const fullPath = join(basePath, modulePath);
+
+      if (!existsSync(fullPath)) {
+        mkdirSync(fullPath, { recursive: true });
+      }
+
+      cb(null, fullPath);
+    },
+    filename(_req, file, cb) {
+      const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+      cb(
+        null,
+        `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`
+      );
+    },
+  });
+
+  return multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB limit
+    fileFilter(_req, file, cb) {
+      const fileTypes = /jpeg|jpg|png|gif|mp4|avi/;
+      const extnameValid = fileTypes.test(
+        path.extname(file.originalname).toLowerCase()
+      );
+      const mimetypeValid = fileTypes.test(file.mimetype);
+
+      if (extnameValid && mimetypeValid) {
+        return cb(null, true);
+      }
+
+      cb(new Error("Invalid file type"));
+    },
+  });
 };
-
-const upload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-});
-
-export default upload;

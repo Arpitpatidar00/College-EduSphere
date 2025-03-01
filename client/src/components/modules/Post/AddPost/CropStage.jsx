@@ -1,20 +1,44 @@
-// src/components/AddPostForm/CropStage.js
 import { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
 import { AppBar, Toolbar, IconButton, Typography, Button, Box, Slider } from '@mui/material';
-import { ArrowBack, ZoomIn, ZoomOut } from '@mui/icons-material';
+import { ArrowBack, ZoomIn, ZoomOut, ArrowForward, ArrowBackIosNew } from '@mui/icons-material';
+import { useCreatePost } from '../../../../services/api/main/post.service';
 
-const CropStage = ({ selectedImage, goBack, onComplete }) => {
+
+const CropStage = ({ goBack, postData }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
-    const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+    const [croppedAreas, setCroppedAreas] = useState({});
+    const createPost = useCreatePost();
+
 
     const onCropComplete = useCallback((_, croppedAreaPixels) => {
-        setCroppedAreaPixels(croppedAreaPixels);
-    }, []);
+        setCroppedAreas((prev) => ({
+            ...prev,
+            [postData.media[currentIndex]]: croppedAreaPixels,
+        }));
+    }, [currentIndex, postData.media]);
+
+    const goNext = () => {
+        if (currentIndex < postData.media.length - 1) {
+            setCurrentIndex((prev) => prev + 1);
+        }
+    };
+
+    const goPrev = () => {
+        if (currentIndex > 0) {
+            setCurrentIndex((prev) => prev - 1);
+        }
+    };
 
     const handleComplete = () => {
-        onComplete(croppedAreaPixels);
+        const updatePostData = {
+            ...postData,
+            media: croppedAreas,
+        };
+
+        createPost.mutate(updatePostData);
     };
 
     return (
@@ -25,20 +49,20 @@ const CropStage = ({ selectedImage, goBack, onComplete }) => {
                         <ArrowBack />
                     </IconButton>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'center' }}>
-                        Crop
+                        Crop Image {currentIndex + 1} / {postData.media.length}
                     </Typography>
                     <Button color="primary" onClick={handleComplete}>
-                        Next
+                        Done
                     </Button>
                 </Toolbar>
             </AppBar>
 
             <Box sx={{ position: 'relative', flexGrow: 1, borderRadius: 6 }}>
                 <Cropper
-                    image={selectedImage}
+                    image={postData.media[currentIndex]}
                     crop={crop}
                     zoom={zoom}
-                    aspect={1}
+                    aspect={16 / 9}
                     onCropChange={setCrop}
                     onZoomChange={setZoom}
                     onCropComplete={onCropComplete}
@@ -56,6 +80,27 @@ const CropStage = ({ selectedImage, goBack, onComplete }) => {
                     sx={{ mx: 2, flexGrow: 1 }}
                 />
                 <ZoomIn />
+            </Box>
+
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 2, py: 1 }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={currentIndex === 0}
+                    onClick={goPrev}
+                    startIcon={<ArrowBackIosNew />}
+                >
+                    Prev
+                </Button>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={currentIndex === postData.media.length - 1}
+                    onClick={goNext}
+                    endIcon={<ArrowForward />}
+                >
+                    Next
+                </Button>
             </Box>
         </Box>
     );

@@ -7,13 +7,12 @@ import moment from "moment";
 import "moment-timezone";
 
 /* eslint-disable no-restricted-syntax */
-export function transformImagePath(url) {
-  if (!url) {
-    return "/assets/errors/broken-image.png";
+export function transformImagePath(dbPath) {
+  if (!dbPath) {
+    return "/assets/images/errors/broken-image.png";
   }
 
-  return url;
-  // Normalize path to use forward slashes
+  return `http://localhost:4000/${dbPath}`;
 }
 
 export function revertImagePath(sitePath) {

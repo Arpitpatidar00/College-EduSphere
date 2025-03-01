@@ -115,6 +115,8 @@ const AddPosts = () => {
             </Box>
 
             <AddPostModal open={open} onClose={() => setOpen(false)} />
+
+
         </StyledBox>
     );
 };

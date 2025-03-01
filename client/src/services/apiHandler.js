@@ -4,6 +4,7 @@ import { makeStore } from "../store/store";
 import api from "./api.config"; // e.g., an Axios instance
 import ErrorService from "./errorService";
 import { MethodTypesEnum } from "../enums/ApiMethord";
+
 export const sendRequest = async ({
   url,
   body = null,

@@ -21,9 +21,13 @@ const StudentModel = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    interest: {
+      type: String,
+      required: true,
+    },
     password: {
       type: String,
-      required: [true, "Password is required"],
+      required: true,
     },
     courseId: {
       type: mongoose.Schema.Types.ObjectId,

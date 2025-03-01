@@ -34,4 +34,4 @@ CommentSchema.pre("save", function (next) {
   }
 });
 
-export default mongoose.model("Comment", CommentSchema);
+export default mongoose.model("Comments", CommentSchema);

@@ -1,61 +1,95 @@
-import Post from "../database/models/posts.model.js";
-import User from "../database/models/student.model.js";
-import fs from "fs";
-import path from "path";
+import mongoose from "mongoose";
+import PostModel from "../database/models/posts.model.js";
 
-export const createPostService = async (postData) => {
-  try {
-    const newPost = new Post(postData);
-    await newPost.save(); // Save the post with the image URL
-    return { data: newPost, error: null };
-  } catch (error) {
-    return { data: null, error: error.message };
+class PostService {
+  static instance = null;
+  static getInstance() {
+    if (!PostService.instance) {
+      PostService.instance = new PostService();
+    }
+    return PostService.instance;
   }
-};
 
-// Helper function to delete a file
-const deleteFile = (filePath) => {
-  if (fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath); // Deletes the file
+  async findOne(id) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new Error("Invalid post ID");
+    }
+    return PostModel.findById(id);
   }
-};
 
-// Delete Post Service using findByIdAndDelete
-export async function deletePostService(postId, userId) {
-  try {
-    const post = await Post.findById(postId);
-    if (!post) {
-      return { data: null, error: "Post not found" };
+  async findAll(pipeline = []) {
+    return PostModel.aggregate(pipeline);
+  }
+
+  async create(postData) {
+    const post = new PostModel(postData);
+    return post.save();
+  }
+
+  async updatePost(id, updateData) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new Error("Invalid post ID");
     }
+    return PostModel.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    });
+  }
 
-    // Ensure the user is the owner of the post
-    if (post.postOwner !== userId) {
-      return {
-        data: null,
-        error: "You are not authorized to delete this post",
-      };
+  async deletePost(id) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new Error("Invalid post ID");
     }
+    return PostModel.findByIdAndDelete(id);
+  }
 
-    // Delete the image file from the uploads folder
-    if (post.postImage) {
-      const imagePath = path.resolve(__dirname, "../../", post.postImage);
-      deleteFile(imagePath); // Delete the image
+  async toggleActiveStatus(id) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new Error("Invalid post ID");
     }
+    const post = await PostModel.findById(id);
+    if (!post) throw new Error("Post not found");
+    post.isActive = !post.isActive;
+    return post.save();
+  }
 
-    // Remove the postId from the user's posts array
-    const user = await User.findById(userId);
-    if (!user) {
-      return { data: null, error: "User not found" };
+  async likePost(postId, userId) {
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      throw new Error("Invalid post ID");
     }
+    const post = await PostModel.findById(postId);
+    if (!post) throw new Error("Post not found");
+    // Add userId if not already in totalLikes
+    if (!post.totalLikes.includes(userId)) {
+      post.totalLikes.push(userId);
+      return post.save();
+    }
+    return post;
+  }
 
-    user.posts = user.posts.filter((post) => post.toString() !== postId);
-    await user.save();
+  async unlikePost(postId, userId) {
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      throw new Error("Invalid post ID");
+    }
+    const post = await PostModel.findById(postId);
+    if (!post) throw new Error("Post not found");
+    // Remove userId from totalLikes
+    post.totalLikes = post.totalLikes.filter(
+      (id) => id.toString() !== userId.toString()
+    );
+    return post.save();
+  }
 
-    // Delete the post using findByIdAndDelete
-    await Post.findByIdAndDelete(postId);
-
-    return { data: "Post deleted successfully", error: null };
-  } catch (error) {
-    return { data: null, error: error.message };
+  async incrementViews(postId) {
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      throw new Error("Invalid post ID");
+    }
+    return PostModel.findByIdAndUpdate(
+      postId,
+      { $inc: { totalViews: 1 } },
+      { new: true }
+    );
   }
 }
+
+export default PostService.getInstance();

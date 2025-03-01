@@ -77,26 +77,27 @@ const WhoToFollow = () => {
       sx={{
         width: '100%',
         maxHeight: 'calc(100vh - 100px)',
-        bgcolor: APP_COLORS.primary,
+        bgcolor: APP_COLORS.secondary[200],
         borderRadius: 4,
         boxShadow: 3,
         display: 'flex',
         flexDirection: 'column',
         overflowY: 'auto',
+        m: 1,
       }}
     >
       <Typography
         variant="h6"
         gutterBottom
-        sx={{ p: 2, fontWeight: 600, position: 'sticky', top: 0, zIndex: 1 }}
+        sx={{ p: 2, fontWeight: 600, position: 'sticky', top: 0, zIndex: 1, color: APP_COLORS.primary[600] }}
       >
         Who to Follow
       </Typography>
-      <List dense sx={{ p: 0, bgcolor: APP_COLORS.secondary, }}>
+      <List dense sx={{ p: 0, bgcolor: APP_COLORS.secondary[500], }}>
         {followers.map((follower, index) => (
           <ListItem key={index} alignItems="flex-start" sx={{ py: 1, px: 1, }}>
-            <Card variant="outlined" sx={{ p: 1, display: 'flex', flexDirection: 'column', width: '100%', bgcolor: APP_COLORS.primary, }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Card variant="outlined" sx={{ p: 1, display: 'flex', flexDirection: 'column', width: '100%', bgcolor: APP_COLORS.secondary[400], }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, color: APP_COLORS.primary[600] }}>
                 <CardMedia
                   component="img"
                   width="50"
@@ -105,14 +106,15 @@ const WhoToFollow = () => {
                   src={follower.avatar}
                   sx={{ width: 50, height: 50 }}
                 />
-                <Box sx={{ flex: 1 }}>
+                <Box sx={{ flex: 1, color: APP_COLORS.primary[600] }}>
                   <Typography variant="body1" fontWeight="600">
                     {follower.name}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" >
                     {follower.followTime}
                   </Typography>
                   <Chip
+                    sx={{ color: APP_COLORS.primary[600] }}
                     size="small"
                     variant="outlined"
                     icon={<InfoRounded />}
@@ -139,7 +141,7 @@ const WhoToFollow = () => {
 
         ))}
       </List>
-    </Box>
+    </Box >
   );
 };
 

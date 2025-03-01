@@ -1,21 +1,21 @@
+// routes/student.routes.js
 import { Router } from "express";
 import { studentController } from "../controllers/index.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
+import { uploadFile } from "../config/multer.config.js";
 
 const router = Router();
 
-//@ for Auth
-router.post("/signup", studentController.signupController);
-router.post("/login", studentController.loginController);
+const upload = uploadFile();
 
-//@ for Auth Services
-router.get("/verify-email", studentController.verifyEmailController);
-router.post("/forgot-password", studentController.forgotPasswordController);
-router.post("/reset-password", studentController.resetPasswordController);
-router.post(
-  "/change-password",
+const uploadFields = upload.fields([{ name: "profilePicture", maxCount: 10 }]);
+
+//@ for Student Updates
+router.patch(
+  "/update",
   authMiddleware,
-  studentController.changePasswordController
+  uploadFields,
+  studentController.updateStudentController
 );
 
 export default router;

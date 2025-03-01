@@ -4,20 +4,32 @@ const PostSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: [true, "Title is required"],
-      maxLength: [200, "Title cannot exceed 200 characters"],
+      required: true,
+      trim: true,
     },
     description: {
       type: String,
-      required: [true, "Description is required"],
-      maxLength: [1000, "Description cannot exceed 1000 characters"],
+      required: true,
     },
     postType: {
       type: String,
-      enum: ["hackathons", "achievement", "project", "other"],
-      required: [true, "Post type is required"],
+      enum: [
+        "hackathons",
+        "achievement",
+        "project",
+        "event",
+        "report",
+        "other",
+      ],
+      required: true,
     },
-    media: {
+    media: [
+      {
+        type: String,
+        default: null,
+      },
+    ],
+    coverImage: {
       type: String,
       default: null,
     },
@@ -29,7 +41,6 @@ const PostSchema = new mongoose.Schema(
     tags: [
       {
         type: String,
-        maxLength: [50, "Tag cannot be longer than 50 characters"],
       },
     ],
     achievements: {
@@ -44,33 +55,32 @@ const PostSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    eventDetails: {
+      type: String,
+      default: "",
+    },
+    eventDate: {
+      type: Date,
+    },
     location: {
       type: String,
       default: "",
     },
-    date: {
-      type: Date,
-      default: Date.now,
-    },
-    totalLikes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
     totalViews: {
       type: Number,
       default: 0,
     },
-    totalComments: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Comment",
-      },
-    ],
     shareCount: {
       type: Number,
       default: 0,
+    },
+    rank: {
+      type: Number,
+      default: 0,
+    },
+    trending: {
+      type: Boolean,
+      default: false,
     },
     isActive: {
       type: Boolean,
@@ -81,6 +91,14 @@ const PostSchema = new mongoose.Schema(
       enum: ["education", "career", "technology", "personal", "other"],
       default: "other",
     },
+    uiTheme: {
+      type: String,
+      default: "modern",
+    },
+    isFeatured: {
+      type: Boolean,
+      default: false,
+    },
     updatedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -90,13 +108,21 @@ const PostSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Pre-save hook to calculate rank and trending status automatically based on engagement metrics
 PostSchema.pre("save", function (next) {
-  if (this.isModified()) {
-    this.updatedAt = Date.now();
-    next();
-  } else {
-    next();
-  }
+  // Calculate score components with customizable weights
+  const viewsScore = this.totalViews * 0.1;
+  const likesScore = this.totalLikes ? this.totalLikes.length * 1 : 0;
+  const commentsScore = this.totalComments ? this.totalComments.length * 2 : 0;
+  const shareScore = this.shareCount * 1.5;
+
+  // Compute overall rank as a weighted sum of the scores
+  this.rank = viewsScore + likesScore + commentsScore + shareScore;
+
+  // Set trending flag if the rank exceeds a specified threshold (adjust as necessary)
+  this.trending = this.rank > 50;
+
+  next();
 });
 
 export default mongoose.model("Post", PostSchema);

@@ -57,7 +57,6 @@ export async function signupController(req, res, next) {
     next(error);
   }
 }
-
 export async function loginController(req, res, next) {
   try {
     const { email, password } = req.body;
@@ -80,7 +79,6 @@ export async function loginController(req, res, next) {
     next(error);
   }
 }
-
 export async function verifyEmailController(req, res, next) {
   const { token } = req.query;
   if (!token) {
@@ -160,3 +158,131 @@ export async function changePasswordController(req, res, next) {
     next(error);
   }
 }
+// controllers/studentController.js
+export async function updateStudentController(req, res, next) {
+  try {
+    const userId = req.user._id; // Assumes user is authenticated
+    const updateData = { ...req.body };
+
+    // Handle file upload (e.g., profile picture)
+    if (req.files?.profilePicture) {
+      updateData.profilePicture = req.files.profilePicture[0].path;
+    }
+
+    // Define allowed fields
+    const allowedFields = [
+      "firstName",
+      "lastName",
+      "interest",
+      "profilePicture",
+      "bio",
+      "location",
+      "website",
+      "phoneNumber",
+      "socialLinks.twitter",
+      "socialLinks.instagram",
+      "socialLinks.linkedin",
+      "socialLinks.facebook",
+      "privacySettings.visibility",
+    ];
+
+    // Fetch the existing user
+    const existingStudent = await StudentService.findOne(userId);
+    if (!existingStudent) {
+      return BAD(res, null, "Student not found.");
+    }
+
+    // Filter update data based on allowed fields
+    const filteredUpdateData = filterUpdateData(updateData, allowedFields);
+
+    // Validate required fields
+    const validationError = validateUpdateData(filteredUpdateData);
+    if (validationError) {
+      return BAD(res, null, validationError);
+    }
+
+    // Check if there's anything to update
+    if (Object.keys(filteredUpdateData).length === 0) {
+      return BAD(res, null, "No valid fields provided for update.");
+    }
+
+    // Merge existing data with new data using Object.assign
+    const mergedUpdateData = mergeUserData(existingStudent, filteredUpdateData);
+
+    // Update the student via service
+    const updatedStudent = await StudentService.updateUser(
+      userId,
+      mergedUpdateData
+    );
+    if (!updatedStudent) {
+      return BAD(res, null, "Failed to update student.");
+    }
+
+    return OK(res, updatedStudent, "Profile updated successfully.");
+  } catch (error) {
+    next(error);
+  }
+}
+
+// Helper function to filter update data
+function filterUpdateData(updateData, allowedFields) {
+  const filtered = {};
+  allowedFields.forEach((field) => {
+    if (updateData[field] !== undefined) {
+      if (field.includes(".")) {
+        const [parent, child] = field.split(".");
+        filtered[parent] = filtered[parent] || {};
+        filtered[parent][child] = updateData[field];
+      } else {
+        filtered[field] = updateData[field];
+      }
+    }
+  });
+  return filtered;
+}
+
+// Helper function for validation
+function validateUpdateData(data) {
+  if (data.firstName === "" || data.lastName === "") {
+    return "First name and last name cannot be empty.";
+  }
+  return null;
+}
+
+// Helper function to merge existing user data with updates
+function mergeUserData(existingUser, updateData) {
+  const mergedData = {};
+
+  // Copy existing user data as a base
+  const userData = existingUser.toObject(); // Convert Mongoose doc to plain object
+
+  // Merge top-level fields
+  Object.assign(mergedData, userData, updateData);
+
+  // Handle nested fields (e.g., socialLinks, privacySettings)
+  if (updateData.socialLinks) {
+    mergedData.socialLinks = Object.assign(
+      {},
+      userData.socialLinks,
+      updateData.socialLinks
+    );
+  }
+  if (updateData.privacySettings) {
+    mergedData.privacySettings = Object.assign(
+      {},
+      userData.privacySettings,
+      updateData.privacySettings
+    );
+  }
+
+  return mergedData;
+}
+export default {
+  signupController,
+  loginController,
+  verifyEmailController,
+  forgotPasswordController,
+  resetPasswordController,
+  changePasswordController,
+  updateStudentController,
+};

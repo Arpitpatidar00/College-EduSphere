@@ -43,8 +43,8 @@ function CollegeSignupForm({ onSubmit, signIn }) {
 
     const [selectedState, setSelectedState] = useState("");
     const [selectedCountry, setSelectedCountry] = useState("");
-    const [showPassword, setShowPassword] = useState(false); // State to manage password visibility
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State to manage confirm password visibility
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const [countryPagination, setCountryPagination] = useState({
         page: 0,
@@ -106,7 +106,6 @@ function CollegeSignupForm({ onSubmit, signIn }) {
         }
     }, [countryData]);
 
-    // Fetch states only when a country is selected and state pagination changes
     useEffect(() => {
         if (selectedCountry) {
             refetchStates();
@@ -128,7 +127,6 @@ function CollegeSignupForm({ onSubmit, signIn }) {
         }
     }, [stateData]);
 
-    // Fetch cities only when a state is selected and city pagination changes
     useEffect(() => {
         if (selectedState) {
             refetchCities();

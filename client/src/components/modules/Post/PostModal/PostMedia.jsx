@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import ImageCarousel from '../../../Common/ImageCarousel/index';
 import { APP_COLORS } from '../../../../enums/Colors';
 
-const PostMedia = ({ mediaUrls }) => {
+const PostMedia = ({ mediaUrls, coverImage }) => {
     return (
         <Box
             sx={{
@@ -10,7 +10,7 @@ const PostMedia = ({ mediaUrls }) => {
                 bgcolor: APP_COLORS.primary,
             }}
         >
-            <ImageCarousel images={mediaUrls} width="100%" height="100vh" />
+            <ImageCarousel coverImage={coverImage} images={mediaUrls} width="100%" height="100vh" />
         </Box>
     );
 };

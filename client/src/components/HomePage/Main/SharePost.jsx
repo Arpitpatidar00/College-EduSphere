@@ -6,7 +6,7 @@ const ShareThoughts = () => {
     <Card sx={{ mb: 1 }}>
       <CardContent>
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Avatar src="https://via.placeholder.com/150" />
+          <Avatar src="/assets/Student.login1.png" />
           <TextField
             fullWidth
             variant="outlined"

@@ -1,53 +1,89 @@
-import { Box, Avatar, Typography } from '@mui/material';
-import { APP_COLORS } from '../../../enums/Colors';
+import { useState } from "react";
+import { Box, Avatar, Typography, CircularProgress } from "@mui/material";
+import { APP_COLORS } from "../../../enums/Colors";
 import { useNavigate } from "react-router-dom";
+import ROUTES from "../../Global/Routes/CommonRoutes";
 
 const data = [
-  { name: 'Cristano', image: 'https://cdn.pixabay.com/photo/2024/08/27/20/44/ai-generated-9002448_1280.jpg' },
-  { name: 'Brahim Diaz', image: 'https://cdn.pixabay.com/photo/2023/09/09/08/00/ai-generated-8242654_960_720.png' },
-  { name: 'Robin', image: 'https://www.befunky.com/images/prismic/82e0e255-17f9-41e0-85f1-210163b0ea34_hero-blur-image-3.jpg?auto=avif,webp&format=jpg&width=896' },
-  { name: 'Georgina', image: 'https://static.vecteezy.com/system/resources/thumbnails/026/829/465/small/beautiful-girl-with-autumn-leaves-photo.jpg' },
-  { name: 'Wick', image: 'https://static.vecteezy.com/system/resources/thumbnails/046/286/162/small/woman-standing-brick-wall-sunbeam-photo.jpg' },
-  { name: 'Chris', image: 'https://www.piclumen.com/wp-content/uploads/2024/10/piclumen-first-01.webp' },
-  { name: 'Amanda', image: 'https://www.piclumen.com/wp-content/uploads/2024/10/piclumen-marquee-04.webp' },
-  { name: 'Jennifer', image: 'https://imgv3.fotor.com/images/slider-image/A-clear-image-of-a-woman-wearing-red-sharpened-by-Fotors-image-sharpener.jpg' },
-  { name: 'Wick', image: 'https://media.istockphoto.com/id/471419621/photo/beautiful-girl-lies-on-the-grass.jpg?s=170667a&w=0&k=20&c=_zikQUMdgL-qlyiw-ImiQ96W6b77QXBQFp24DNa6d-Q=' },
-  { name: 'John Wick', image: 'https://cdn.pixabay.com/photo/2024/05/03/17/45/ai-generated-8737620_640.png' },
+  { name: "Cristano", image: "/assets/samantha-gades-fIHozNWfcvs-unsplash.jpg" },
+  { name: "Brahim Diaz", image: "/assets/matt-ragland-02z1I7gv4ao-unsplash.jpg" },
+  { name: "Robin", image: "/assets/swag-slayer-dd2EOQBycJY-unsplash.jpg" },
+  { name: "Georgina", image: "/assets/danielle-claude-belanger-43eI1_Ug5SQ-unsplash.jpg" },
+  { name: "Wick", image: "/assets/zetong-li-y8diuDh3M0s-unsplash.jpg" },
+  { name: "Chris", image: "/assets/samantha-gades-fIHozNWfcvs-unsplash.jpg" },
+  { name: "Amanda", image: "/assets/fray-bekele-_BAaXJC2xKQ-unsplash.jpg" },
+  { name: "Jennifer", image: "https://imgv3.fotor.com/images/slider-image/A-clear-image-of-a-woman-wearing-red-sharpened-by-Fotors-image-sharpener.jpg" },
+  { name: "Wick", image: "/assets/swag-slayer-dd2EOQBycJY-unsplash.jpg" },
+  { name: "John Wick", image: "/assets/matt-ragland-02z1I7gv4ao-unsplash.jpg" },
 ];
 
 const PostStory = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(data.map(() => true)); // Track loading state for each avatar
 
-  const handleStoryClick = () => navigate("/story");
+  const handleStoryClick = () => navigate(ROUTES.HOME.STORIES);
 
+  // Handle image load
+  const handleImageLoad = (index) => {
+    setLoading((prev) => prev.map((item, i) => (i === index ? false : item)));
+  };
 
   return (
     <Box
       sx={{
-        bgcolor: APP_COLORS.accent,
+        bgcolor: APP_COLORS.secondary[400],
         padding: 1,
         overflowX: "auto",
         whiteSpace: "nowrap",
-
-        display: 'flex',
-        flexDirection: 'row',
-      }}>
+        display: "flex",
+        flexDirection: "row",
+      }}
+    >
       {data.map((person, index) => (
-        <Box key={index} sx={{ display: 'inline-block', marginRight: 2 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <Avatar
-              src={person.image}
-              alt={person.name}
+        <Box key={index} sx={{ display: "inline-block", marginRight: 2 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <Box
               sx={{
+                position: "relative",
                 width: 100,
                 height: 100,
-                border: '3px solid #FFC107',
-                objectFit: 'cover',
-                cursor: 'pointer',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
-              onClick={() => handleStoryClick(person)}
-            />
-            <Typography variant="body2" sx={{ color: 'white' }}>{person.name}</Typography>
+            >
+              {/* Show loader while loading */}
+              {loading[index] && (
+                <CircularProgress
+                  size={40}
+                  sx={{
+                    position: "absolute",
+                    color: "#FFC107",
+                  }}
+                />
+              )}
+
+              {/* Avatar */}
+              <Avatar
+                src={person.image}
+                alt={person.name}
+                sx={{
+                  width: 100,
+                  height: 100,
+                  border: "3px solid #FFC107",
+                  objectFit: "cover",
+                  cursor: "pointer",
+                  opacity: loading[index] ? 0 : 1, // Hide Avatar while loading
+                  transition: "opacity 0.3s ease-in-out",
+                }}
+                onLoad={() => handleImageLoad(index)}
+                onClick={() => handleStoryClick(person)}
+              />
+            </Box>
+
+            <Typography variant="body2" sx={{ color: "white" }}>
+              {person.name}
+            </Typography>
           </Box>
         </Box>
       ))}

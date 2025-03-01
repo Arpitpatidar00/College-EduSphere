@@ -39,7 +39,6 @@ function StudentAuthContainer() {
   const handleSignIn = async (values, { setSubmitting }) => {
     setLoading(true);
     try {
-      console.log("Sign up values:", values);
 
       await dispatch(loginThunk(values)).unwrap();
       navigate(ROUTES.HOME.INDEX);

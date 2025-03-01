@@ -50,6 +50,9 @@ const Sidebar = ({ isDarkMode }) => {
         textAlign: "center",
         justifyContent: "center",
         alignItems: "center",
+        bgcolor: APP_COLORS.secondary[200],
+        m: 1,
+
       }}
     >
       <Box
@@ -61,7 +64,7 @@ const Sidebar = ({ isDarkMode }) => {
           alignItems: "center",
         }}
       >
-        <ProfileCard />
+        {/* <ProfileCard /> */}
       </Box>
 
       <CardContent

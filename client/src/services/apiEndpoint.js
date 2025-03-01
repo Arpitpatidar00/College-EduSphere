@@ -6,11 +6,11 @@ export const apiEndPoints = {
   //@college
   collegeSignup: "/auth/college/signup",
   collegeLogin: "/auth/college/login",
-  getAllCollege:"/college/get-all-colleges",
+  getAllCollege: "/college/get-all-colleges",
 
   //@student
-  studentLogin: "/auth/user/login",
-  studentSignup: "/auth/user/signup",
+  studentLogin: "/auth/student/login",
+  studentSignup: "/auth/student/signup",
 
   //@location - Countries
   getAllCountries: "/location/get-all-counties",
@@ -32,4 +32,26 @@ export const apiEndPoints = {
   updateCity: "/location/update-city",
   deleteCity: "/location/delete-city",
   toggleCity: "/location/city-activate",
+
+  //@posts
+  createPost: "/post/create-post",
+  getAllPosts: "/post/get-all-posts",
+  getPostById: "/post/:id",
+  updatePost: "/post/update-post/:id",
+  deletePost: "/post/delete-post/:id",
+  togglePostActive: "/post/:id/toggle-active",
+  likePost: "/post/add-like/:id",
+  unlikePost: "/post/remove-like/:id",
+  incrementPostView: "/post/:id/increment-view",
+
+  // New chat endpoints
+  getMessages: "/chat/messages",
+  sendMessage: "/chat/message",
+  createDirectChat: "/chat/create-direct",
+  createGroupChat: "/chat/create-group",
+
+  toggleLike: "/likes/toggle",
+  createComment: "/comments/create",
+  deleteComment: "/comments",
+  getComments: "/comments",
 };

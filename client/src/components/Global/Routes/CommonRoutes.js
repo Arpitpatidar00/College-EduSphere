@@ -18,6 +18,10 @@ export const ROUTES = {
   HOME: {
     LOGIN: "/login",
     INDEX: "/",
+    PROFILE: "/profile",
+    MESSAGE: "/message",
+    STORIES: "/stories",
+    SETTING: "/setting",
   },
   ADMIN: {
     INDEX: `/sysopdmin/${ADMIN_SECRET}`,

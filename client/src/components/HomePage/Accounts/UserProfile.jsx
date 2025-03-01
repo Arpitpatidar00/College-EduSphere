@@ -9,8 +9,15 @@ import { Edit as EditIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { APP_COLORS } from '../../../enums/Colors';
 import Sidebar from '../Sidebar/Sidebar';
+import { transformImagePath } from '../../../utils/commonFn';
+import { useSelector } from 'react-redux';
+import { selectUserData } from '../../../store/slices/auth.slice'
+
 
 function UserProfile({ toggleTheme }) {
+
+    const user = useSelector(selectUserData);
+
     const navigate = useNavigate();
 
     return (
@@ -28,10 +35,17 @@ function UserProfile({ toggleTheme }) {
                         color: APP_COLORS.text,
                     }}
                 >
+
                     <Avatar
-                        src="https://randomuser.me/api/portraits/women/19.jpg"
-                        alt="User"
+                        src={user?.profilePicture ? transformImagePath(user.profilePicture) : "https://via.placeholder.com/150"}
+                        alt={`${user?.firstName ?? "User"} ${user?.lastName ?? ""}`}
                         sx={{ width: 100, height: 100, marginRight: 2 }}
+                        imgProps={{
+                            style: {
+                                objectFit: "cover",
+                                objectPosition: "top"
+                            }
+                        }}
                     />
                     <Box sx={{ flexGrow: 1 }}>
                         <Typography variant="h5" sx={{ color: APP_COLORS.primary[700] }}>

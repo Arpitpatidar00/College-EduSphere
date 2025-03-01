@@ -2,6 +2,8 @@ import { Modal, Box, IconButton } from "@mui/material";
 import PostMedia from "./PostMedia";
 import PostComments from "./PostComments";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
+import CloseIcon from "@mui/icons-material/Close";
+import { APP_COLORS } from "../../../../enums/Colors";
 
 const modalStyle = {
     position: "absolute",
@@ -10,63 +12,80 @@ const modalStyle = {
     transform: "translate(-50%, -50%)",
     width: "70%",
     height: "90%",
-    bgcolor: "black",
+    backgroundColor: APP_COLORS.secondary[100],
     display: "flex",
     outline: "none",
-    borderRadius: 4,
+    borderRadius: 2,
     overflow: "hidden",
 };
 
+const buttonStyle = {
+    position: "fixed",
+    top: "50%",
+    transform: "translateY(-50%)",
+    color: "white",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    "&:hover": { backgroundColor: "rgba(0,0,0,0.8)" },
+    zIndex: 1500,
+};
+
+
 const PostModal = ({ post, isOpen, onClose, onNext, onPrevious }) => {
-    console.log('post: ', post.images);
+
     if (!post) return null;
 
     return (
-        <Modal open={isOpen} onClose={onClose}>
-            <Box sx={modalStyle}>
+        <>
+            {isOpen && (
+                <>
+                    <IconButton
+                        sx={{ ...buttonStyle, left: 20 }}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onPrevious();
+                        }}
+                    >
+                        <ArrowBack />
+                    </IconButton>
 
+                    <IconButton
+                        sx={{ ...buttonStyle, right: 20 }}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onNext();
+                        }}
+                    >
+                        <ArrowForward />
+                    </IconButton>
+                    <IconButton
+                        sx={{
+                            position: "absolute",
+                            top: 16,
+                            right: 16,
+                            color: "white",
+                            zIndex: 10,
+                            backgroundColor: APP_COLORS.primary[900],
+                            "&:hover": { backgroundColor: APP_COLORS.primary[400] },
+                        }}
 
-                {/* Left Navigation */}
-                <IconButton
-                    sx={{
-                        position: "absolute",
-                        left: 10,
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        color: "white",
-                        backgroundColor: "rgba(0,0,0,0.5)",
-                        "&:hover": { backgroundColor: "rgba(0,0,0,0.8)" },
-                        zIndex: 10,
-                    }}
-                    onClick={onPrevious}
-                >
-                    <ArrowBack />
-                </IconButton>
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </>
+            )}
 
-                <PostMedia mediaUrls={post.images} />
-
-                <Box sx={{ width: "40%", display: "flex", flexDirection: "column", color: "white" }}>
-                    <PostComments post={post} />
+            <Modal open={isOpen} onClose={onClose} >
+                <Box sx={modalStyle} onClick={(e) => e.stopPropagation()}>
+                    <PostMedia mediaUrls={post.media
+                    } coverImage={post.coverImage} />
+                    <Box sx={{
+                        width: "40%", display: "flex", flexDirection: "column", color: "white", backgroundColor: APP_COLORS.secondary,
+                    }}>
+                        <PostComments post={post} />
+                    </Box>
                 </Box>
-
-                {/* Right Navigation */}
-                <IconButton
-                    sx={{
-                        position: "absolute",
-                        right: 10,
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        color: "white",
-                        backgroundColor: "rgba(0,0,0,0.5)",
-                        "&:hover": { backgroundColor: "rgba(0,0,0,0.8)" },
-                        zIndex: 10,
-                    }}
-                    onClick={onNext}
-                >
-                    <ArrowForward />
-                </IconButton>
-            </Box>
-        </Modal>
+            </Modal>
+        </>
     );
 };
 

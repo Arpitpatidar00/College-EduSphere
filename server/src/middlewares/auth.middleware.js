@@ -15,7 +15,6 @@ export const authMiddleware = async (req, res, next) => {
 
   try {
     const decoded = JwtServices.decodeToken(token);
-    console.log(decoded);
     if (!decoded) {
       return UNAUTHORIZED(res, "Access denied: Invalid or expired token.");
     }
@@ -33,7 +32,7 @@ export const authMiddleware = async (req, res, next) => {
         return NOT_FOUND(res, "College not found.");
       }
       req.user = user;
-    } else if (decoded.role === UserType.USER) {
+    } else if (decoded.role === UserType.STUDENT) {
       user = await UserModel.findById(decoded.id);
       if (!user) {
         return NOT_FOUND(res, "User not found.");

@@ -13,14 +13,12 @@ import './styles/global.css'
 const App = () => {
   return (
     <ThemeProvider  >
-      <CssBaseline />
       <AppProvider>
         <QueryClientProvider client={queryClient}>
           <Box component="main">
             <AppRouter />
           </Box>
         </QueryClientProvider>
-
         <AppToastContainer />
       </AppProvider>
     </ThemeProvider>

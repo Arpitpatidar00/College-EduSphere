@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Typography, Grid, Avatar, Button } from '@mui/material';
 import { APP_COLORS } from '../../../enums/Colors';
 
@@ -42,7 +41,7 @@ const ProfileCard = () => {
 
             <Avatar
                 alt="Alita Dizzouza"
-                src="https://img.freepik.com/premium-photo/stunning-anime-girl-drawing-showcasing-beautiful-face-intricate-details_1283595-23849.jpg?w=360"
+                src="/assets/fray-bekele-_BAaXJC2xKQ-unsplash.jpg"
                 sx={{ width: 100, height: 100, mb: 1 }}
             />
 

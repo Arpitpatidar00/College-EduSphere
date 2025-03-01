@@ -30,15 +30,25 @@ class StudentService {
     const user = new StudentModel(userData);
     return user.save();
   }
-
   async updateUser(userId, updateData) {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new Error("Invalid user ID");
     }
-    return StudentModel.findByIdAndUpdate(userId, updateData, {
-      new: true,
-      runValidators: true,
-    });
+
+    const updatedUser = await StudentModel.findOneAndUpdate(
+      { _id: userId },
+      { $set: updateData }, // Use $set for partial updates
+      {
+        new: true, // Return updated document
+        runValidators: true, // Apply schema validations
+      }
+    );
+
+    if (!updatedUser) {
+      throw new Error("User not found");
+    }
+
+    return updatedUser;
   }
 
   async deleteUser(userId) {

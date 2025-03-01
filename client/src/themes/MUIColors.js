@@ -69,9 +69,9 @@ export const MUI_COLORS = {
       white: APP_COLORS.common.white,
     },
     text: {
-      primary: APP_COLORS.primary[500],
-      secondary: APP_COLORS.grey[800],
-      disabled: APP_COLORS.grey[500],
+      primary: APP_COLORS.primary[200],
+      secondary: APP_COLORS.grey[100],
+      disabled: APP_COLORS.grey[200],
     },
     background: {
       default: APP_COLORS.grey[50],

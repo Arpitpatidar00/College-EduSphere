@@ -18,8 +18,9 @@ const AddPostModal = ({ open, onClose }) => {
                     p: 5,
                 }}
             >
-                <AddPostForm />
+                <AddPostForm onClose={onClose} />
             </Box>
+
         </Modal>
     );
 };
