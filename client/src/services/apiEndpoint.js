@@ -11,6 +11,7 @@ export const apiEndPoints = {
   //@student
   studentLogin: "/auth/student/login",
   studentSignup: "/auth/student/signup",
+  getAllStudents: "/student/get-all-students",
 
   //@location - Countries
   getAllCountries: "/location/get-all-counties",
@@ -54,4 +55,9 @@ export const apiEndPoints = {
   createComment: "/comments/create",
   deleteComment: "/comments",
   getComments: "/comments",
+
+  followUser: "/follow/follow-user",
+  getFollowers: "/follow/followers",
+  getFollowing: "/follow/following",
+  blockUser: "/follow/block-user",
 };

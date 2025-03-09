@@ -1,6 +1,5 @@
-// src/config/apiConfig.js
 const API_CONFIG = {
-  BASE_URL: "http://localhost:4000",
+  BASE_URL: "http://localhost:3000",
   SOCKET_URL: "http://localhost:4000",
   ENDPOINTS: {
     CREATE_DIRECT_CHAT: "/chat/direct",

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Box,
   Typography,
@@ -6,142 +6,151 @@ import {
   ListItem,
   Card,
   CardMedia,
-  Chip,
   Button,
-} from '@mui/material';
-import InfoRounded from '@mui/icons-material/InfoRounded';
-import { APP_COLORS } from '../../../enums/Colors';
+  Chip,
+} from "@mui/material";
+import { APP_COLORS } from "../../../enums/Colors";
+import { FOLLOW_STATUS } from "../../../enums/AuthConstants";
+import { useDispatch } from "react-redux";
 
-const initialFollowers = [
-  {
-    name: 'George Jose',
-    avatar: 'https://tse1.mm.bing.net/th/id/OET.7252da000e8341b2ba1fb61c275c1f30?w=594&h=594&c=7&rs=1&o=5&pid=1.9',
-    followTime: '',
-    score: 85,
-    isFollowing: false,
-  },
-  {
-    name: 'Michel',
-    avatar: 'https://letsenhance.io/static/03620c83508fc72c6d2b218c7e304ba5/11499/UpscalerAfter.jpg',
-    followTime: '',
-    score: 78,
-    isFollowing: false,
-  },
-  {
-    name: 'George Jose',
-    avatar: 'https://tse1.mm.bing.net/th/id/OET.7252da000e8341b2ba1fb61c275c1f30?w=594&h=594&c=7&rs=1&o=5&pid=1.9',
-    followTime: '',
-    score: 85,
-    isFollowing: false,
-  },
-  {
-    name: 'Michel',
-    avatar: 'https://letsenhance.io/static/03620c83508fc72c6d2b218c7e304ba5/11499/UpscalerAfter.jpg',
-    followTime: '',
-    score: 78,
-    isFollowing: false,
-  },
-  {
-    name: 'George Jose',
-    avatar: 'https://tse1.mm.bing.net/th/id/OET.7252da000e8341b2ba1fb61c275c1f30?w=594&h=594&c=7&rs=1&o=5&pid=1.9',
-    followTime: '',
-    score: 85,
-    isFollowing: false,
-  },
-  {
-    name: 'Michel',
-    avatar: 'https://letsenhance.io/static/03620c83508fc72c6d2b218c7e304ba5/11499/UpscalerAfter.jpg',
-    followTime: '',
-    score: 78,
-    isFollowing: false,
-  },
-];
+import { useGetAllStudents } from "../../../services/api/Auth/student.service";
+import { transformImagePath } from "../../../utils/image.utils";
+import { useToggleFollow } from "../../../services/api/main/follow.service";
+import { useSelector } from "react-redux";
+import { selectUserData, updateFollowState } from "../.../../../../store/slices/auth.slice";
 
 const WhoToFollow = () => {
-  const [followers, setFollowers] = useState(initialFollowers);
+  const dispatch = useDispatch();
 
-  const toggleFollow = (index) => {
-    setFollowers((prevFollowers) =>
-      prevFollowers.map((follower, i) =>
-        i === index ? { ...follower, isFollowing: !follower.isFollowing } : follower
-      )
+  const user = useSelector(selectUserData);
+
+  const [studentPagination, setStudentPagination] = useState({
+    page: 0,
+    pageSize: 20,
+  });
+
+  // Fetch students
+  const {
+    data: studentData,
+    isFetching: fetchingStudents,
+    refetch: refetchStudents,
+  } = useGetAllStudents(
+    { page: studentPagination.page, limit: studentPagination.pageSize },
+    { data: [], totalCount: 0 }
+  );
+
+  const { mutateAsync: toggleFollow } = useToggleFollow();
+
+  const isUserFollowing = (studentId) => {
+    return user?.follow?.following?.some(
+      (follow) => follow.user === studentId
     );
   };
 
-  const removeFollower = (index) => {
-    setFollowers((prevFollowers) => prevFollowers.filter((_, i) => i !== index));
+  const handleFollowToggle = async (studentId, isFollowing, visibility) => {
+    let status = isFollowing ? null : (visibility === "public" ? FOLLOW_STATUS.FOLLOWING : FOLLOW_STATUS.REQUESTED);
+    try {
+      const response = await toggleFollow({ userId: studentId, status });
+
+      if (response?.result) {
+        dispatch(updateFollowState(response?.result));
+      }
+    } catch (error) {
+      console.error("Error toggling follow:", error);
+    }
   };
+
 
   return (
     <Box
       sx={{
-        width: '100%',
-        maxHeight: 'calc(100vh - 100px)',
+        width: "100%",
+        maxHeight: "calc(100vh - 100px)",
         bgcolor: APP_COLORS.secondary[200],
         borderRadius: 4,
         boxShadow: 3,
-        display: 'flex',
-        flexDirection: 'column',
-        overflowY: 'auto',
+        display: "flex",
+        flexDirection: "column",
+        overflowY: "auto",
         m: 1,
       }}
     >
       <Typography
         variant="h6"
         gutterBottom
-        sx={{ p: 2, fontWeight: 600, position: 'sticky', top: 0, zIndex: 1, color: APP_COLORS.primary[600] }}
+        sx={{
+          p: 2,
+          fontWeight: 600,
+          position: "sticky",
+          top: 0,
+          zIndex: 1,
+          color: APP_COLORS.primary[600],
+        }}
       >
-        Who to Follow
+        Students List
       </Typography>
-      <List dense sx={{ p: 0, bgcolor: APP_COLORS.secondary[500], }}>
-        {followers.map((follower, index) => (
-          <ListItem key={index} alignItems="flex-start" sx={{ py: 1, px: 1, }}>
-            <Card variant="outlined" sx={{ p: 1, display: 'flex', flexDirection: 'column', width: '100%', bgcolor: APP_COLORS.secondary[400], }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, color: APP_COLORS.primary[600] }}>
-                <CardMedia
-                  component="img"
-                  width="50"
-                  height="50"
-                  alt={follower.name}
-                  src={follower.avatar}
-                  sx={{ width: 50, height: 50 }}
-                />
-                <Box sx={{ flex: 1, color: APP_COLORS.primary[600] }}>
-                  <Typography variant="body1" fontWeight="600">
-                    {follower.name}
-                  </Typography>
-                  <Typography variant="body2" >
-                    {follower.followTime}
-                  </Typography>
-                  <Chip
-                    sx={{ color: APP_COLORS.primary[600] }}
+
+      <List dense sx={{ p: 0, bgcolor: APP_COLORS.secondary[500] }}>
+        {studentData?.data.map((student) => {
+          const visibility = student?.privacySettings?.visibility || "private";
+          const isFollowing = isUserFollowing(student._id);
+
+          return (
+            <ListItem key={student._id} alignItems="flex-start" sx={{ py: 1, px: 1 }}>
+              <Card
+                variant="outlined"
+                sx={{
+                  p: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "100%",
+                  bgcolor: APP_COLORS.secondary[400],
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2, color: APP_COLORS.primary[600] }}>
+                  <CardMedia
+                    component="img"
+                    width="50"
+                    height="50"
+                    alt={student.firstName}
+                    src={transformImagePath(student.profilePicture) || "public/assets/default-profile.png"}
+                    sx={{ width: 50, height: 50, borderRadius: "20%" }}
+                  />
+
+                  <Box sx={{ flex: 1, color: APP_COLORS.primary[600] }}>
+                    <Typography variant="body1" fontWeight="600">
+                      {student.firstName} {student.lastName}
+                    </Typography>
+
+                    <Chip
+                      label={visibility === "public" ? "Public" : "Private"}
+                      color={APP_COLORS.secondary[800]}
+                      size="small"
+                      sx={{ mt: 1 }}
+                    />
+                  </Box>
+                </Box>
+
+                {/* Action Buttons */}
+                <Box sx={{ display: "flex", justifyContent: "space-around", mt: 2 }}>
+                  <Button
                     size="small"
                     variant="outlined"
-                    icon={<InfoRounded />}
-                    label={`Score: ${follower.score}%`}
-                  />
+                    color={isFollowing ? "primary" : "primary"}
+                    onClick={() => handleFollowToggle(student._id, isFollowing, visibility)}
+                  >
+                    {isFollowing ? "Unfollow" : "Follow"}
+                  </Button>
+                  <Button size="small" variant="outlined" color="error" onClick={() => handleRemove(student._id)}>
+                    Remove
+                  </Button>
                 </Box>
-              </Box>
-              {/* Buttons at the bottom */}
-              <Box sx={{ display: 'flex', justifyContent: 'space-around', mt: 2 }}>
-                <Button
-                  size="small"
-                  variant={follower.isFollowing ? 'contained' : 'outlined'}
-                  color={follower.isFollowing ? 'success' : 'primary'}
-                  onClick={() => toggleFollow(index)}
-                >
-                  {follower.isFollowing ? 'Following' : 'Follow'}
-                </Button>
-                <Button size="small" variant="outlined" color="error" onClick={() => removeFollower(index)}>
-                  Remove
-                </Button>
-              </Box>
-            </Card>
-          </ListItem>
-
-        ))}
+              </Card>
+            </ListItem>
+          );
+        })}
       </List>
-    </Box >
+    </Box>
   );
 };
 

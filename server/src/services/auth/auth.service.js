@@ -22,6 +22,7 @@ class AuthService {
 
     const Service = AuthService.getServiceByRole(role);
     const user = await Service.findBy("email", email);
+
     if (!user) throw new NotFoundError(`${role} not found.`);
 
     const isPasswordValid = await user.comparePassword(password);

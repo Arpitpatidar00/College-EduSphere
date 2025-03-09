@@ -1,7 +1,7 @@
 import AdminService from "../services/admin.service.js";
 import AuthService from "../services/auth/auth.service.js";
 import { OK, BAD } from "../lib/responseHelper.js";
-import UserType from "../constants/userTypeEnum.js";
+import { UserType } from "../constants/enum.js";
 
 export async function signupController(req, res, next) {
   const { firstName, lastName, email, password, contactPhone } = req.body;

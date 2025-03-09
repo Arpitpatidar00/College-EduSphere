@@ -24,13 +24,13 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 import { ROUTES } from "../../Global/Routes/CommonRoutes";
 import signUpValidationSchemas from "./signUpValidationSchemas";
-import UserType from "../../../../../server/src/constants/userTypeEnum";
 import InfiniteScrollDropdown from "../../../common/InfiniteScrollDropdown";
 import {
     useGetAllCountries,
     useGetAllStates,
     useGetAllCities,
 } from "../../../services/api/master/location.service.js";
+import { UserType } from '../../../enums/AuthConstants.jsx';
 
 function CollegeSignupForm({ onSubmit, signIn }) {
     const [step, setStep] = useState(0);

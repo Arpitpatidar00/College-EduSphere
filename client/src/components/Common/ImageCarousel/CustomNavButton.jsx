@@ -11,7 +11,7 @@ const CustomNavButton = ({ direction, onClick, activeIndex, length }) => {
     if (!isVisible) return null;
 
     return (
-        <IconButton onClick={onClick} style={{ position: 'absolute', color: APP_COLORS.common.white, top: '40%', [direction === 'prev' ? 'left' : 'right']: 0 }}>
+        <IconButton onClick={onClick} style={{ position: 'absolute', color: APP_COLORS.common.black, top: '40%', [direction === 'prev' ? 'left' : 'right']: 0 }}>
             {direction === 'prev' ? <ArrowBackIos /> : <ArrowForwardIos />}
         </IconButton>
     );

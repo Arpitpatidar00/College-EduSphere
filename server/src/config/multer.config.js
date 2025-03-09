@@ -48,7 +48,8 @@ export const uploadFile = () => {
     storage,
     limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB limit
     fileFilter(_req, file, cb) {
-      const fileTypes = /jpeg|jpg|png|gif|mp4|avi/;
+      const fileTypes =
+        /jpeg|jpg|png|gif|bmp|webp|tiff|svg|mp4|avi|mov|wmv|flv|mkv|webm/;
       const extnameValid = fileTypes.test(
         path.extname(file.originalname).toLowerCase()
       );

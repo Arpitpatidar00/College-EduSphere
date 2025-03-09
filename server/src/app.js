@@ -16,7 +16,7 @@ import { createServer } from "http";
 import { initializeSocket } from "./socket/chat.socket.js";
 
 // @import routes
-import authStudentRoutes from "./routes/auht.student.routes.js";
+import authStudentRoutes from "./routes/auth.student.routes.js";
 import studentRoutes from "./routes/student.routes.js";
 
 import adminRoutes from "./routes/admin.routes.js";
@@ -28,6 +28,7 @@ import chatRoutes from "./routes/chat.routes.js";
 import storiesRoutes from "./routes/story.routes.js";
 import likesRoutes from "./routes/like.routes.js";
 import commentsRoutes from "./routes/comment.routes.js";
+import followRoutes from "./routes/follow.routes.js";
 
 // @Start App
 const app = express();
@@ -93,5 +94,6 @@ app.use("/chat", chatRoutes); // Add chat routes
 app.use("/stories", storiesRoutes);
 app.use("/likes", likesRoutes);
 app.use("/comments", commentsRoutes);
+app.use("/follow", followRoutes);
 
 export default app;

@@ -4,35 +4,55 @@ import {
     Typography,
     Box,
     Stack,
-    Avatar
+    Avatar,
+    IconButton
 } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { APP_COLORS } from '../../../../enums/Colors';
 import ImageCarousel from '../../../Common/ImageCarousel/index';
+import { useState } from 'react';
+import { useToggleLike } from '../../../../services/api/main/likeAndComment.service';
+import { useSelector } from 'react-redux';
+import { selectUserData } from '../../../../store/slices/auth.slice';
 
-const ProjectCard = ({ post }) => {
-    console.log('post: ', post);
+const ProjectCard = ({ post, handleOpenModal }) => {
+    const userData = useSelector(selectUserData);
+    const [likedPosts, setLikedPosts] = useState({});
+    const { mutateAsync: toggleLike } = useToggleLike();
 
     const formatNumber = (num) => {
         if (!num) return 0;
         return num >= 1000 ? (num / 1000).toFixed(1) + 'k' : num;
     };
 
+    const isLikedByUser = Array.isArray(post?.likes?.user) && post.likes.user.includes(userData._id);
+    const isLiked = likedPosts[post._id] ?? isLikedByUser;
+    const likeCount = Array.isArray(post.likes?.user) ? post.likes.user.length : 0;
+
+    const handleLikeClick = async (e) => {
+        e.stopPropagation();
+        await toggleLike({ postId: post._id, like: !isLiked });
+        setLikedPosts((prev) => ({ ...prev, [post._id]: !isLiked }));
+    };
+
     return (
-        <Card sx={{
-            height: '100%',
-            position: 'relative',
-            borderRadius: 6,
-            overflow: 'hidden',
-            boxShadow: 3,
-            '&:hover': {
-                boxShadow: 6,
-                transform: 'translateY(-4px)',
-                transition: 'all 0.2s ease-in-out'
-            }
-        }}>
-            {/* User Info */}
+        <Card
+            onClick={() => handleOpenModal()}
+
+            sx={{
+                height: '100%',
+                position: 'relative',
+                borderRadius: 6,
+                overflow: 'hidden',
+                boxShadow: 3,
+                '&:hover': {
+                    boxShadow: 6,
+                    transform: 'translateY(-4px)',
+                    transition: 'all 0.2s ease-in-out'
+                }
+            }}>
             <Box sx={{
                 position: 'absolute',
                 top: 10,
@@ -52,7 +72,6 @@ const ProjectCard = ({ post }) => {
                 </Typography>
             </Box>
 
-            {/* Image Carousel */}
             <ImageCarousel
                 images={post?.media}
                 coverImage={post?.coverImage}
@@ -64,7 +83,6 @@ const ProjectCard = ({ post }) => {
                 backgroundColor: APP_COLORS.secondary[50],
                 '&:last-child': { pb: 2 }
             }}>
-                {/* Title */}
                 <Box sx={{
                     display: 'flex',
                     flexDirection: { xs: 'column', sm: 'row' },
@@ -87,57 +105,30 @@ const ProjectCard = ({ post }) => {
                         {post.title}
                     </Typography>
 
-                    {/* Likes & Views */}
-                    <Stack
-                        direction="row"
-                        spacing={2}
-                        sx={{ flexShrink: 0, mt: { xs: 1, sm: 0 } }}
-                    >
+                    <Stack direction="row" spacing={2} sx={{ flexShrink: 0, mt: { xs: 1, sm: 0 } }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            <FavoriteIcon sx={{
-                                fontSize: 18,
-                                color: APP_COLORS.secondary[600],
-                                transition: 'color 0.2s',
-                                '&:hover': { color: APP_COLORS.secondary[800] }
-                            }} />
-                            <Typography
-                                variant="body2"
-                                color={APP_COLORS.secondary[600]}
-                                sx={{ fontWeight: 500 }}
-                            >
-                                {formatNumber(post?.totalLikes?.length || 0)}
+                            <IconButton onClick={handleLikeClick} sx={{ color: isLiked ? 'red' : APP_COLORS.secondary[600] }}>
+                                {isLiked ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
+                            </IconButton>
+                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                {formatNumber(likeCount)}
                             </Typography>
                         </Box>
 
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            <VisibilityIcon sx={{
-                                fontSize: 18,
-                                color: APP_COLORS.secondary[600],
-                                transition: 'color 0.2s',
-                                '&:hover': { color: APP_COLORS.secondary[800] }
-                            }} />
-                            <Typography
-                                variant="body2"
-                                color={APP_COLORS.primary[600]}
-                                sx={{ fontWeight: 500 }}
-                            >
+                            <VisibilityIcon sx={{ fontSize: 18, color: APP_COLORS.secondary[600] }} />
+                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
                                 {formatNumber(post?.totalViews || 0)}
                             </Typography>
                         </Box>
                     </Stack>
                 </Box>
 
-                {/* Tags */}
                 {post.tags?.length > 0 && (
                     <Typography
                         variant="body2"
                         color="text.secondary"
-                        sx={{
-                            mt: 0.5,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap'
-                        }}
+                        sx={{ mt: 0.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                     >
                         {Array.isArray(post.tags) ? post.tags.join(', ') : post.tags.split(' ')}
                     </Typography>

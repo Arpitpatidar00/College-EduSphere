@@ -5,16 +5,17 @@ import { APP_COLORS } from "../../../../enums/Colors";
 import { useCreateComment } from "../../../../services/api/main/likeAndComment.service";
 import Comment from "./Comment";
 import { transformImagePath } from '../../../../utils/image.utils';
+import PostActions from "./PostActions";
 
 const PostComments = ({ post }) => {
-    console.log('post: ', post);
     const [newComment, setNewComment] = useState("");
-    const { mutate: createComment, isLoading: submittingComment } = useCreateComment();
+
+    const { mutateAsync: createComment, isLoading: submittingComment } = useCreateComment(post._id);
 
     const handleCommentSubmit = () => {
         if (newComment.trim()) {
             createComment({ postId: post._id, comment: newComment });
-            setNewComment(""); // Clear input after submitting
+            setNewComment("");
         }
     };
 
@@ -71,6 +72,18 @@ const PostComments = ({ post }) => {
             </Box>
 
             {/* Comment Input with Send Icon */}
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+
+                    borderTop: "1px solid gray",
+                }}
+            >
+                <PostActions post={post} />
+
+
+            </Box>
             <Box
                 sx={{
                     display: "flex",

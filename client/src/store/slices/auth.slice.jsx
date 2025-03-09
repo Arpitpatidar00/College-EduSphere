@@ -18,6 +18,11 @@ const authSlice = createSlice({
     updateUserState: (state, action) => {
       state.user = action.payload;
     },
+    updateFollowState: (state, action) => {
+      if (state.user && state.user.user) {
+        state.user.user.follow = action.payload;
+      }
+    },
     // This reducer can be used for immediate logout if needed.
     logout: (state) => {
       state.isAuthenticated = false;
@@ -55,10 +60,10 @@ const authSlice = createSlice({
   },
 });
 
-export const { updateUserState, logout } = authSlice.actions;
+export const { updateUserState, updateFollowState, logout } = authSlice.actions;
 
-export const selectUserData = (state) => state.auth.user.user;
-export const selectToken = (state) => state.auth.user.token;
+export const selectUserData = (state) => state.auth.user?.user;
+export const selectToken = (state) => state.auth.token;
 export const selectAuthData = (state) => state.auth;
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
 export const selectUserRole = (state) => state.auth.user.user.role;

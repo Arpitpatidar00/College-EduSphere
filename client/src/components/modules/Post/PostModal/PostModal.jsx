@@ -10,12 +10,11 @@ const modalStyle = {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: "70%",
-    height: "90%",
-    backgroundColor: APP_COLORS.secondary[100],
+    width: "85%",
+    height: "95%",
+    backgroundColor: APP_COLORS.secondary[600],
     display: "flex",
     outline: "none",
-    borderRadius: 2,
     overflow: "hidden",
 };
 

@@ -10,7 +10,7 @@ const PostMedia = ({ mediaUrls, coverImage }) => {
                 bgcolor: APP_COLORS.primary,
             }}
         >
-            <ImageCarousel coverImage={coverImage} images={mediaUrls} width="100%" height="100vh" />
+            <ImageCarousel coverImage={coverImage} images={mediaUrls} width="100%" height="100vh" objectFit="cover" />
         </Box>
     );
 };

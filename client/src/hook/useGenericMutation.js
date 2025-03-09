@@ -8,7 +8,15 @@ export function useGenericMutation(mutationFn, queryKeysToInvalidate) {
     mutationFn,
     onSuccess: (response) => {
       if (response.code) {
-        queryClient.invalidateQueries({ queryKey: queryKeysToInvalidate });
+        if (Array.isArray(queryKeysToInvalidate)) {
+          queryKeysToInvalidate.forEach((key) => {
+            queryClient.invalidateQueries([key], { exact: false });
+          });
+        } else {
+          queryClient.invalidateQueries([queryKeysToInvalidate], {
+            exact: false,
+          });
+        }
       } else {
         ErrorService.handleResponse(response);
         throw response;

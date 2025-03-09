@@ -1,5 +1,5 @@
 // App.jsx
-import { Box, CssBaseline } from "@mui/material";
+import { Box } from "@mui/material";
 import { QueryClientProvider } from "@tanstack/react-query";
 import queryClient from "./services/queryClient";
 

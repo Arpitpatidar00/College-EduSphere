@@ -2,7 +2,7 @@ import JwtServices from "../services/external/jwt.service.js";
 import AdminModel from "../database/models/admin.model.js";
 import UserModel from "../database/models/student.model.js";
 import { NOT_FOUND, UNAUTHORIZED } from "../lib/responseHelper.js";
-import UserType from "../constants/userTypeEnum.js";
+import { UserType } from "../constants/enum.js";
 import CollegeModel from "../database/models/college.model.js";
 
 export const authMiddleware = async (req, res, next) => {

@@ -8,13 +8,14 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@utils": path.resolve(__dirname, "src/utils"), 
-      "@components": path.resolve(__dirname, "src/components"), 
+      "@utils": path.resolve(__dirname, "src/utils"),
+      "@components": path.resolve(__dirname, "src/components"),
     },
   },
   server: {
     port: 3000,
-     hmr: false,
+    hmr: false,
+    host: true, // Allow external connections
+    allowedHosts: ["d50c-182-70-199-162.ngrok-free.app"], // Allow your ngrok URL
   },
-
 });

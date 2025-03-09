@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import UploadStage from "./UploadStage";
 import EditStage from "./EditStage";
 
-const AddPostForm = (onClose) => {
+const AddPostForm = ({ onClose }) => {
     const [selectedImages, setSelectedImages] = useState([]);
     const [selectedImagesFile, setSelectedImagesFile] = useState([]);
 

@@ -13,6 +13,8 @@ import StudentAuthContainer from '../../Auth/StudentAuth/StudentAuthContainer.js
 import CollegeAuthContainer from '../../Auth/CollegeAuth/CollegeAuth.container.jsx';
 import ChatApp from '../../modules/ChatMain/index';
 import UserProfile from '../../../pages/Profile.page';
+import AdminLoginPage from '../../Auth/AdminAuth/index';
+import AdminDashboard from '../../modules/Admin/AdminDashboard/AdminDashboard';
 
 const AppRouter = ({ toggleTheme }) => {
   return (
@@ -37,10 +39,14 @@ const AppRouter = ({ toggleTheme }) => {
           <Route path={ROUTES.HOME.MESSAGE} element={<ChatApp toggleTheme={toggleTheme} />} />
           <Route path={ROUTES.HOME.SETTING} element={<SettingPage toggleTheme={toggleTheme} />} />
           <Route path={ROUTES.HOME.STORIES} element={<StoriesPage toggleTheme={toggleTheme} />} />
+          <Route path={ROUTES.ADMIN.LOGIN} element={<AdminLoginPage toggleTheme={toggleTheme} />} />
+          <Route path={ROUTES.ADMIN.DASHBOARD} element={<AdminDashboard toggleTheme={toggleTheme} />} />
+
           <Route path="*" element={<NotFoundPage />} />
+
         </Route>
       </Routes>
-    </Router>
+    </Router >
   );
 };
 

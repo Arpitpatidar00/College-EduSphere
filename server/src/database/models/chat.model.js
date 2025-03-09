@@ -9,7 +9,12 @@ const MessageSchema = new mongoose.Schema(
     },
     senderId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      refPath: "senderType", // Use senderType to determine the ref model
+      required: true,
+    },
+    senderType: {
+      type: String,
+      enum: ["Student", "College"], // Restrict to valid model names
       required: true,
     },
     messageType: {
@@ -18,17 +23,17 @@ const MessageSchema = new mongoose.Schema(
       required: true,
     },
     content: {
-      type: String, 
+      type: String,
       required: true,
     },
     mediaUrl: {
-      type: String, 
+      type: String,
       default: null,
     },
     seenBy: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "senderType",
       },
     ],
     isEdited: {

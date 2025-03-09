@@ -35,8 +35,13 @@ const PostSchema = new mongoose.Schema(
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "userType",
       required: [true, "User ID is required"],
+    },
+    userType: {
+      type: String,
+      enum: ["Student", "College"],
+      required: true,
     },
     tags: [
       {
@@ -101,7 +106,7 @@ const PostSchema = new mongoose.Schema(
     },
     updatedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "userType",
       default: null,
     },
   },

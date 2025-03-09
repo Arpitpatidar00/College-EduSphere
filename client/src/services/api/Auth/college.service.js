@@ -1,11 +1,9 @@
-
 import { MethodTypesEnum } from "../../../enums/ApiMethord";
 
 import { apiEndPoints } from "../../apiEndpoint";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useGenericMutation } from "../../../hook/useGenericMutation";
 import { createServerAction } from "../../../hook/createServerAction";
-
 
 export const getCollegeAction = async (params, authToken, showSuccessToast) => {
   return createServerAction({

@@ -23,7 +23,7 @@ import { ROUTES } from "../../Global/Routes/CommonRoutes";
 import signUpValidationSchemas from "./signUpValidationSchemas";
 import { UserType } from "../../../enums/AuthConstants";
 import InfiniteScrollDropdown from "../../../common/InfiniteScrollDropdown";
-import { useGetAllCollege } from "../../../services/api/Auth/users";
+import { useGetAllCollege } from "../../../services/api/Auth/college.service";
 
 const courseOptions = [
     { label: "Computer Science", id: "67b385aa8473cd955a191904" },

@@ -17,11 +17,11 @@ import {
     Image,
     LocationOn,
     Public,
-    Close
 } from '@mui/icons-material';
 import AddPostModal from '../../modules/Post/AddPost/AddPostModal';
+import { useState } from 'react';
 
-const StyledBox = styled(Box)(({ theme }) => ({
+const StyledBox = styled(Box)(() => ({
     backgroundColor: 'white',
     borderRadius: '10px',
     padding: '16px',
@@ -30,17 +30,15 @@ const StyledBox = styled(Box)(({ theme }) => ({
 }));
 
 const AddPosts = () => {
-    const [privacy, setPrivacy] = React.useState('Public');
-    const [open, setOpen] = React.useState(false); // State for modal
-    const [isVisible, setIsVisible] = React.useState(true); // State to control visibility of AddPosts
+    const [privacy, setPrivacy] = useState('Public');
+    const [open, setOpen] = useState(false);
+    const [isVisible, setIsVisible] = useState(true);
 
     const handlePrivacyChange = (event) => {
         setPrivacy(event.target.value);
     };
 
-    const handleClose = () => {
-        setIsVisible(false);
-    };
+
 
     if (!isVisible) return null; // Render nothing if the component is not visible
 

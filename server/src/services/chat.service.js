@@ -1,4 +1,4 @@
-// services/chat.service.js
+// server/src/services/chat.service.js
 import mongoose from "mongoose";
 import {
   DirectChatConversation,
@@ -10,88 +10,114 @@ class ChatService {
   static instance = null;
 
   static getInstance() {
-    if (!ChatService.instance) {
-      ChatService.instance = new ChatService();
-    }
+    if (!ChatService.instance) ChatService.instance = new ChatService();
     return ChatService.instance;
   }
 
-  // Direct Chat Methods
-  async findOrCreateDirectChat(participantIds) {
+  async findOrCreateDirectChat(participantIds, collegeId) {
     const participants = participantIds.map(
       (id) => new mongoose.Types.ObjectId(id)
     );
     let chat = await DirectChatConversation.findOne({
       participants: { $all: participants, $size: 2 },
+      college: collegeId || null,
     });
 
     if (!chat) {
       chat = await DirectChatConversation.create({
         participants,
+        college: collegeId || null,
         unreadCounts: new Map(participants.map((id) => [id.toString(), 0])),
       });
     }
     return chat;
   }
 
-  // Group Chat Methods
-  async createGroupChat(groupData) {
-    const participants = groupData.participants.map(
+  async createGroupChat({ participants, groupName, creatorId, collegeId }) {
+    const participantIds = participants.map(
       (id) => new mongoose.Types.ObjectId(id)
     );
+    const creatorObjectId = new mongoose.Types.ObjectId(creatorId);
+
     const chat = await GroupChatConversation.create({
-      ...groupData,
-      participants,
-      groupAdmins: [new mongoose.Types.ObjectId(groupData.creatorId)],
-      unreadCounts: new Map(participants.map((id) => [id.toString(), 0])),
+      participants: participantIds,
+      groupName,
+      college: collegeId,
+      groupAdmins: [creatorObjectId],
+      unreadCounts: new Map(participantIds.map((id) => [id.toString(), 0])),
     });
     return chat;
   }
 
-  // Message Methods
   async createMessage(messageData) {
-    const message = await Message.create(messageData);
-    const conversationModel = messageData.isGroup
+    const {
+      conversationId,
+      senderId,
+      senderType,
+      messageType,
+      content,
+      media,
+      isGroup,
+    } = messageData;
+
+    const message = await Message.create({
+      conversationId,
+      conversationModel: isGroup
+        ? "GroupChatConversation"
+        : "DirectChatConversation",
+      senderId,
+      senderType, // Required field
+      messageType: messageType || "text",
+      content: content || "",
+      media: media || [],
+    });
+
+    const conversationModel = isGroup
       ? GroupChatConversation
       : DirectChatConversation;
+    const conversation = await conversationModel.findById(conversationId);
+    const recipients = conversation.participants.filter(
+      (id) => id.toString() !== senderId.toString()
+    );
 
-    const conversation = await conversationModel.findByIdAndUpdate(
-      messageData.conversationId,
+    const updatedConversation = await conversationModel.findByIdAndUpdate(
+      conversationId,
       {
-        lastMessage: message.content || "Media message",
-        $inc: { [`unreadCounts.${messageData.sender}`]: 0 }, // Reset sender's count
-        $inc: { [`unreadCounts.${messageData.recipients}`]: 1 }, // Increment others
+        lastMessage: content || "Media message",
+        $set: { [`unreadCounts.${senderId}`]: 0 },
+        $inc: recipients.reduce((acc, recipientId) => {
+          acc[`unreadCounts.${recipientId}`] = 1;
+          return acc;
+        }, {}),
       },
       { new: true }
     );
 
-    return { message, conversation };
+    return { message, conversation: updatedConversation };
   }
 
   async getMessages(conversationId, limit = 50, skip = 0) {
-    return Message.find({ conversationId })
+    return await Message.find({ conversationId })
       .sort({ createdAt: -1 })
       .limit(limit)
       .skip(skip)
-      .populate("sender", "name");
+      .populate("senderId", "username firstName lastName profilePicture"); // Populates Student or College
   }
 
-  async markMessageAsRead(messageId, userId) {
+  async markMessageAsRead(messageId, studentId) {
     const message = await Message.findByIdAndUpdate(
       messageId,
-      {
-        $addToSet: { seenBy: userId },
-        status: "read",
-      },
+      { $addToSet: { seenBy: studentId }, status: "read" },
       { new: true }
     );
 
-    const conversationModel = message.conversationId.isGroup
-      ? GroupChatConversation
-      : DirectChatConversation;
+    const conversationModel =
+      message.conversationModel === "GroupChatConversation"
+        ? GroupChatConversation
+        : DirectChatConversation;
 
     await conversationModel.findByIdAndUpdate(message.conversationId, {
-      $set: { [`unreadCounts.${userId}`]: 0 },
+      $set: { [`unreadCounts.${studentId}`]: 0 },
     });
 
     return message;

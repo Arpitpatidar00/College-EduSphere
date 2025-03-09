@@ -4,6 +4,7 @@ import { apiEndPoints } from "../../apiEndpoint";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useGenericMutation } from "../../../hook/useGenericMutation";
 import { createServerAction } from "../../../hook/createServerAction";
+import queryClient from "../../queryClient";
 
 // Like Actions
 
@@ -50,12 +51,7 @@ export const getCommentsAction = async (params, showSuccessToast = false) => {
 // Like Hooks
 
 export const useToggleLike = () => {
-  return useGenericMutation(toggleLikeAction, ["likes", "posts"], {
-    onSuccess: (data) => {
-      // Optionally invalidate related queries, e.g., post details
-      console.log("Like toggled successfully:", data);
-    },
-  });
+  return useGenericMutation(toggleLikeAction, ["likes", "posts"]);
 };
 
 // Comment Hooks
@@ -64,6 +60,7 @@ export const useGetComments = (postId, initialData) => {
   return useQuery({
     queryKey: ["comments", postId],
     queryFn: async () => {
+      if (!postId) return []; // Prevents API call if postId is missing
       const response = await getCommentsAction({ postId });
       if (!response.code) {
         throw response;
@@ -72,21 +69,20 @@ export const useGetComments = (postId, initialData) => {
     },
     initialData: () => initialData,
     placeholderData: keepPreviousData,
-    enabled: !!postId,
+    enabled: !!postId, // Ensures query runs only when postId exists
   });
 };
-export const useCreateComment = () => {
-  return useGenericMutation(createCommentAction, ["comments", "posts"], {
-    onSuccess: (data) => {
-      console.log("Comment created successfully:", data);
+
+export const useCreateComment = (postId) => {
+  return useGenericMutation(createCommentAction, {
+    onSuccess: () => {
+      if (postId) {
+        queryClient.invalidateQueries(["comments", postId]);
+      }
     },
   });
 };
 
 export const useDeleteComment = () => {
-  return useGenericMutation(deleteCommentAction, ["comments", "posts"], {
-    onSuccess: (data) => {
-      console.log("Comment deleted successfully:", data);
-    },
-  });
+  return useGenericMutation(deleteCommentAction, ["comments", "posts"]);
 };

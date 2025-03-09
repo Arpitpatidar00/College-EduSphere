@@ -1,7 +1,8 @@
 import AuthService from "../services/auth/auth.service.js";
 import { OK, BAD } from "../lib/responseHelper.js";
-import UserType from "../constants/userTypeEnum.js";
+import { UserType } from "../constants/enum.js";
 import { collegeService } from "../services/college.service.js";
+import FollowService from "../services/follow.service.js";
 
 export async function signupCollegeController(req, res, next) {
   const {
@@ -54,7 +55,19 @@ export async function signupCollegeController(req, res, next) {
     if (!user || !token) {
       return BAD(res, "College cannot be created.");
     }
-    return OK(res, { token, user }, "College created successfully.");
+    const followCollection = await FollowService.createFollowDocument(user._id);
+
+    const updateData = {
+      follow: followCollection._id,
+    };
+
+    const updatedCollege = await collegeService.updateUser(user.id, updateData);
+
+    return OK(
+      res,
+      { token, user: updatedCollege },
+      "College created successfully."
+    );
   } catch (error) {
     console.error("Error during college signup:", error);
     next(error);

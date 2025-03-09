@@ -14,3 +14,11 @@ export const USER_STATUS = {
     INACTIVE: "inactive",
     PENDING: "pending",
 };
+export const FOLLOW_STATUS = {
+    PENDING: "pending",
+    REQUESTED: "requested",
+    FOLLOWING: "following",
+    UNFOLLOW: "unfollow",
+
+};
+

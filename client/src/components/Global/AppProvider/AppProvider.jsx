@@ -8,8 +8,10 @@ function AppProvider({ children }) {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Provider store={makeStore()}>
+
         <CssBaseline />
         {children}
+
       </Provider>
     </LocalizationProvider>
   );

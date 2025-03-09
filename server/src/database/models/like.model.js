@@ -5,11 +5,16 @@ const LikeSchema = new mongoose.Schema(
     user: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "userType",
         required: [true, "User ID is required"],
         index: true,
       },
     ],
+    userType: {
+      type: String,
+      enum: ["Student", "College"],
+      required: true,
+    },
     postId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Post",

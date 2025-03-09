@@ -29,7 +29,6 @@ const Navbar = () => {
   const handleMessageClick = () => navigate("/message");
   const handleHomeClick = () => navigate("/");
   const handleLoginClick = () => navigate("/login");
-  const handleSignupClick = () => navigate("/signup");
 
   return (
     <AppBar
@@ -136,13 +135,7 @@ const Navbar = () => {
               >
                 Login
               </Button>
-              <Button
-                variant="contained"
-                sx={{ bgcolor: APP_COLORS.secondary[500], "&:hover": { bgcolor: APP_COLORS.secondary[700] } }}
-                onClick={handleSignupClick}
-              >
-                Sign Up
-              </Button>
+
             </Box>
           </>
         )}

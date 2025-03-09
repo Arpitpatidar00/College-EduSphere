@@ -85,9 +85,13 @@ const EditStage = ({ selectedImages, goBack, onClose, selectedImagesFile }) => {
         try {
             const response = await createPost.mutateAsync(formData);
             console.log("Response:", response);
+            console.log("Closing modal...");
 
             if (response) {
-                onClose(true);
+                console.log("Closing modal...");
+
+                console.log("Response:", response);
+                onClose();
             }
         } catch (error) {
             console.error("Error creating post:", error);

@@ -3,7 +3,7 @@ import Carousel from 'react-material-ui-carousel';
 import CustomNavButton from './CustomNavButton';
 import { transformImagePath } from '../../../utils/image.utils';
 
-const ImageCarousel = ({ images = [], width, height, coverImage }) => {
+const ImageCarousel = ({ images = [], width, height, coverImage, objectFit }) => {
     const validImages = images.filter(img => img && typeof img === 'string');
 
     const allImagesArr = coverImage
@@ -51,7 +51,7 @@ const ImageCarousel = ({ images = [], width, height, coverImage }) => {
                         style={{
                             width: width || "100%",
                             height: height || "auto",
-                            objectFit: "cover",
+                            objectFit: objectFit || "cover",
                             objectPosition: "top center",
                         }}
                     />

@@ -38,7 +38,7 @@ const CropStage = ({ goBack, postData }) => {
             media: croppedAreas,
         };
 
-        createPost.mutate(updatePostData);
+        createPost.mutateAsync(updatePostData);
     };
 
     return (

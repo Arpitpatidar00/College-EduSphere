@@ -1,40 +1,24 @@
+// server/src/database/models/group.chat.model.js
 import mongoose from "mongoose";
+
 const { Schema } = mongoose;
 
-/**
- * DirectChatConversation Schema
- * Represents a one-to-one conversation between exactly two users.
- */
+// DirectChatConversationSchema (unchanged)
 const DirectChatConversationSchema = new Schema(
   {
     participants: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-          required: true,
-        },
-      ],
+      type: [{ type: Schema.Types.ObjectId, ref: "Student", required: true }],
       validate: {
-        validator: function (value) {
-          return value.length === 2;
-        },
+        validator: (value) => value.length === 2,
         message: "Direct chat must have exactly 2 participants",
       },
+      index: true,
     },
-    // Stores a preview of the last message sent
-    lastMessage: {
-      type: String,
-      default: "",
-    },
-    // Tracks unread message counts for each participant (e.g., { userId1: 2, userId2: 0 })
-    unreadCounts: {
-      type: Map,
-      of: Number,
-      default: {},
-    },
+    college: { type: Schema.Types.ObjectId, ref: "College", required: false },
+    lastMessage: { type: String, default: "", trim: true },
+    unreadCounts: { type: Map, of: Number, default: () => new Map() },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
 const DirectChatConversation = mongoose.model(
@@ -42,49 +26,24 @@ const DirectChatConversation = mongoose.model(
   DirectChatConversationSchema
 );
 
-/**
- * GroupChatConversation Schema
- * Represents a group conversation with more than 2 participants.
- */
+// GroupChatConversationSchema (unchanged)
 const GroupChatConversationSchema = new Schema(
   {
     participants: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-      },
+      { type: Schema.Types.ObjectId, ref: "Student", required: true },
     ],
-    // Flag to indicate this is a group chat (always true for this model)
-    isGroup: {
-      type: Boolean,
-      default: true,
-    },
-    // Required group name for group chats
+    isGroup: { type: Boolean, default: true, immutable: true },
     groupName: {
       type: String,
-      required: [true, "Group name is required for group chats"],
+      required: [true, "Group name is required"],
+      trim: true,
     },
-    // Optional array of group admins (references to User)
-    groupAdmins: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    // Stores a preview of the last message sent
-    lastMessage: {
-      type: String,
-      default: "",
-    },
-    // Tracks unread message counts for each participant
-    unreadCounts: {
-      type: Map,
-      of: Number,
-      default: {},
-    },
+    college: { type: Schema.Types.ObjectId, ref: "College", required: true },
+    groupAdmins: [{ type: Schema.Types.ObjectId, ref: "Student" }],
+    lastMessage: { type: String, default: "", trim: true },
+    unreadCounts: { type: Map, of: Number, default: () => new Map() },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
 const GroupChatConversation = mongoose.model(
@@ -92,55 +51,43 @@ const GroupChatConversation = mongoose.model(
   GroupChatConversationSchema
 );
 
-/**
- * Message Schema
- * Represents an individual message within a conversation.
- */
+// MessageSchema (unchanged from your latest version)
 const MessageSchema = new Schema(
   {
-    // This ID could refer to either a DirectChatConversation or GroupChatConversation
     conversationId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       required: true,
+      index: true,
+      refPath: "conversationModel",
     },
-    sender: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+    conversationModel: {
+      type: String,
       required: true,
+      enum: ["DirectChatConversation", "GroupChatConversation"],
+      default: "DirectChatConversation",
     },
-    // Message type to support different media formats
+    senderId: {
+      type: Schema.Types.ObjectId,
+      refPath: "senderType",
+      required: true,
+      index: true,
+    },
+    senderType: { type: String, enum: ["Student", "College"], required: true },
     messageType: {
       type: String,
       enum: ["text", "image", "video", "file"],
       default: "text",
     },
-    // Text content of the message (if applicable)
-    content: {
-      type: String,
-      default: "",
-    },
-    // Array to store media URLs when messageType is not 'text'
-    media: [
-      {
-        type: String,
-        default: null,
-      },
-    ],
-    // Array of user IDs who have seen this message (read receipts)
-    seenBy: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    // Message status for tracking delivery (sent, delivered, read)
+    content: { type: String, default: "", trim: true },
+    media: [{ type: String, default: null, trim: true }],
+    seenBy: [{ type: Schema.Types.ObjectId, ref: "Student" }],
     status: {
       type: String,
       enum: ["sent", "delivered", "read"],
       default: "sent",
     },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
 const Message = mongoose.model("Message", MessageSchema);

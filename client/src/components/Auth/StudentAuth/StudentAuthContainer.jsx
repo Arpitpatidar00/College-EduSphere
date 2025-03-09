@@ -22,7 +22,6 @@ function StudentAuthContainer() {
 
 
   const handleSignUp = async (values, { setSubmitting }) => {
-    console.log('values: ', values);
     setLoading(true);
     try {
       await dispatch(signupThunk(values)).unwrap();
@@ -43,7 +42,7 @@ function StudentAuthContainer() {
       await dispatch(loginThunk(values)).unwrap();
       navigate(ROUTES.HOME.INDEX);
     } catch (error) {
-      toast.error("Invalid credentials");
+      toast.error("Invalid credentials", error);
     } finally {
       setLoading(false);
       setSubmitting(false);

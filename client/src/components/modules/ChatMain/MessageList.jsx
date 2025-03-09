@@ -1,113 +1,98 @@
-import { Box, Typography, Avatar, Stack } from "@mui/material";
+import { useState, useEffect, useRef } from "react";
+import { Box, Typography, Avatar, Stack, CircularProgress } from "@mui/material";
 import { APP_COLORS } from "../../../enums/Colors";
+import { useGetAllStudents } from "../../../services/api/Auth/student.service";
+import { transformImagePath } from "../../../utils/image.utils";
+import { createSocketService } from "../../../services/socket";
+import { useSelector } from "react-redux";
+import { selectUserData } from "../../../store/slices/auth.slice";
 
-const MessageList = ({ sx, ...props }) => {
-    // Dummy messages data
-    const messages = [
-        {
-            id: 1,
-            avatar: "/images/user1.jpg", // Replace with your actual image path
-            username: "Alice",
-            message: "Hello there!",
-        },
-        {
-            id: 2,
-            avatar: "/images/user2.jpg", // Replace with your actual image path
-            username: "Bob",
-            message: "How are you?",
-        },
-        {
-            id: 3,
-            avatar: "/images/user3.jpg", // Replace with your actual image path
-            username: "Charlie",
-            message: "Let's meet soon.",
-        },
-        {
-            id: 4,
-            avatar: "/images/user1.jpg", // Replace with your actual image path
-            username: "Alice",
-            message: "Hello there!",
-        },
-        {
-            id: 5,
-            avatar: "/images/user2.jpg", // Replace with your actual image path
-            username: "Bob",
-            message: "How are you?",
-        },
-        {
-            id: 6,
-            avatar: "/images/user3.jpg", // Replace with your actual image path
-            username: "Charlie",
-            message: "Let's meet soon.",
-        },
-        {
-            id: 7,
-            avatar: "/images/user1.jpg", // Replace with your actual image path
-            username: "Alice",
-            message: "Hello there!",
-        },
-        {
-            id: 8,
-            avatar: "/images/user2.jpg",
-            username: "Bob",
-            message: "How are you?",
-        },
-        {
-            id: 9,
-            avatar: "/images/user3.jpg",
-            username: "Charlie",
-            message: "Let's meet soon.",
-        },
-        {
-            id: 10,
-            avatar: "/images/user1.jpg",
-            username: "Alice",
-            message: "Hello there!",
-        },
-        {
-            id: 11,
-            avatar: "/images/user2.jpg",
-            username: "Bob",
-            message: "How are you?",
-        },
-        {
-            id: 12,
-            avatar: "/images/user3.jpg",
-            username: "Charlie",
-            message: "Let's meet soon.",
-        },
-    ];
+const MessageList = ({ sx, onSelectConversation, ...props }) => {
+    const [activeStudents, setActiveStudents] = useState(new Set());
+    const currentUser = useSelector(selectUserData);
+    const currentUserId = currentUser?._id;
+    const socketServiceRef = useRef(null);
+
+    const { data: studentData, isFetching } = useGetAllStudents(
+        { page: 0, limit: 20 },
+        { data: [], totalCount: 0 }
+    );
+
+    useEffect(() => {
+        if (!currentUserId) return;
+
+        if (!socketServiceRef.current) {
+            socketServiceRef.current = createSocketService(currentUserId);
+        }
+        const socket = socketServiceRef.current;
+
+        const handleActiveUsers = (activeUserIds) => {
+            setActiveStudents(new Set(activeUserIds));
+        };
+        socket.getActiveUsers(handleActiveUsers);
+
+        const handleUserStatus = ({ userId, isOnline }) => {
+            setActiveStudents((prev) => {
+                const newSet = new Set(prev);
+                isOnline ? newSet.add(userId) : newSet.delete(userId);
+                return newSet;
+            });
+        };
+        socket.listenToUserStatus(handleUserStatus);
+
+        return () => {
+            console.log("🔌 Cleaning up socket listeners...");
+            socket.disconnect();
+        };
+    }, [currentUserId]);
+
+    if (isFetching) {
+        return (
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "calc(100vh - 200px)", ...sx }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
 
     return (
-        <Box
-            sx={{
-                p: 3,
-                height: "calc(100vh - 200px)",
-
-                backgroundColor: APP_COLORS.common.white,
-                borderRadius: "12px",
-                boxShadow: `0px 2px 5px ${APP_COLORS.primary[100]}`,
-                ...sx,
-            }}
-            {...props}
-        >
-            <Typography variant="h6" sx={{ mb: 1 }}>
-                Messages
-            </Typography>
-            {messages.map((msg) => (
+        <Box sx={{ p: 3, height: "calc(100vh - 200px)", backgroundColor: APP_COLORS.common.white, borderRadius: "12px", boxShadow: `0px 2px 5px ${APP_COLORS.primary[100]}`, overflowY: "auto", ...sx }} {...props}>
+            <Typography variant="h6" sx={{ mb: 1 }}>Messages</Typography>
+            {studentData?.data?.map((user) => (
                 <Stack
-                    key={msg.id}
+                    key={user._id}
                     direction="row"
                     alignItems="center"
                     spacing={2}
-                    sx={{ p: 1, borderBottom: `1px solid ${APP_COLORS.common.white}` }}
+                    sx={{
+                        p: 1,
+                        borderBottom: `1px solid ${APP_COLORS.grey[200]}`,
+                        cursor: "pointer",
+                        "&:hover": { backgroundColor: APP_COLORS.grey[100] },
+                    }}
+                    onClick={() => onSelectConversation(user)}
                 >
-                    <Avatar src={msg.avatar} alt={msg.username} />
+                    <Box sx={{ position: "relative" }}>
+                        <Avatar src={transformImagePath(user?.profilePicture)} alt={user?.firstName} />
+                        <Box
+                            sx={{
+                                position: "absolute",
+                                bottom: 0,
+                                right: 0,
+                                width: 12,
+                                height: 12,
+                                borderRadius: "50%",
+                                backgroundColor: activeStudents.has(user._id) ? "green" : "red",
+                                border: `2px solid ${APP_COLORS.common.white}`,
+                            }}
+                        />
+                    </Box>
                     <Box>
                         <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                            {msg.username}
+                            {user.username || `${user.firstName} ${user.lastName || ""}`}
                         </Typography>
-                        <Typography variant="body2">{msg.message}</Typography>
+                        <Typography variant="body2" color="textSecondary">
+                            {user.message || "Start a conversation"}
+                        </Typography>
                     </Box>
                 </Stack>
             ))}

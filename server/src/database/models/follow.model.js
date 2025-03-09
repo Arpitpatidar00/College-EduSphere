@@ -1,18 +1,31 @@
 import mongoose from "mongoose";
+import { FOLLOW_STATUS } from "../../constants/enum.js";
 
 const FollowSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "userType",
       required: true,
       unique: true,
     },
+
+    userType: {
+      type: String,
+      enum: ["Student", "College"],
+      required: true,
+    },
+
     followers: [
       {
         user: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
+          ref: "userType",
+        },
+        status: {
+          type: String,
+          enum: Object.values(FOLLOW_STATUS),
+          default: FOLLOW_STATUS.PENDING,
         },
         followedAt: { type: Date, default: Date.now },
       },
@@ -21,7 +34,12 @@ const FollowSchema = new mongoose.Schema(
       {
         user: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
+          ref: "userType",
+        },
+        status: {
+          type: String,
+          enum: Object.values(FOLLOW_STATUS),
+          default: FOLLOW_STATUS.REQUESTED,
         },
         followedAt: { type: Date, default: Date.now },
       },
@@ -30,7 +48,7 @@ const FollowSchema = new mongoose.Schema(
       {
         user: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
+          ref: "userType",
         },
         blockedAt: { type: Date, default: Date.now },
       },

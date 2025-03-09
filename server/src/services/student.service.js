@@ -18,8 +18,8 @@ class StudentService {
     return StudentModel.findById(id);
   }
 
-  async findAll(filter = {}) {
-    return StudentModel.find(filter);
+  async findAll(pipeline = []) {
+    return StudentModel.aggregate(pipeline);
   }
 
   async findBy(key, value) {

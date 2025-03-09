@@ -5,7 +5,7 @@ const StorySchema = new Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "userType",
       required: true,
     },
     media: [
@@ -27,10 +27,15 @@ const StorySchema = new Schema(
       type: Date,
       default: () => new Date(Date.now() + 24 * 60 * 60 * 1000),
     },
+    userType: {
+      type: String,
+      enum: ["Student", "College"],
+      required: true,
+    },
     viewers: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "userType",
       },
     ],
   },

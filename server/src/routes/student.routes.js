@@ -17,5 +17,10 @@ router.patch(
   uploadFields,
   studentController.updateStudentController
 );
+router.get(
+  "/get-all-students",
+  authMiddleware,
+  studentController.getAllStudentsController
+);
 
 export default router;
