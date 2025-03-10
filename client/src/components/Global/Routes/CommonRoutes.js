@@ -25,8 +25,8 @@ export const ROUTES = {
   },
   ADMIN: {
     INDEX: `/sysopdmin/${ADMIN_SECRET}`,
-    LOGIN: `/sysopdmin/login`,
-    DASHBOARD: `/sysopdmin/dashboard`,
+    LOGIN: `/sysopdmin/login/${ADMIN_SECRET}`,
+    DASHBOARD: `/sysopdmin/dashboard/${ADMIN_SECRET}`,
   },
 };
 

@@ -16,9 +16,12 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import { navigationItems } from "../data/navigationData";
+import { navigationItems } from '../data/navigationData';
+import { useSelector } from 'react-redux';
+import { selectUserData } from '../../../../store/slices/auth.slice'
 
-const DRAWER_WIDTH = 240;
+
+const DRAWER_WIDTH = 260;
 
 const StyledDrawer = styled(Drawer)(({ theme }) => ({
     width: DRAWER_WIDTH,
@@ -42,6 +45,8 @@ const Logo = styled(Box)(({ theme }) => ({
 }));
 
 export default function Sidebar() {
+    const userData = useSelector(selectUserData);
+
     const [location] = useLocation();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [openMenus, setOpenMenus] = useState({});
@@ -72,7 +77,7 @@ export default function Sidebar() {
                         justifyContent: "center",
                     }}
                 ></Box>
-
+                <ListItemText primary="Admin Panel" sx={{ fontWeight: 600 }} />
             </Logo>
             <List>
                 {navigationItems.map((item) => {
@@ -135,7 +140,6 @@ export default function Sidebar() {
 
     return (
         <Box sx={{ display: "flex" }}>
-            {/* Mobile Menu Button */}
             <IconButton
                 color="inherit"
                 aria-label="open drawer"
@@ -146,7 +150,6 @@ export default function Sidebar() {
                 <MenuIcon />
             </IconButton>
 
-            {/* Mobile Drawer */}
             <Drawer
                 variant="temporary"
                 open={mobileOpen}

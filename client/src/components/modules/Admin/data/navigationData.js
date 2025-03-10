@@ -8,6 +8,10 @@ import EmailIcon from "@mui/icons-material/Email";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import SettingsIcon from "@mui/icons-material/Settings";
 import HelpIcon from "@mui/icons-material/Help";
+import PostAddIcon from "@mui/icons-material/PostAdd";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
 export const navigationItems = [
   {
@@ -20,7 +24,6 @@ export const navigationItems = [
     id: "location",
     icon: LocationCityIcon,
     label: "Location",
-    path: "/admin/location",
     subItems: [
       { id: "city", label: "City", path: "/admin/location/city" },
       { id: "state", label: "State", path: "/admin/location/state" },
@@ -31,13 +34,39 @@ export const navigationItems = [
     id: "college",
     icon: SchoolIcon,
     label: "Colleges",
-    path: "/admin/colleges",
+    subItems: [
+      { id: "all-colleges", label: "All Colleges", path: "/admin/colleges" },
+      {
+        id: "pending-approvals",
+        label: "Pending Approvals",
+        path: "/admin/colleges/approvals",
+      },
+    ],
   },
   {
     id: "students",
     icon: PeopleIcon,
     label: "Students",
-    path: "/admin/students",
+    subItems: [
+      { id: "all-students", label: "All Students", path: "/admin/students" },
+      {
+        id: "pending-approvals",
+        label: "Pending Approvals",
+        path: "/admin/students/approvals",
+      },
+    ],
+  },
+  {
+    id: "posts",
+    icon: PostAddIcon,
+    label: "Post Moderation",
+    path: "/admin/posts",
+  },
+  {
+    id: "reports",
+    icon: BarChartIcon,
+    label: "Reports & Insights",
+    path: "/admin/reports",
   },
   {
     id: "complaints",
@@ -50,6 +79,12 @@ export const navigationItems = [
     icon: DescriptionIcon,
     label: "Documents",
     path: "/admin/documents",
+  },
+  {
+    id: "announcements",
+    icon: NotificationsIcon,
+    label: "Announcements",
+    path: "/admin/announcements",
   },
   {
     id: "mail",
@@ -68,6 +103,12 @@ export const navigationItems = [
     icon: SettingsIcon,
     label: "Settings",
     path: "/admin/settings",
+  },
+  {
+    id: "admin-access",
+    icon: AdminPanelSettingsIcon,
+    label: "Admin Access",
+    path: "/admin/access",
   },
   {
     id: "help",

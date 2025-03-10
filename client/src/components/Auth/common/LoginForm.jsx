@@ -18,6 +18,7 @@ function LoginForm({ onSubmit, signIn }) {
 
     const formikConfig = {
         initialValues: { email: "", password: "" },
+
         validationSchema: Yup.object({
             email: Yup.string()
                 .email("Invalid email format")

@@ -19,16 +19,17 @@ import { APP_COLORS } from "../../../enums/Colors";
 import { APP_IMAGES } from "../../Common/Images/index";
 import { transformImagePath } from "../../../utils/commonFn";
 import { selectUserData, selectIsAuthenticated } from "../../../store/slices/auth.slice";
+import { ROUTES } from '../../Global/Routes/CommonRoutes';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const userData = useSelector(selectUserData);
   const isAuthenticated = useSelector(selectIsAuthenticated);
 
-  const handleAccountClick = () => navigate("/profile");
-  const handleMessageClick = () => navigate("/message");
-  const handleHomeClick = () => navigate("/");
-  const handleLoginClick = () => navigate("/login");
+  const handleAccountClick = () => navigate(ROUTES.HOME.PROFILE);
+  const handleMessageClick = () => navigate(ROUTES.HOME.MESSAGE);
+  const handleHomeClick = () => navigate(ROUTES.HOME.INDEX);
+  const handleLoginClick = () => navigate(ROUTES.AUTH.STUDENT);
 
   return (
     <AppBar

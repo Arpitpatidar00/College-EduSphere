@@ -37,7 +37,10 @@ const authSlice = createSlice({
       .addCase(loginThunk.pending, (state) => {
         state.isLoading = true;
       })
+
       .addCase(loginThunk.fulfilled, (state, action) => {
+        console.log('state: ', state);
+
         state.error = null;
         state.isLoading = false;
         state.isAuthenticated = true;
@@ -66,7 +69,7 @@ export const selectUserData = (state) => state.auth.user?.user;
 export const selectToken = (state) => state.auth.token;
 export const selectAuthData = (state) => state.auth;
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
-export const selectUserRole = (state) => state.auth.user.user.role;
+export const selectUserRole = (state) => state.auth.user?.user.role;
 export const selectIsLoading = (state) => state.auth.isLoading;
 
 export default authSlice.reducer;

@@ -6,7 +6,7 @@ import { mongoose } from "mongoose";
 export async function createCommentController(req, res, next) {
   try {
     const { postId, comment } = req.body;
-    const userId = req.user.id; // From auth middleware
+    const userId = req.user._id; // From auth middleware
 
     if (!postId || !comment) {
       return BAD(res, null, "Post ID and comment text are required");

@@ -1,70 +1,97 @@
 const statsData = [
   {
     id: "1",
-    title: "Bank Balance",
-    value: "$143,624",
-    change: 2.5,
-    description: "Current balance",
+    title: "Total Registered Colleges",
+    value: "120",
+    change: 5.2,
+    description: "New colleges added this month",
   },
   {
     id: "2",
-    title: "Uncategorized",
-    value: "12",
-    change: -0.8,
-    description: "From last month",
+    title: "Total Students",
+    value: "15,678",
+    change: 3.8,
+    description: "New students joined this week",
   },
   {
     id: "3",
-    title: "Active Employees",
-    value: "7",
-    change: 1.2,
-    description: "Out of 12 employees",
+    title: "Active Users Today",
+    value: "8,912",
+    change: 6.3,
+    description: "Compared to yesterday",
   },
   {
     id: "4",
-    title: "Card Spending",
-    value: "$3,287.49",
-    change: -1.5,
-    description: "Corporate cards",
+    title: "Posts Created",
+    value: "1,243",
+    change: 4.1,
+    description: "New posts in the last 24 hours",
   },
 ];
 
 const revenueData = [
-  { date: "Feb 14", value: 15000 },
-  { date: "Feb 15", value: 18000 },
-  { date: "Feb 16", value: 16000 },
-  { date: "Feb 17", value: 20000 },
-  { date: "Feb 18", value: 17000 },
-  { date: "Feb 19", value: 19000 },
-  { date: "Feb 20", value: 16500 },
+  { date: "Mar 1", value: 5000 },
+  { date: "Mar 2", value: 8000 },
+  { date: "Mar 3", value: 7500 },
+  { date: "Mar 4", value: 9000 },
+  { date: "Mar 5", value: 8700 },
+  { date: "Mar 6", value: 11000 },
+  { date: "Mar 7", value: 9500 },
 ];
 
-const emails = [
+const collegeRequests = [
   {
     id: "1",
-    sender: {
-      name: "Hannah Morgan",
-      avatar: "https://mui.com/static/images/avatar/1.jpg",
+    college: {
+      name: "Harvard University",
+      logo: "https://mui.com/static/images/avatar/1.jpg",
     },
-    subject: "Meeting scheduled",
+    adminName: "Hannah Morgan",
     timestamp: "1:24 PM",
   },
   {
     id: "2",
-    sender: {
-      name: "Megan Clark",
-      avatar: "https://mui.com/static/images/avatar/2.jpg",
+    college: {
+      name: "Stanford University",
+      logo: "https://mui.com/static/images/avatar/2.jpg",
     },
-    subject: "Update on marketing campaign",
+    adminName: "Megan Clark",
     timestamp: "12:32 PM",
   },
   {
     id: "3",
-    sender: {
-      name: "Brandon Williams",
-      avatar: "https://mui.com/static/images/avatar/3.jpg",
+    college: {
+      name: "MIT",
+      logo: "https://mui.com/static/images/avatar/3.jpg",
     },
-    subject: "Designly 2.0 is about to launch",
+    adminName: "Brandon Williams",
+    timestamp: "Yesterday at 8:57 PM",
+  },
+  {
+    id: "4",
+    college: {
+      name: "Harvard University",
+      logo: "https://mui.com/static/images/avatar/1.jpg",
+    },
+    adminName: "Hannah Morgan",
+    timestamp: "1:24 PM",
+  },
+  {
+    id: "5",
+    college: {
+      name: "Stanford University",
+      logo: "https://mui.com/static/images/avatar/2.jpg",
+    },
+    adminName: "Megan Clark",
+    timestamp: "12:32 PM",
+  },
+  {
+    id: "6",
+    college: {
+      name: "MIT",
+      logo: "https://mui.com/static/images/avatar/3.jpg",
+    },
+    adminName: "Brandon Williams",
     timestamp: "Yesterday at 8:57 PM",
   },
 ];
@@ -90,4 +117,4 @@ const tasks = [
   },
 ];
 
-export { statsData, revenueData, emails, tasks };
+export { statsData, revenueData, collegeRequests, tasks };
