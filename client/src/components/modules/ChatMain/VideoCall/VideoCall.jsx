@@ -1,7 +1,7 @@
 import { Box, IconButton } from "@mui/material";
 import { CallEnd } from "@mui/icons-material";
 
-const VideoCall = ({ localStreamRef, remoteStream, onEndCall }) => {
+const VideoCall = ({ localStreamRef, remoteStreamRef, onEndCall }) => {
     return (
         <Box
             sx={{
@@ -14,7 +14,7 @@ const VideoCall = ({ localStreamRef, remoteStream, onEndCall }) => {
         >
             {/* Remote Video */}
             <video
-                ref={remoteStream}
+                ref={remoteStreamRef}
                 autoPlay
                 playsInline
                 style={{
@@ -41,7 +41,10 @@ const VideoCall = ({ localStreamRef, remoteStream, onEndCall }) => {
                 }}
             />
 
-            <IconButton onClick={onEndCall} sx={{ marginTop: 2, backgroundColor: "red", color: "white" }}>
+            <IconButton
+                onClick={onEndCall}
+                sx={{ marginTop: 2, backgroundColor: "red", color: "white" }}
+            >
                 <CallEnd />
             </IconButton>
         </Box>
