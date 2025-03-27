@@ -120,7 +120,7 @@ const Navbar = () => {
               >
                 <Avatar
                   src={userData?.profilePicture ? transformImagePath(userData.profilePicture) : "/assets/Student.login1.png"}
-                  alt={userData?.firstName ?? "User"}
+                  alt={userData?.firstName || userData.institutionName}
                 />
               </Button>
             </Box>

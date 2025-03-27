@@ -2,18 +2,64 @@ import { useState } from "react";
 import { Modal, Box, Typography, TextField, Button, Stack, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { APP_COLORS } from "../../../../enums/Colors";
+import { UserType } from "@/enums/AuthConstants";
 
-const EditProfileModal = ({ open, handleClose, user, handleSave }) => {
+
+const EditProfileModal = ({ open, handleClose, user, handleSave, isCollegePending, isStudentPending }) => {
+
+
     const [formData, setFormData] = useState({
-        firstName: user?.firstName || "",
-        lastName: user?.lastName || "",
-        bio: user?.bio || "",
-        location: user?.location || "",
+        ...(user?.role === UserType.STUDENT
+            ? {
+                firstName: user?.firstName || "",
+                lastName: user?.lastName || "",
+                bio: user?.bio || "",
+                location: user?.location || "",
+                website: user?.website || "",
+                phoneNumber: user?.phoneNumber || "",
+                interest: user?.interest || "",
+                socialLinks: {
+                    twitter: user?.socialLinks?.twitter || "",
+                    instagram: user?.socialLinks?.instagram || "",
+                    linkedin: user?.socialLinks?.linkedin || "",
+                    facebook: user?.socialLinks?.facebook || "",
+                },
+            }
+            : {
+                institutionName: user?.institutionName || "",
+                bio: user?.bio || "",
+                location: user?.location || "",
+                websiteURL: user?.websiteURL || "",
+                contactEmail: user?.contactEmail || "",
+                contactPhone: user?.contactPhone || "",
+                socialLinks: {
+                    twitter: user?.socialLinks?.twitter || "",
+                    instagram: user?.socialLinks?.instagram || "",
+                    linkedin: user?.socialLinks?.linkedin || "",
+                    facebook: user?.socialLinks?.facebook || "",
+                    youtube: user?.socialLinks?.youtube || "",
+                },
+            }),
     });
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        if (name.includes("socialLinks.") || name.includes("socialLinks.")) {
+            const [parent, child] = name.split(".");
+            setFormData({
+                ...formData,
+                [parent]: {
+                    ...formData[parent],
+                    [child]: value,
+                },
+            });
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
     };
+
+
+    const isStudent = user?.role === UserType.STUDENT;
 
     return (
         <Modal
@@ -29,14 +75,14 @@ const EditProfileModal = ({ open, handleClose, user, handleSave }) => {
             <Box
                 sx={{
                     position: "relative",
-                    width: { xs: "90%", sm: 400 }, // Responsive width
-                    maxHeight: "90vh", // Limit height on small screens
+                    width: { xs: "90%", sm: 800 },
+                    maxHeight: "90vh",
                     bgcolor: "background.paper",
-                    borderRadius: 6, // Slightly softer corners
-                    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)", // Softer, modern shadow
-                    p: { xs: 2, sm: 4 }, // Responsive padding
-                    overflowY: "auto", // Scrollable if content overflows
-                    transition: "transform 0.3s ease, opacity 0.2s ease", // Smooth open/close
+                    borderRadius: 6,
+                    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
+                    p: { xs: 2, sm: 4 },
+                    overflowY: "auto",
+                    transition: "transform 0.3s ease, opacity 0.2s ease",
                     transform: open ? "scale(1)" : "scale(0.95)",
                     opacity: open ? 1 : 0,
                 }}
@@ -47,9 +93,9 @@ const EditProfileModal = ({ open, handleClose, user, handleSave }) => {
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        mb: 3, // Increased margin for breathing room
+                        mb: 3,
                         borderBottom: "1px solid",
-                        borderColor: "grey.200", // Subtle divider
+                        borderColor: "grey.200",
                         pb: 1,
                     }}
                 >
@@ -62,7 +108,7 @@ const EditProfileModal = ({ open, handleClose, user, handleSave }) => {
                             letterSpacing: "0.02em",
                         }}
                     >
-                        Edit Profile
+                        {isStudent ? "Edit Student Profile" : "Edit College Profile"}
                     </Typography>
                     <IconButton
                         onClick={handleClose}
@@ -77,59 +123,154 @@ const EditProfileModal = ({ open, handleClose, user, handleSave }) => {
                 </Box>
 
                 {/* Form Fields */}
-                <Stack spacing={2.5}> {/* Slightly larger spacing */}
-                    <TextField
-                        label="First Name"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleChange}
-                        fullWidth
-                        variant="outlined"
-                        size="small" // Smaller input for cleaner look
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                borderRadius: 1.5,
-                                "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
-                                "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
-                            },
-                            "& .MuiInputLabel-root": { color: "grey.600" },
-                        }}
-                    />
-                    <TextField
-                        label="Last Name"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                borderRadius: 1.5,
-                                "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
-                                "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
-                            },
-                            "& .MuiInputLabel-root": { color: "grey.600" },
-                        }}
-                    />
-                    <TextField
-                        label="Bio"
-                        name="bio"
-                        value={formData.bio}
-                        onChange={handleChange}
-                        fullWidth
-                        multiline
-                        rows={3}
-                        variant="outlined"
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                borderRadius: 1.5,
-                                "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
-                                "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
-                            },
-                            "& .MuiInputLabel-root": { color: "grey.600" },
-                        }}
-                    />
+                <Stack spacing={2.5}>
+                    {isStudent ? (
+                        <>
+                            <TextField
+                                label="First Name"
+                                name="firstName"
+                                value={formData.firstName}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                size="small"
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 1.5,
+                                        "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
+                                        "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
+                                    },
+                                    "& .MuiInputLabel-root": { color: "grey.600" },
+                                }}
+                            />
+                            <TextField
+                                label="Last Name"
+                                name="lastName"
+                                value={formData.lastName}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                size="small"
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 1.5,
+                                        "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
+                                        "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
+                                    },
+                                    "& .MuiInputLabel-root": { color: "grey.600" },
+                                }}
+                            />
+                            <TextField
+                                label="Bio"
+                                name="bio"
+                                value={formData.bio}
+                                onChange={handleChange}
+                                fullWidth
+                                multiline
+                                rows={3}
+                                variant="outlined"
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 1.5,
+                                        "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
+                                        "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
+                                    },
+                                    "& .MuiInputLabel-root": { color: "grey.600" },
+                                }}
+                            />
+                            <TextField
+                                label="Interest"
+                                name="interest"
+                                value={formData.interest}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                size="small"
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 1.5,
+                                        "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
+                                        "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
+                                    },
+                                    "& .MuiInputLabel-root": { color: "grey.600" },
+                                }}
+                            />
+                        </>
+                    ) : (
+                        <>
+                            <TextField
+                                label="Institution Name"
+                                name="institutionName"
+                                value={formData.institutionName}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                size="small"
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 1.5,
+                                        "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
+                                        "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
+                                    },
+                                    "& .MuiInputLabel-root": { color: "grey.600" },
+                                }}
+                            />
+                            <TextField
+                                label="Bio"
+                                name="bio"
+                                value={formData.bio}
+                                onChange={handleChange}
+                                fullWidth
+                                multiline
+                                rows={3}
+                                variant="outlined"
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 1.5,
+                                        "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
+                                        "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
+                                    },
+                                    "& .MuiInputLabel-root": { color: "grey.600" },
+                                }}
+                            />
+                            <TextField
+                                label="Contact Email"
+                                name="contactEmail"
+                                value={formData.contactEmail}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                size="small"
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 1.5,
+                                        "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
+                                        "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
+                                    },
+                                    "& .MuiInputLabel-root": { color: "grey.600" },
+                                }}
+                            />
+                            <TextField
+                                label="Contact Phone"
+                                name="contactPhone"
+                                value={formData.contactPhone}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                size="small"
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 1.5,
+                                        "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
+                                        "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
+                                    },
+                                    "& .MuiInputLabel-root": { color: "grey.600" },
+                                }}
+                            />
+                        </>
+                    )}
+
+                    {/* Common Fields */}
                     <TextField
                         label="Location"
                         name="location"
@@ -147,19 +288,146 @@ const EditProfileModal = ({ open, handleClose, user, handleSave }) => {
                             "& .MuiInputLabel-root": { color: "grey.600" },
                         }}
                     />
+                    <TextField
+                        label="Website"
+                        name={isStudent ? "website" : "websiteURL"}
+                        value={isStudent ? formData.website : formData.websiteURL}
+                        onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        sx={{
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: 1.5,
+                                "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
+                                "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
+                            },
+                            "& .MuiInputLabel-root": { color: "grey.600" },
+                        }}
+                    />
+                    {isStudent && (
+                        <TextField
+                            label="Phone Number"
+                            name="phoneNumber"
+                            value={formData.phoneNumber}
+                            onChange={handleChange}
+                            fullWidth
+                            variant="outlined"
+                            size="small"
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: 1.5,
+                                    "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
+                                    "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
+                                },
+                                "& .MuiInputLabel-root": { color: "grey.600" },
+                            }}
+                        />
+                    )}
+
+                    {/* Social Links/Handles */}
+                    <TextField
+                        label="Twitter"
+                        name={isStudent ? "socialLinks.twitter" : "socialLinks.twitter"}
+                        value={isStudent ? formData.socialLinks.twitter : formData.socialLinks.twitter}
+                        onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        sx={{
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: 1.5,
+                                "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
+                                "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
+                            },
+                            "& .MuiInputLabel-root": { color: "grey.600" },
+                        }}
+                    />
+                    <TextField
+                        label="Instagram"
+                        name={isStudent ? "socialLinks.instagram" : "socialLinks.instagram"}
+                        value={isStudent ? formData.socialLinks.instagram : formData.socialLinks.instagram}
+                        onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        sx={{
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: 1.5,
+                                "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
+                                "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
+                            },
+                            "& .MuiInputLabel-root": { color: "grey.600" },
+                        }}
+                    />
+                    <TextField
+                        label="LinkedIn"
+                        name={isStudent ? "socialLinks.linkedin" : "socialLinks.linkedin"}
+                        value={isStudent ? formData.socialLinks.linkedin : formData.socialLinks.linkedin}
+                        onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        sx={{
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: 1.5,
+                                "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
+                                "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
+                            },
+                            "& .MuiInputLabel-root": { color: "grey.600" },
+                        }}
+                    />
+                    <TextField
+                        label="Facebook"
+                        name={isStudent ? "socialLinks.facebook" : "socialLinks.facebook"}
+                        value={isStudent ? formData.socialLinks.facebook : formData.socialLinks.facebook}
+                        onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        sx={{
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: 1.5,
+                                "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
+                                "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
+                            },
+                            "& .MuiInputLabel-root": { color: "grey.600" },
+                        }}
+                    />
+                    {!isStudent && (
+                        <TextField
+                            label="YouTube"
+                            name="socialLinks.youtube"
+                            value={formData.socialLinks.youtube}
+                            onChange={handleChange}
+                            fullWidth
+                            variant="outlined"
+                            size="small"
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: 1.5,
+                                    "&:hover fieldset": { borderColor: APP_COLORS.primary[500] },
+                                    "&.Mui-focused fieldset": { borderColor: APP_COLORS.primary[700] },
+                                },
+                                "& .MuiInputLabel-root": { color: "grey.600" },
+                            }}
+                        />
+                    )}
                 </Stack>
 
                 {/* Save Button */}
                 <Button
                     variant="contained"
                     fullWidth
+                    loading={isCollegePending | isStudentPending}
                     sx={{
-                        mt: 4, // More space before button
-                        py: 1.2, // Taller button
+                        mt: 4,
+                        py: 1.2,
                         bgcolor: APP_COLORS.primary[500],
-                        borderRadius: 1.5,
-                        textTransform: "none", // Avoid uppercase for modern look
-                        fontWeight: 500,
+                        borderRadius: 4,
+                        textTransform: "none",
+                        fontWeight: 300,
+                        width: 100,
                         "&:hover": {
                             bgcolor: APP_COLORS.primary[700],
                             boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
@@ -169,6 +437,7 @@ const EditProfileModal = ({ open, handleClose, user, handleSave }) => {
                         },
                         transition: "background-color 0.3s ease, box-shadow 0.2s ease",
                     }}
+
                     onClick={() => handleSave(formData)}
                 >
                     Save Changes

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import StudentModel from "../database/models/student.model.js";
+import { ObjectId } from "mongodb";
 
 class StudentService {
   static instance = null;
@@ -75,6 +76,13 @@ class StudentService {
   async checkUserExist(key, value) {
     const exists = await StudentModel.exists({ [key]: value });
     return !!exists;
+  }
+  async updateStudentStatus(studentId, updateData) {
+    return await StudentModel.findOneAndUpdate(
+      { _id: new ObjectId(studentId) },
+      { $set: updateData },
+      { new: true } // Return updated document
+    );
   }
 }
 

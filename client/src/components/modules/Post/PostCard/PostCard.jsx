@@ -121,7 +121,7 @@ const PostCard = () => {
                   />
                   <Box>
                     <Typography sx={{ fontWeight: "bold", color: "grey.900" }}>
-                      {post?.user?.firstName} {post?.user?.lastName}
+                      {post?.user?.firstName || post?.user?.institutionName} {post?.user?.lastName}
                     </Typography>
                     <Typography sx={{ color: "grey.600", fontSize: 14 }}>
                       {post?.user?.position} • {timeAgo(post?.createdAt)}

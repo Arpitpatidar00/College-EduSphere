@@ -13,7 +13,7 @@ const Comment = ({ comment }) => {
         <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
             <Avatar src={transformImagePath(comment.user.profilePicture)} sx={{ width: 30, height: 30 }} />
             <Box sx={{ ml: 2, flex: 1 }}>
-                <Typography sx={{ fontWeight: "bold", fontSize: "14px" }}>{comment.user.firstName} {comment.user.lastName}</Typography>
+                <Typography sx={{ fontWeight: "bold", fontSize: "14px" }}>{comment.user.firstName || comment.user.institutionName} {comment.user.lastName}</Typography>
                 <Typography sx={{ fontSize: "14px" }}>{comment.comment}</Typography>
                 <Typography sx={{ fontSize: "12px", color: APP_COLORS.secondary[100] }}>{timeAgo(comment.createdAt)} • {comment.likes} likes • Reply</Typography>
             </Box>

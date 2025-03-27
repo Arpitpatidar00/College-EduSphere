@@ -12,24 +12,26 @@ import PostAddIcon from "@mui/icons-material/PostAdd";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import ROUTES from "../../../Global/Routes/CommonRoutes";
 
 export const navigationItems = [
   {
     id: "home",
     icon: HomeIcon,
     label: "Home",
-    path: "/admin",
+    path: ROUTES.ADMIN.INDEX,
   },
   {
     id: "location",
     icon: LocationCityIcon,
     label: "Location",
     subItems: [
-      { id: "city", label: "City", path: "/admin/location/city" },
-      { id: "state", label: "State", path: "/admin/location/state" },
-      { id: "country", label: "Country", path: "/admin/location/country" },
+      { id: "country", label: "Country", path: ROUTES.ADMIN.LOCATION.COUNTRY },
+      { id: "state", label: "State", path: ROUTES.ADMIN.LOCATION.STATE },
+      { id: "city", label: "City", path: ROUTES.ADMIN.LOCATION.CITY },
     ],
   },
+
   {
     id: "college",
     icon: SchoolIcon,

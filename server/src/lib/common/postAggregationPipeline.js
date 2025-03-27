@@ -1,57 +1,40 @@
-// utils/postAggregationPipeline.js
-
-/**
- * Generates an aggregation pipeline for posts with user, likes, and comments
- * @param {Object} matchQuery - Initial match conditions (e.g., userId filter)
- * @returns {Array} Aggregation pipeline stages
- */
 function generatePostAggregationPipeline(matchQuery = {}) {
   return [
     { $match: matchQuery },
-    // Lookup for User (post creator)
+    // Lookup for both Student and College users
     {
       $lookup: {
-        from: "studentmodels",
+        from: "students",
         localField: "userId",
         foreignField: "_id",
         as: "studentUser",
       },
     },
     {
-      $unwind: {
-        path: "$studentUser",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-
-    // Lookup for College User
-    {
       $lookup: {
-        from: "collegemodels",
+        from: "colleges",
         localField: "userId",
         foreignField: "_id",
         as: "collegeUser",
       },
     },
-    {
-      $unwind: {
-        path: "$collegeUser",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-
+    // Combine user data based on which lookup found a match
     {
       $addFields: {
         user: {
           $cond: {
-            if: { $ne: ["$studentUser", {}] },
-            then: "$studentUser",
-            else: "$collegeUser",
+            if: { $gt: [{ $size: "$studentUser" }, 0] },
+            then: { $arrayElemAt: ["$studentUser", 0] },
+            else: { $arrayElemAt: ["$collegeUser", 0] },
           },
         },
       },
     },
-    // Lookup for Likes
+    // Clean up temporary fields
+    {
+      $unset: ["studentUser", "collegeUser"],
+    },
+    // Lookup for likes
     {
       $lookup: {
         from: "likes",
@@ -66,7 +49,7 @@ function generatePostAggregationPipeline(matchQuery = {}) {
         preserveNullAndEmptyArrays: true,
       },
     },
-
+    // Lookup for comments
     {
       $lookup: {
         from: "comments",
@@ -83,17 +66,33 @@ function generatePostAggregationPipeline(matchQuery = {}) {
     },
     {
       $lookup: {
-        from: "studentmodels",
+        from: "students",
         localField: "comments.userId",
         foreignField: "_id",
-        as: "comments.user",
+        as: "comments.studentUser",
       },
     },
     {
-      $unwind: {
-        path: "$comments.user",
-        preserveNullAndEmptyArrays: true,
+      $lookup: {
+        from: "colleges",
+        localField: "comments.userId",
+        foreignField: "_id",
+        as: "comments.collegeUser",
       },
+    },
+    {
+      $addFields: {
+        "comments.user": {
+          $cond: {
+            if: { $gt: [{ $size: "$comments.studentUser" }, 0] },
+            then: { $arrayElemAt: ["$comments.studentUser", 0] },
+            else: { $arrayElemAt: ["$comments.collegeUser", 0] },
+          },
+        },
+      },
+    },
+    {
+      $unset: ["comments.studentUser", "comments.collegeUser"],
     },
     // Group to reconstruct the document
     {
@@ -176,6 +175,7 @@ function generatePostAggregationPipeline(matchQuery = {}) {
         "user._id": 1,
         "user.firstName": 1,
         "user.lastName": 1,
+        "user.institutionName": 1,
         "user.email": 1,
         "user.profilePicture": 1,
         "user.collegeId": 1,

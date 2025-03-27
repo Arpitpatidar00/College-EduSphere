@@ -7,11 +7,14 @@ export const apiEndPoints = {
   collegeSignup: "/auth/college/signup",
   collegeLogin: "/auth/college/login",
   getAllCollege: "/college/get-all-colleges",
+  updateCollege: "/college/update",
 
   //@student
   studentLogin: "/auth/student/login",
   studentSignup: "/auth/student/signup",
   getAllStudents: "/student/get-all-students",
+  updateStudent: "/student/update",
+  updateStudentStatus: "/student/toggle-field",
 
   //@location - Countries
   getAllCountries: "/location/get-all-counties",

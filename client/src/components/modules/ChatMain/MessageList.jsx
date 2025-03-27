@@ -72,7 +72,7 @@ const MessageList = ({ sx, onSelectConversation, ...props }) => {
                     onClick={() => onSelectConversation(user)}
                 >
                     <Box sx={{ position: "relative" }}>
-                        <Avatar src={transformImagePath(user?.profilePicture)} alt={user?.firstName} />
+                        <Avatar src={transformImagePath(user?.profilePicture)} alt={user?.firstName || user.institutionName} />
                         <Box
                             sx={{
                                 position: "absolute",
@@ -88,7 +88,7 @@ const MessageList = ({ sx, onSelectConversation, ...props }) => {
                     </Box>
                     <Box>
                         <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                            {user.username || `${user.firstName} ${user.lastName || ""}`}
+                            {user.username || user.institutionName || `${user.firstName || user.institutionName} ${user.lastName || ""}`}
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
                             {user.message || "Start a conversation"}

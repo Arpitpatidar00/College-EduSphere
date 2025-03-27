@@ -10,11 +10,7 @@ const LikeSchema = new mongoose.Schema(
         index: true,
       },
     ],
-    userType: {
-      type: String,
-      enum: ["Student", "College"],
-      required: true,
-    },
+
     postId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Post",

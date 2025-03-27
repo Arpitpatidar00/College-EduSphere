@@ -72,7 +72,6 @@ const MessageSchema = new Schema(
       required: true,
       index: true,
     },
-    senderType: { type: String, enum: ["Student", "College"], required: true },
     messageType: {
       type: String,
       enum: ["text", "image", "video", "file"],

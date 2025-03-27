@@ -11,9 +11,9 @@ export async function getAllStatesController(req, res, next) {
 
     const matchQuery = {};
 
-    if (queryParams.searchTerm && typeof queryParams.searchTerm === "string") {
+    if (queryParams.search && typeof queryParams.search === "string") {
       matchQuery.$or = [
-        { name: { $regex: queryParams.searchTerm, $options: "i" } },
+        { name: { $regex: queryParams.search, $options: "i" } },
       ];
     }
 

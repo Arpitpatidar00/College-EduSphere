@@ -35,7 +35,6 @@ export function initializeSocket(io) {
     activeUsers.set(userId, socket.id);
     console.log(`🟢 Registered user: ${userId} -> ${socket.id}`);
 
-    // Notify all users that this user is online
     io.emit(SocketEvents.USER_STATUS, { userId, isOnline: true });
 
     socket.on(SocketEvents.DISCONNECT, () => {
@@ -51,18 +50,42 @@ export function initializeSocket(io) {
 
     socket.on(SocketEvents.JOIN_CHAT, ({ conversationIds }) => {
       if (!Array.isArray(conversationIds)) return;
-      conversationIds.forEach((id) => socket.join(id.toString()));
-      console.log(`📢 User ${userId} joined rooms: ${conversationIds}`);
+      conversationIds.forEach((id) => {
+        socket.join(id.toString());
+        console.log(`✅ User ${userId} joined room: ${id}`);
+      });
     });
 
     socket.on(SocketEvents.NEW_MESSAGE, ({ message, conversationId }) => {
-      if (!message || !conversationId) return;
-      console.log(`📩 New message in ${conversationId}: ${message.content}`);
+      if (!message || !conversationId) {
+        console.log("❌ Missing message or conversationId");
+        return;
+      }
+      console.log(
+        `📩 Backend received message in ${conversationId}: ${message.content}`
+      );
       io.to(conversationId).emit(SocketEvents.MESSAGE_RECEIVED, {
         message,
         conversationId,
       });
     });
+
+    // Added typing event handler for one-to-one communication
+    socket.on(SocketEvents.TYPING, ({ conversationId, userId }) => {
+      socket
+        .to(conversationId.toString())
+        .emit(SocketEvents.TYPING, { conversationId, userId });
+    });
+
+    // Added message read (seen) event handler
+    socket.on(
+      SocketEvents.MESSAGE_READ,
+      ({ messageId, conversationId, userId }) => {
+        socket
+          .to(conversationId.toString())
+          .emit(SocketEvents.MESSAGE_READ, { messageId, userId });
+      }
+    );
 
     // WebRTC call signals
     socket.on(SocketEvents.CALL_USER, ({ from, to, offer, type }) => {

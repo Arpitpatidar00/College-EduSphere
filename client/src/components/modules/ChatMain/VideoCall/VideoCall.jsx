@@ -41,10 +41,7 @@ const VideoCall = ({ localStreamRef, remoteStreamRef, onEndCall }) => {
                 }}
             />
 
-            <IconButton
-                onClick={onEndCall}
-                sx={{ marginTop: 2, backgroundColor: "red", color: "white" }}
-            >
+            <IconButton onClick={onEndCall} sx={{ marginTop: 2, backgroundColor: "red", color: "white" }}>
                 <CallEnd />
             </IconButton>
         </Box>

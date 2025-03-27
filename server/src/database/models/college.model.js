@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import { UserType } from "../../constants/enum.js";
 
 const collegeSchema = new mongoose.Schema(
   {
@@ -18,7 +19,7 @@ const collegeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    description: {
+    bio: {
       type: String,
       default: "",
     },
@@ -33,6 +34,10 @@ const collegeSchema = new mongoose.Schema(
     contactPhone: {
       type: String,
       default: "",
+    },
+    profilePicture: {
+      type: String,
+      required: false,
     },
     stateId: {
       type: String,
@@ -50,7 +55,7 @@ const collegeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    socialMediaHandles: {
+    socialLinks: {
       twitter: { type: String, default: "" },
       instagram: { type: String, default: "" },
       linkedin: { type: String, default: "" },
@@ -90,7 +95,8 @@ const collegeSchema = new mongoose.Schema(
     ],
     role: {
       type: String,
-      default: "COLLEGE",
+
+      default: UserType.COLLEGE,
     },
     verified: {
       type: Boolean,

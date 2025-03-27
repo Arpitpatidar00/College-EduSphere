@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useLocation, Link } from "wouter";
+import { useState } from 'react';
+import { useLocation, Link } from 'react-router-dom'; // Switch to react-router-dom
 import {
     Box,
     Drawer,
@@ -8,144 +8,194 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
-    Collapse,
     IconButton,
-    useTheme,
     styled,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
+    Collapse,
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import { navigationItems } from '../data/navigationData';
-import { useSelector } from 'react-redux';
-import { selectUserData } from '../../../../store/slices/auth.slice'
-
+import { APP_COLORS } from '../../../../enums/Colors';
 
 const DRAWER_WIDTH = 260;
+const COLLAPSED_WIDTH = 80;
 
 const StyledDrawer = styled(Drawer)(({ theme }) => ({
-    width: DRAWER_WIDTH,
     flexShrink: 0,
-    "& .MuiDrawer-paper": {
-        width: DRAWER_WIDTH,
-        boxSizing: "border-box",
-        backgroundColor: theme.palette.background.default,
-        borderRight: `1px solid ${theme.palette.divider}`,
-        top: "64px",
-        height: "calc(100vh - 64px)",
+    '& .MuiDrawer-paper': {
+        boxSizing: 'border-box',
+        backgroundColor: APP_COLORS.primary[900],
+        color: APP_COLORS.common.white,
+        borderRight: `1px solid ${APP_COLORS.grey[50]}`,
+        top: '64px',
+        height: 'calc(100vh - 64px)',
+        transition: theme.transitions.create(['width'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+        overflowX: 'hidden',
+        [theme.breakpoints.down('sm')]: {
+            top: 0,
+            height: '100vh',
+        },
     },
 }));
 
-const Logo = styled(Box)(({ theme }) => ({
-    padding: theme.spacing(2),
-    display: "flex",
-    alignItems: "center",
-    gap: theme.spacing(2),
-    borderBottom: `1px solid ${theme.palette.divider}`,
-}));
-
-export default function Sidebar() {
-    const userData = useSelector(selectUserData);
-
-    const [location] = useLocation();
+export default function Sidebar({ collapsed, onToggle }) {
+    const location = useLocation(); // Now from react-router-dom
     const [mobileOpen, setMobileOpen] = useState(false);
-    const [openMenus, setOpenMenus] = useState({});
+    const [openSubMenus, setOpenSubMenus] = useState({});
 
-    const theme = useTheme();
-
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
-    };
-
-    const toggleSubMenu = (id) => {
-        setOpenMenus((prevState) => ({
-            ...prevState,
-            [id]: !prevState[id],
+    const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
+    const handleSubMenuToggle = (id) => {
+        setOpenSubMenus((prev) => ({
+            ...prev,
+            [id]: !prev[id],
         }));
     };
 
-    const drawerContent = (
-        <>
-            <Logo>
-                <Box
-                    sx={{
-                        width: 40,
-                        backgroundColor: "primary.main",
-                        borderRadius: 1,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                ></Box>
-                <ListItemText primary="Admin Panel" sx={{ fontWeight: 600 }} />
-            </Logo>
-            <List>
-                {navigationItems.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = location === item.path;
+    const renderMenuItem = ({ id, label, icon: Icon, path, subItems }) => {
+        const isActive = location.pathname === path || (subItems && subItems.some(item => location.pathname === item.path));
+        const hasSubItems = subItems && subItems.length > 0;
 
-                    return (
-                        <Box key={item.id}>
-                            <ListItem disablePadding>
-                                <ListItemButton
-                                    component={item.subItems ? undefined : Link}
-                                    href={item.subItems ? undefined : item.path}
-                                    selected={isActive}
-                                    onClick={item.subItems ? () => toggleSubMenu(item.id) : undefined}
-                                    sx={{
-                                        borderRadius: 1,
-                                        mx: 1,
-                                        mb: 0.5,
-                                        "&.Mui-selected": {
-                                            backgroundColor: theme.palette.action.selected,
-                                        },
-                                    }}
-                                >
-                                    <ListItemIcon>
-                                        <Icon color={isActive ? "primary" : "inherit"} />
-                                    </ListItemIcon>
-                                    <ListItemText primary={item.label} />
-                                    {item.subItems &&
-                                        (openMenus[item.id] ? <ExpandLess /> : <ExpandMore />)}
-                                </ListItemButton>
-                            </ListItem>
-                            {item.subItems && (
-                                <Collapse in={openMenus[item.id]} timeout="auto" unmountOnExit>
-                                    <List component="div" disablePadding>
-                                        {item.subItems.map((subItem) => (
-                                            <ListItem key={subItem.id} disablePadding>
-                                                <ListItemButton
-                                                    component={Link}
-                                                    href={subItem.path}
-                                                    sx={{
-                                                        pl: 4,
-                                                        borderRadius: 1,
-                                                        mx: 1,
-                                                        mb: 0.5,
-                                                    }}
-                                                >
-                                                    <ListItemText primary={subItem.label} />
-                                                </ListItemButton>
-                                            </ListItem>
-                                        ))}
-                                    </List>
-                                </Collapse>
-                            )}
-                        </Box>
-                    );
-                })}
+        return (
+            <>
+                <ListItem key={id} disablePadding>
+                    <ListItemButton
+                        component={path && !hasSubItems ? Link : 'button'}
+                        to={path && !hasSubItems ? path : undefined} // Use "to" instead of "href"
+                        onClick={hasSubItems ? () => handleSubMenuToggle(id) : undefined}
+                        sx={{
+                            justifyContent: collapsed ? 'center' : 'flex-start',
+                            px: collapsed ? 2 : 3,
+                            py: 1.5,
+                            borderTopLeftRadius: '1000px',
+                            borderBottomLeftRadius: '1000px',
+                            color: isActive ? APP_COLORS.accent[400] : APP_COLORS.grey[100],
+                            backgroundColor: isActive ? APP_COLORS.accent[50] : 'transparent',
+                            '&:hover': {
+                                backgroundColor: APP_COLORS.primary[600],
+                                color: APP_COLORS.accent[300],
+                            },
+                            minHeight: 48,
+                            transition: 'all 0.2s ease-in-out',
+                        }}
+                    >
+                        <ListItemIcon
+                            sx={{
+                                color: isActive ? APP_COLORS.accent[600] : APP_COLORS.grey[300],
+                                minWidth: collapsed ? 'unset' : 56,
+                                mr: collapsed ? 0 : 2,
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <Icon />
+                        </ListItemIcon>
+                        {!collapsed && (
+                            <ListItemText
+                                primary={label}
+                                sx={{
+                                    opacity: collapsed ? 0 : 1,
+                                    '& .MuiTypography-root': {
+                                        fontWeight: isActive ? 600 : 400,
+                                    },
+                                }}
+                            />
+                        )}
+                        {!collapsed && hasSubItems && (
+                            openSubMenus[id] ? <ExpandLess /> : <ExpandMore />
+                        )}
+                    </ListItemButton>
+                </ListItem>
+                {hasSubItems && !collapsed && (
+                    <Collapse in={openSubMenus[id]} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding>
+                            {subItems.map((subItem) => (
+                                <ListItem key={subItem.id} disablePadding>
+                                    <ListItemButton
+                                        component={Link}
+                                        to={subItem.path} // Use "to" instead of "href"
+                                        sx={{
+                                            pl: 6,
+                                            py: 1,
+                                            color: location.pathname === subItem.path ? APP_COLORS.accent[400] : APP_COLORS.grey[200],
+                                            backgroundColor: location.pathname === subItem.path ? APP_COLORS.primary[700] : 'transparent',
+                                            '&:hover': {
+                                                backgroundColor: APP_COLORS.primary[500],
+                                                color: APP_COLORS.accent[300],
+                                            },
+                                        }}
+                                    >
+                                        <ListItemText
+                                            primary={subItem.label}
+                                            sx={{
+                                                '& .MuiTypography-root': {
+                                                    fontSize: '0.9rem',
+                                                },
+                                            }}
+                                        />
+                                    </ListItemButton>
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Collapse>
+                )}
+            </>
+        );
+    };
+
+    const drawerContent = (
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+                bgcolor: APP_COLORS.primary[900],
+            }}
+        >
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    py: 2,
+                }}
+            >
+                <IconButton
+                    onClick={onToggle}
+                    sx={{
+                        color: APP_COLORS.accent[400],
+                        display: { xs: 'none', sm: 'block' },
+                    }}
+                >
+                    {collapsed ? '→' : '←'}
+                </IconButton>
+            </Box>
+
+            <List sx={{ flexGrow: 1 }}>
+                {navigationItems.map((item) => renderMenuItem(item))}
             </List>
-        </>
+        </Box>
     );
 
     return (
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: 'flex' }}>
             <IconButton
-                color="inherit"
                 aria-label="open drawer"
                 edge="start"
                 onClick={handleDrawerToggle}
-                sx={{ mr: 2, display: { sm: "none" } }}
+                sx={{
+                    display: { sm: 'none' },
+                    position: 'fixed',
+                    top: 16,
+                    left: 16,
+                    zIndex: 1300,
+                    color: APP_COLORS.accent[400],
+                    bgcolor: APP_COLORS.primary[800],
+                    '&:hover': {
+                        bgcolor: APP_COLORS.primary[700],
+                    },
+                }}
             >
                 <MenuIcon />
             </IconButton>
@@ -156,24 +206,25 @@ export default function Sidebar() {
                 onClose={handleDrawerToggle}
                 ModalProps={{ keepMounted: true }}
                 sx={{
-                    display: { xs: "block", sm: "none" },
-                    "& .MuiDrawer-paper": {
+                    display: { xs: 'block', sm: 'none' },
+                    '& .MuiDrawer-paper': {
                         width: DRAWER_WIDTH,
-                        top: "64px",
-                        height: "calc(100vh - 64px)",
+                        backgroundColor: APP_COLORS.primary[900],
                     },
                 }}
             >
                 {drawerContent}
             </Drawer>
 
-            {/* Desktop Sidebar */}
             <StyledDrawer
                 variant="permanent"
-                open
                 sx={{
-                    display: { xs: "none", sm: "block" },
+                    display: { xs: 'none', sm: 'block' },
+                    '& .MuiDrawer-paper': {
+                        width: collapsed ? COLLAPSED_WIDTH : DRAWER_WIDTH,
+                    },
                 }}
+                open
             >
                 {drawerContent}
             </StyledDrawer>

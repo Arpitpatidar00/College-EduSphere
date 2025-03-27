@@ -28,7 +28,7 @@ const ProjectCard = ({ post, handleOpenModal }) => {
     };
 
     const isLikedByUser = Array.isArray(post?.likes?.user) && post.likes.user.includes(userData._id);
-    const isLiked = likedPosts[post._id] ?? isLikedByUser;
+    const isLiked = likedPosts[post?._id] ?? isLikedByUser;
     const likeCount = Array.isArray(post.likes?.user) ? post.likes.user.length : 0;
 
     const handleLikeClick = async (e) => {
@@ -64,7 +64,7 @@ const ProjectCard = ({ post, handleOpenModal }) => {
             }}>
                 <Avatar
                     src={post?.user?.profilePicture || "https://via.placeholder.com/40"}
-                    alt={post?.user?.firstName || "User"}
+                    alt={post?.user?.firstName || post?.user?.institutionName}
                     sx={{ width: 30, height: 30 }}
                 />
                 <Typography variant="body2" sx={{ fontWeight: 600, color: 'white' }}>

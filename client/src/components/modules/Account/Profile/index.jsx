@@ -16,7 +16,7 @@ const Profile = () => {
     });
 
     const { data: postData } = useGetAllPosts(
-        { page: postPagination.page, limit: postPagination.pageSize, userId: userDate._id },
+        { page: postPagination.page, limit: postPagination.pageSize, userId: userDate?._id },
         { data: [], totalCount: 0 }
     );
 

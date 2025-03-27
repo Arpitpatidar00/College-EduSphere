@@ -9,9 +9,9 @@ export async function getAllCitiesController(req, res, next) {
     const queryParams = req.query;
     const matchQuery = {};
 
-    if (queryParams.searchTerm && typeof queryParams.searchTerm === "string") {
+    if (queryParams.search && typeof queryParams.search === "string") {
       matchQuery.$or = [
-        { name: { $regex: queryParams.searchTerm, $options: "i" } },
+        { name: { $regex: queryParams.search, $options: "i" } },
       ];
     }
 

@@ -8,8 +8,11 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@utils": path.resolve(__dirname, "src/utils"),
-      "@components": path.resolve(__dirname, "src/components"),
+      "@": path.resolve(__dirname, "src"), // Set @ to point to the src directory
+      "@components": path.resolve(__dirname, "src/components"), // Alias for components
+      "@pages": path.resolve(__dirname, "src/pages"), // Alias for pages
+      "@utils": path.resolve(__dirname, "src/utils"), // Alias for utilities
+      "@services": path.resolve(__dirname, "src/services"), // Alias for API services
     },
   },
   server: {

@@ -38,7 +38,7 @@ function UserProfile({ toggleTheme }) {
 
                     <Avatar
                         src={user?.profilePicture ? transformImagePath(user.profilePicture) : "https://via.placeholder.com/150"}
-                        alt={`${user?.firstName ?? "User"} ${user?.lastName ?? ""}`}
+                        alt={`${user?.firstName || user.institutionName} ${user?.lastName ?? ""}`}
                         sx={{ width: 100, height: 100, marginRight: 2 }}
                         imgProps={{
                             style: {

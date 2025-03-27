@@ -13,7 +13,7 @@ const PostActions = ({ post }) => {
 
     // Check if the current user has liked this post
     const isLikedByUser = Array.isArray(post.likes?.user) && post.likes.user.includes(userData._id);
-    const isLiked = likedPosts[post._id] ?? isLikedByUser;
+    const isLiked = likedPosts[post?._id] ?? isLikedByUser;
     const likeCount = Array.isArray(post.likes?.user) ? post.likes.user.length : 0;
 
     // Handle Like Click

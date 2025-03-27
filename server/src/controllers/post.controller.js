@@ -7,7 +7,7 @@ import { generatePostAggregationPipeline } from "../lib/common/postAggregationPi
 export async function createPostController(req, res, next) {
   try {
     var postData = req.body;
-    const userId = req.user;
+    const userId = req.user._id;
 
     if (req.files && req.files.coverImage) {
       postData.coverImage = req.files.coverImage[0].path;

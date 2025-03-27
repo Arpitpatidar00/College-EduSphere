@@ -14,12 +14,12 @@ export const loginThunk = createAsyncThunk(
 
       const endpoint = endpointMapping[role];
 
-      const user = await LoginApi({ email, password }, endpoint);
+      const result = await LoginApi({ email, password }, endpoint);
 
-      if (!user) {
+      if (!result) {
         throw new Error("Login failed!");
       }
-      return user;
+      return result;
     } catch (error) {
       return rejectWithValue(error?.message);
     }
@@ -39,12 +39,12 @@ export const signupThunk = createAsyncThunk(
 
       const endpoint = endpointMapping[role] || "studentSignup";
 
-      const user = await SignupApi({ ...additionalData }, endpoint);
+      const result = await SignupApi({ ...additionalData }, endpoint);
 
-      if (!user) {
+      if (!result) {
         throw new Error("Signup failed!");
       }
-      return user;
+      return result;
     } catch (error) {
       return rejectWithValue(error?.message);
     }

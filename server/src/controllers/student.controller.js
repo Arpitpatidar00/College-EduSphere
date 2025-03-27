@@ -1,12 +1,13 @@
 import StudentService from "../services/student.service.js";
 import { OK, BAD } from "../lib/responseHelper.js";
 import { generateAggregationPipeline } from "../utils/generatePipeline.js";
+import { ObjectId } from "mongodb";
 import { mongoose } from "mongoose";
 
 export async function updateStudentController(req, res, next) {
   try {
-    // const userId = req.user._id; // Assumes user is authenticated
     const updateData = { ...req.body };
+    const studentId = req.user._id;
 
     // Handle file upload (e.g., profile picture)
     if (req.files?.profilePicture) {
@@ -29,9 +30,8 @@ export async function updateStudentController(req, res, next) {
       "socialLinks.facebook",
       "privacySettings.visibility",
     ];
-    const newuserId = new mongoose.Types.ObjectId(updateData.userId);
     // Fetch the existing user
-    const existingStudent = await StudentService.findOne(newuserId);
+    const existingStudent = await StudentService.findOne(studentId);
     if (!existingStudent) {
       return BAD(res, null, "Student not found.");
     }
@@ -55,14 +55,14 @@ export async function updateStudentController(req, res, next) {
 
     // Update the student via service
     const updatedStudent = await StudentService.updateUser(
-      newuserId,
+      studentId,
       mergedUpdateData
     );
     if (!updatedStudent) {
       return BAD(res, null, "Failed to update student.");
     }
 
-    return OK(res, updatedStudent, "Profile updated successfully.");
+    return OK(res, { user: updatedStudent }, "Profile updated successfully.");
   } catch (error) {
     next(error);
   }
@@ -125,36 +125,85 @@ function mergeUserData(existingUser, updateData) {
 export async function getAllStudentsController(req, res, next) {
   try {
     const queryParams = req.query;
+
     const matchQuery = {};
 
-    // if (queryParams.searchTerm && typeof queryParams.searchTerm === "string") {
-    //   matchQuery.$or = [
-    //     { name: { $regex: queryParams.searchTerm, $options: "i" } },
-    //     { email: { $regex: queryParams.searchTerm, $options: "i" } },
-    //   ];
-    // }
+    // 🔹 Search Query
+    if (queryParams.search) {
+      matchQuery.$or = [
+        { name: { $regex: queryParams.search, $options: "i" } },
+        { email: { $regex: queryParams.search, $options: "i" } },
+      ];
+    }
 
-    // if (queryParams?.studentId) {
-    //   try {
-    //     matchQuery.studentId = new ObjectId(queryParams.studentId);
-    //   } catch (error) {
-    //     return BAD(res, null, "Invalid studentId format", error);
-    //   }
-    // }
+    // 🔹 Convert String IDs to ObjectId Safely
+    try {
+      if (queryParams.studentId)
+        matchQuery.studentId = new ObjectId(queryParams.studentId);
+      if (queryParams.collegeId)
+        matchQuery.collegeId = new ObjectId(queryParams.collegeId);
+    } catch (error) {
+      return BAD(res, null, "Invalid ID format", error);
+    }
 
-    // if (queryParams?.collegeId) {
-    //   try {
-    //     matchQuery.collegeId = new ObjectId(queryParams.collegeId);
-    //   } catch (error) {
-    //     return BAD(res, null, "Invalid collegeId format", error);
-    //   }
-    // }
+    if (queryParams.isActive) {
+      matchQuery.isActive = queryParams.isActive === "true"; // Convert string to boolean
+    }
+    if (queryParams.collegeVerified) {
+      matchQuery.collegeVerified = queryParams.collegeVerified === "true"; // Convert string to boolean
+    }
+    if (queryParams.verified) {
+      matchQuery.verified = queryParams.verified === "true"; // Convert string to boolean
+    }
 
-    let pipeline = [{ $match: matchQuery }];
-    pipeline = generateAggregationPipeline(queryParams, pipeline, "updatedAt");
+    // 🔹 Generate Aggregation Pipeline
+    const pipeline = generateAggregationPipeline(
+      req.query,
+      [{ $match: matchQuery }],
+      "updatedAt"
+    );
 
+    // 🔹 Fetch Students
     const [students] = await StudentService.findAll(pipeline);
+
     return OK(res, students, "Students retrieved successfully.");
+  } catch (error) {
+    next(error);
+  }
+}
+export async function toggleStudentField(req, res, next) {
+  try {
+    const { _id } = req.params;
+    const { field } = req.body;
+    const studentIdModified = new mongoose.Types.ObjectId(_id);
+
+    if (!field) {
+      return BAD(res, null, "Field to toggle is required");
+    }
+
+    // Find the student
+    const student = await StudentService.findOne(studentIdModified);
+
+    if (!student || student[field] === undefined) {
+      return BAD(res, null, `Field '${field}' not found for student`);
+    }
+
+    // Toggle the specified field
+    const newStatus = !student[field];
+
+    // Update the student's field
+    const updatedStudent = await StudentService.updateStudentStatus(
+      studentIdModified,
+      {
+        [field]: newStatus,
+      }
+    );
+
+    if (!updatedStudent) {
+      return BAD(res, null, `Failed to update student ${field} status`);
+    }
+
+    return OK(res, updatedStudent, `Student ${field} set to ${newStatus}`);
   } catch (error) {
     next(error);
   }

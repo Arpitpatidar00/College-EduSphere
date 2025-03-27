@@ -7,6 +7,7 @@ import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList";
 import MessageInput from "./MessageInput";
 import VideoCall from "../VideoCall/VideoCall.jsx";
+import ringtone from "/assets/alarme_motiva_o.mp3"; // Ensure correct path
 
 const Chat = ({ conversationUser }) => {
     const user = useSelector(selectUserData);
@@ -16,30 +17,28 @@ const Chat = ({ conversationUser }) => {
     const localStreamRef = useRef(null);
     const remoteStreamRef = useRef(null);
     const peerConnectionRef = useRef(null);
+    const ringtoneRef = useRef(new Audio(ringtone));
 
     const [socketService, setSocketService] = useState(null);
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [isInCall, setIsInCall] = useState(false);
     const [callRequest, setCallRequest] = useState(null);
+    const [callType, setCallType] = useState("video");
 
     useEffect(() => {
         if (!userId || !conversationUser?._id) return;
 
-        // 1) Create & store the socket service
         const socket = createSocketService(userId);
         setSocketService(socket);
-
-        // 2) Join the chat room
         socket.joinChat([conversationUser._id]);
 
-        // 3) Listen for new incoming messages
-        socket.socket.on(SocketEvents.NEW_MESSAGE, ({ message }) => {
+        socket.socket.on(SocketEvents.MESSAGE_RECEIVED, ({ message }) => {
+            console.log('message: ', message);
             setMessages((prev) => [...prev, message]);
             scrollToBottom();
         });
 
-        // 4) Handle incoming WebRTC signals (Offer, Answer, ICE, etc.)
         socket.socket.on(SocketEvents.OFFER, handleIncomingOffer);
         socket.socket.on(SocketEvents.ANSWER, handleIncomingAnswer);
         socket.socket.on(SocketEvents.ICE_CANDIDATE, handleIncomingIceCandidate);
@@ -47,30 +46,20 @@ const Chat = ({ conversationUser }) => {
         socket.socket.on(SocketEvents.CALL_ENDED, handleCallEnded);
 
         return () => {
-            // Clean up listeners on unmount
-            socket.socket.off(SocketEvents.NEW_MESSAGE);
-            socket.socket.off(SocketEvents.OFFER);
-            socket.socket.off(SocketEvents.ANSWER);
-            socket.socket.off(SocketEvents.ICE_CANDIDATE);
-            socket.socket.off(SocketEvents.CALL_REJECTED);
-            socket.socket.off(SocketEvents.CALL_ENDED);
             socket.disconnect();
         };
     }, [userId, conversationUser._id]);
 
-    // ─────────────────────────────────────────────────────────────────────────────
-    // WebRTC Handlers
-    // ─────────────────────────────────────────────────────────────────────────────
-
     const handleIncomingOffer = ({ from, offer, type }) => {
-        // Another user is calling us
         if (from !== userId) {
             setCallRequest({ from, offer, type });
+            setCallType(type);
+            ringtoneRef.current.play();
+            ringtoneRef.current.loop = true;
         }
     };
 
     const handleIncomingAnswer = async ({ answer }) => {
-        // Our call partner accepted and sent an Answer
         if (peerConnectionRef.current) {
             await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(answer));
         }
@@ -78,45 +67,32 @@ const Chat = ({ conversationUser }) => {
 
     const handleIncomingIceCandidate = async ({ candidate }) => {
         if (candidate && peerConnectionRef.current) {
-            try {
-                await peerConnectionRef.current.addIceCandidate(new RTCIceCandidate(candidate));
-            } catch (error) {
-                console.error("Error adding ICE Candidate:", error);
-            }
+            await peerConnectionRef.current.addIceCandidate(new RTCIceCandidate(candidate));
         }
     };
 
     const handleCallRejected = () => {
-        // Our call request was rejected
+        stopRingtone();
         resetCallState();
     };
 
     const handleCallEnded = () => {
-        // The other user ended the call
+        stopRingtone();
         resetCallState();
     };
 
-    const startCall = async () => {
+    const startCall = async (type = "video") => {
         if (!socketService) return;
         setIsInCall(true);
+        setCallType(type);
 
         try {
-            // 1) Create the PeerConnection
             createPeerConnection();
+            const stream = await getMediaStream(type);
+            if (localStreamRef.current) localStreamRef.current.srcObject = stream;
 
-            // 2) Get local media (audio/video)
-            const stream = await getMediaStream();
-            // Show your own camera locally
-            if (localStreamRef.current) {
-                localStreamRef.current.srcObject = stream;
-            }
+            stream.getTracks().forEach((track) => peerConnectionRef.current.addTrack(track, stream));
 
-            // 3) Add your local tracks to the PeerConnection
-            stream.getTracks().forEach((track) =>
-                peerConnectionRef.current.addTrack(track, stream)
-            );
-
-            // 4) Create & send Offer
             const offer = await peerConnectionRef.current.createOffer();
             await peerConnectionRef.current.setLocalDescription(offer);
 
@@ -124,7 +100,7 @@ const Chat = ({ conversationUser }) => {
                 from: userId,
                 to: conversationUser._id,
                 offer,
-                type: "video",
+                type,
             });
         } catch (error) {
             console.error("Error starting call:", error);
@@ -135,28 +111,17 @@ const Chat = ({ conversationUser }) => {
     const acceptCall = async () => {
         if (!socketService || !callRequest) return;
         setIsInCall(true);
+        stopRingtone();
 
         try {
-            // 1) Create the PeerConnection
             createPeerConnection();
+            const stream = await getMediaStream(callRequest.type);
+            if (localStreamRef.current) localStreamRef.current.srcObject = stream;
 
-            // 2) Get local media
-            const stream = await getMediaStream();
-            if (localStreamRef.current) {
-                localStreamRef.current.srcObject = stream;
-            }
+            stream.getTracks().forEach((track) => peerConnectionRef.current.addTrack(track, stream));
 
-            // 3) Add your local tracks to the PeerConnection
-            stream.getTracks().forEach((track) =>
-                peerConnectionRef.current.addTrack(track, stream)
-            );
+            await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(callRequest.offer));
 
-            // 4) Set remote description from the Offer we received
-            await peerConnectionRef.current.setRemoteDescription(
-                new RTCSessionDescription(callRequest.offer)
-            );
-
-            // 5) Create & send Answer
             const answer = await peerConnectionRef.current.createAnswer();
             await peerConnectionRef.current.setLocalDescription(answer);
 
@@ -168,21 +133,16 @@ const Chat = ({ conversationUser }) => {
             console.error("Error accepting call:", error);
             resetCallState();
         } finally {
-            // Clear the incoming call request
             setCallRequest(null);
         }
     };
 
-    /**
-     * Create/Initialize the RTCPeerConnection & attach its event handlers
-     */
     const createPeerConnection = () => {
         if (!socketService) return;
         peerConnectionRef.current = new RTCPeerConnection({
             iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
         });
 
-        // 1) Send ICE candidates to the other peer
         peerConnectionRef.current.onicecandidate = (event) => {
             if (event.candidate) {
                 socketService.socket.emit(SocketEvents.ICE_CANDIDATE, {
@@ -192,7 +152,6 @@ const Chat = ({ conversationUser }) => {
             }
         };
 
-        // 2) Receive remote tracks (this is how we get the other person's video)
         peerConnectionRef.current.ontrack = (event) => {
             if (event.streams.length > 0 && remoteStreamRef.current) {
                 remoteStreamRef.current.srcObject = event.streams[0];
@@ -201,28 +160,24 @@ const Chat = ({ conversationUser }) => {
     };
 
     const endCall = () => {
-        // We choose to hang up
         if (socketService) {
-            socketService.socket.emit(SocketEvents.CALL_ENDED, {
-                to: conversationUser._id,
-            });
+            socketService.socket.emit(SocketEvents.CALL_ENDED, { to: conversationUser._id });
         }
         resetCallState();
     };
 
     const rejectCall = () => {
         if (socketService && callRequest?.from) {
-            socketService.socket.emit(SocketEvents.CALL_REJECTED, {
-                to: callRequest.from,
-            });
+            socketService.socket.emit(SocketEvents.CALL_REJECTED, { to: callRequest.from });
         }
+        stopRingtone();
         setCallRequest(null);
     };
 
     const resetCallState = () => {
         setIsInCall(false);
+        stopRingtone();
 
-        // Stop local & remote tracks
         [localStreamRef, remoteStreamRef].forEach((ref) => {
             const vidEl = ref.current;
             if (vidEl && vidEl.srcObject instanceof MediaStream) {
@@ -231,16 +186,22 @@ const Chat = ({ conversationUser }) => {
             }
         });
 
-        // Close PeerConnection
         if (peerConnectionRef.current) {
             peerConnectionRef.current.close();
             peerConnectionRef.current = null;
         }
     };
 
-    // ─────────────────────────────────────────────────────────────────────────────
-    // Utility / Messaging
-    // ─────────────────────────────────────────────────────────────────────────────
+    const stopRingtone = () => {
+        ringtoneRef.current.pause();
+        ringtoneRef.current.currentTime = 0;
+    };
+
+    const getMediaStream = async (type) => {
+        return navigator.mediaDevices.getUserMedia(
+            type === "audio" ? { audio: true } : { video: true, audio: true }
+        );
+    };
 
     const scrollToBottom = () => {
         if (chatContainerRef.current) {
@@ -260,57 +221,34 @@ const Chat = ({ conversationUser }) => {
             senderId: userId,
             status: "sent",
         };
+
         socketService.sendMessage(messageData, conversationUser._id);
         setMessages((prev) => [...prev, { ...messageData, sender: "self" }]);
         setInput("");
         scrollToBottom();
     };
 
-    const getMediaStream = async () => {
-        return navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    };
-
-    // ─────────────────────────────────────────────────────────────────────────────
-    // Render
-    // ─────────────────────────────────────────────────────────────────────────────
-
     return (
         <Box sx={{ flex: 1, display: "flex", flexDirection: "column", padding: 2 }}>
             <ChatHeader conversationUser={conversationUser} handleCall={startCall} />
 
             {isInCall ? (
-                <VideoCall
-                    localStreamRef={localStreamRef}
-                    remoteStreamRef={remoteStreamRef}
-                    onEndCall={endCall}
-                />
+                <VideoCall localStreamRef={localStreamRef} remoteStreamRef={remoteStreamRef} onEndCall={endCall} />
             ) : (
                 <>
-                    {/* Chat UI */}
-                    <Box ref={chatContainerRef} sx={{ flex: 1, overflowY: "auto" }}>
-                        <MessageList messages={messages} />
+                    <Box sx={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+                        <MessageList messages={messages} chatContainerRef={chatContainerRef} />
                     </Box>
-                    <MessageInput
-                        input={input}
-                        setInput={setInput}
-                        handleSendMessage={handleSendMessage}
-                    />
+                    <MessageInput input={input} setInput={setInput} handleSendMessage={handleSendMessage} />
                 </>
             )}
 
-            {/* Incoming Call Dialog */}
             <Dialog open={!!callRequest} onClose={rejectCall}>
-                <DialogTitle>Incoming Call</DialogTitle>
-                <DialogContent>
-                    <p>{callRequest?.from} is calling you.</p>
-                </DialogContent>
+                <DialogTitle>Incoming {callType} Call</DialogTitle>
+                <DialogContent>{callRequest?.from} is calling you.</DialogContent>
                 <DialogActions>
-                    <Button onClick={rejectCall} color="error">
-                        Reject
-                    </Button>
-                    <Button onClick={acceptCall} color="primary">
-                        Accept
-                    </Button>
+                    <Button onClick={rejectCall} color="error">Reject</Button>
+                    <Button onClick={acceptCall} color="primary">Accept</Button>
                 </DialogActions>
             </Dialog>
         </Box>

@@ -12,11 +12,7 @@ const CommentSchema = new mongoose.Schema(
       ref: "userType",
       required: [true, "User ID is required"],
     },
-    userType: {
-      type: String,
-      enum: ["Student", "College"],
-      required: true,
-    },
+
     comment: {
       type: String,
       required: [true, "Comment text is required"],

@@ -2,7 +2,7 @@
 
 ## Overview
 
-EduSphere a social media platform designed for students and colleges to connect, share achievements, participate in hackathons, and exchange valuable resources. The platform facilitates interaction between students of the same college and across different institutions.
+EduSphere is an interactive, feature-rich social media platform designed specifically for colleges and students. This platform enables verified colleges to connect, engage, and interact with their students while also facilitating inter-college networking. The project aims to create a collaborative digital ecosystem where students can build relationships, participate in various events, and enhance their academic and career opportunities.
 
 ## Features
 
@@ -96,12 +96,6 @@ EduSphere a social media platform designed for students and colleges to connect,
  │ - `createdAt` for sorting posts/events               │
  └───────────────────────────────────────────────────────┘
 ```
-
-## EduSphere - Social Media Platform
-
-### Overview
-
-EduSphere is a social media platform designed for students, colleges, and admins to connect, share achievements, and participate in hackathons and events. This document provides a structured breakdown of the platform, including functional and non-functional requirements, database schema, and future enhancements.
 
 ### 1. Functional Requirements
 

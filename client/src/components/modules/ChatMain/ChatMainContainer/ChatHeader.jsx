@@ -24,7 +24,7 @@ const ChatHeader = ({ conversationUser, handleCall }) => {
                 <Avatar
                     sx={{ width: 40, height: 40 }}
                     src={transformImagePath(conversationUser.profilePicture) || "/default-profile.png"}
-                    alt={`${conversationUser.firstName} ${conversationUser.lastName}`}
+                    alt={`${conversationUser.firstName || user.institutionName} ${conversationUser.lastName}`}
                 />
                 <Typography variant="h6" sx={{ marginLeft: 1 }}>
                     {conversationUser.firstName} {conversationUser.lastName}

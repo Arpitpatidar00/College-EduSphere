@@ -3,7 +3,13 @@ import { Box, Typography } from "@mui/material";
 import { APP_COLORS } from '../../../../enums/Colors';
 
 const MessageList = ({ messages, chatContainerRef }) => (
-    <Box ref={chatContainerRef} sx={{ flex: 1, overflowY: "auto", padding: 2 }}>
+    <Box ref={chatContainerRef} sx={{
+        flex: 1,
+        overflowY: "auto",
+        padding: 2,
+        maxHeight: "calc(100vh - 150px)", // Adjust based on UI needs
+        minHeight: "200px",
+    }}>
         {messages.map((msg) => (
             <Box key={msg.id} sx={{ display: "flex", justifyContent: msg.sender === "self" ? "flex-end" : "flex-start" }}>
                 <Typography sx={{
@@ -23,5 +29,6 @@ const MessageList = ({ messages, chatContainerRef }) => (
         ))}
     </Box>
 );
+
 
 export default MessageList;

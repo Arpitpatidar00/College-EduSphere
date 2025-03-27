@@ -27,11 +27,7 @@ const StorySchema = new Schema(
       type: Date,
       default: () => new Date(Date.now() + 24 * 60 * 60 * 1000),
     },
-    userType: {
-      type: String,
-      enum: ["Student", "College"],
-      required: true,
-    },
+
     viewers: [
       {
         type: mongoose.Schema.Types.ObjectId,

@@ -4,7 +4,6 @@ import PostModal from '../../Post/PostModal/PostModal';
 import { useState } from 'react';
 
 const ProjectGrid = ({ postData }) => {
-    console.log('postData: ', postData);
 
     const [isModalOpen, setModalOpen] = useState(false);
     const [selectedPost, setSelectedPost] = useState(null);

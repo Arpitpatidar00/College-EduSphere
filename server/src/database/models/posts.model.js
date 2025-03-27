@@ -38,11 +38,7 @@ const PostSchema = new mongoose.Schema(
       ref: "userType",
       required: [true, "User ID is required"],
     },
-    userType: {
-      type: String,
-      enum: ["Student", "College"],
-      required: true,
-    },
+
     tags: [
       {
         type: String,

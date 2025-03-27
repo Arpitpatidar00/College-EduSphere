@@ -6,8 +6,12 @@ import { useCreateComment } from "../../../../services/api/main/likeAndComment.s
 import Comment from "./Comment";
 import { transformImagePath } from '../../../../utils/image.utils';
 import PostActions from "./PostActions";
+import { useSelector } from "react-redux";
+import { selectUserData } from '@/store/slices/auth.slice'
 
 const PostComments = ({ post }) => {
+    const currentUser = useSelector(selectUserData);
+
     const [newComment, setNewComment] = useState("");
 
     const { mutateAsync: createComment, isLoading: submittingComment } = useCreateComment(post._id);
@@ -39,7 +43,7 @@ const PostComments = ({ post }) => {
             >
                 <Avatar src={transformImagePath(post?.user?.profilePicture)} />
                 <Typography sx={{ ml: 2, fontWeight: "bold" }}>
-                    {post?.user?.firstName} {post?.user?.lastName}
+                    {post?.user?.firstName || post?.user?.institutionName} {post?.user?.lastName}
                 </Typography>
             </Box>
 
@@ -92,7 +96,7 @@ const PostComments = ({ post }) => {
                     borderTop: "1px solid gray",
                 }}
             >
-                <Avatar src={post?.user?.profilePicture} sx={{ width: 30, height: 30 }} />
+                <Avatar src={transformImagePath(currentUser?.profilePicture)} sx={{ width: 30, height: 30 }} />
                 <TextField
                     variant="standard"
                     placeholder="Add a comment..."

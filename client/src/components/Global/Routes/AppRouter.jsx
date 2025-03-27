@@ -1,56 +1,79 @@
-// AppRouter.jsx
-import { Outlet, Route, Routes, BrowserRouter as Router } from "react-router-dom";
-import ROUTES from "./CommonRoutes.js";
-import HomePage from "../../../pages/Home.page";
-import { ProtectedRoute, UnProtectedRoute, AdminProtectedRoute, AdminUnProtectedRoute } from "../Routes/ProtectedRoutes.jsx";
-import EditProfile from "../../../pages/Edit.profile.page";
-import NotFoundPage from "../../../pages/NotFound.page.jsx";
-import Navbar from "../../layout/Navbar/Navbar.jsx";
-import SettingPage from "../../../pages/Setting.page.jsx";
-import StoriesPage from "../../../pages/StoriesPage";
-import StudentAuthContainer from '../../Auth/StudentAuth/StudentAuthContainer.jsx';
-import CollegeAuthContainer from '../../Auth/CollegeAuth/CollegeAuth.container.jsx';
-import ChatApp from '../../modules/ChatMain/index';
-import UserProfile from '../../../pages/Profile.page';
-import AdminDashboard from '../../modules/Admin/AdminDashboard/AdminDashboard';
-import AdminLoginPage from '../../Auth/AdminAuth/AdminLogin';
+import { Suspense, lazy } from 'react';
+import { Outlet, Route, Routes, BrowserRouter as Router } from 'react-router-dom';
+import Navbar from '../../layout/Navbar/Navbar.jsx';
+import ROUTES from './CommonRoutes.js';
+import { ProtectedRoute, UnProtectedRoute, AdminProtectedRoute, AdminUnProtectedRoute } from '../Routes/ProtectedRoutes.jsx';
+import CollegeLayout from "@/components/modules/College/CollegeLayout.jsx"
+import CollegeDashboard from "@/components/modules/College/CollegeDashboard/index"
+// Lazy-loaded components (unchanged)
+const HomePage = lazy(() => import('../../../pages/Home.page'));
+const EditProfile = lazy(() => import('../../../pages/Edit.profile.page'));
+const NotFoundPage = lazy(() => import('../../../pages/NotFound.page.jsx'));
+const SettingPage = lazy(() => import('../../../pages/Setting.page.jsx'));
+const StoriesPage = lazy(() => import('../../../pages/StoriesPage'));
+const StudentAuthContainer = lazy(() => import('../../Auth/StudentAuth/StudentAuthContainer.jsx'));
+const CollegeAuthContainer = lazy(() => import('../../Auth/CollegeAuth/CollegeAuth.container.jsx'));
+const ChatApp = lazy(() => import('../../modules/ChatMain/index'));
+const UserProfile = lazy(() => import('../../../pages/Profile.page'));
+const AdminLoginPage = lazy(() => import('../../Auth/AdminAuth/AdminLogin'));
+const Country = lazy(() => import('../../modules/Admin/Location/Country/index'));
+const State = lazy(() => import('../../modules/Admin/Location/State/index'));
+const City = lazy(() => import('../../modules/Admin/Location/City/index'));
+const AdminLayout = lazy(() => import('../../modules/Admin/AdminLayout'));
+const AdminDashboardContainer = lazy(() => import('../../modules/Admin/AdminDashboard/AdminDashboardContainer'));
+import NProgressBar from '../../../common/NProgressBar';
+import StudentList from '../../modules/College/StudentList/index';
 
 const AppRouter = ({ toggleTheme }) => {
   return (
     <Router>
       <Navbar />
-      <Routes>
+      <Suspense fallback={<NProgressBar />}>
+        <Routes>
+          {/* Public Routes (Unauthenticated Users) */}
+          <Route element={<UnProtectedRoute><Outlet /></UnProtectedRoute>}>
+            <Route path={ROUTES.AUTH.STUDENT} element={<StudentAuthContainer toggleTheme={toggleTheme} />} />
+            <Route path={ROUTES.AUTH.COLLEGE} element={<CollegeAuthContainer toggleTheme={toggleTheme} />} />
+          </Route>
 
-        {/* Public Routes (Unauthenticated Users) */}
-        <Route element={<UnProtectedRoute><Outlet /></UnProtectedRoute>}>
-          <Route path={ROUTES.AUTH.STUDENT} element={<StudentAuthContainer toggleTheme={toggleTheme} />} />
-          <Route path={ROUTES.AUTH.COLLEGE} element={<CollegeAuthContainer toggleTheme={toggleTheme} />} />
-        </Route>
+          {/* Admin Login Page */}
+          <Route element={<AdminUnProtectedRoute><Outlet /></AdminUnProtectedRoute>}>
+            <Route path={ROUTES.ADMIN.LOGIN} element={<AdminLoginPage toggleTheme={toggleTheme} />} />
+          </Route>
 
-        {/* Admin Login Page (Protected by Admin Secret) */}
-        <Route element={<AdminUnProtectedRoute><Outlet /></AdminUnProtectedRoute>}>
-          <Route path={ROUTES.ADMIN.LOGIN} element={<AdminLoginPage toggleTheme={toggleTheme} />} />
-        </Route>
+          {/* Protected Routes (Authenticated Users) */}
+          <Route element={<ProtectedRoute><Outlet /></ProtectedRoute>}>
+            <Route path={ROUTES.HOME.INDEX} element={<HomePage toggleTheme={toggleTheme} />} />
+            <Route path={ROUTES.HOME.PROFILE} element={<UserProfile toggleTheme={toggleTheme} />} />
+            <Route path="/edit-profile" element={<EditProfile toggleTheme={toggleTheme} />} />
+            <Route path={ROUTES.HOME.MESSAGE} element={<ChatApp toggleTheme={toggleTheme} />} />
+            <Route path={ROUTES.HOME.SETTING} element={<SettingPage toggleTheme={toggleTheme} />} />
+            <Route path={ROUTES.HOME.STORIES} element={<StoriesPage toggleTheme={toggleTheme} />} />
+          </Route>
 
-        {/* Protected Routes (Authenticated Users) */}
-        <Route element={<ProtectedRoute><Outlet /></ProtectedRoute>}>
-          <Route path={ROUTES.HOME.INDEX} element={<HomePage toggleTheme={toggleTheme} />} />
-          <Route path={ROUTES.HOME.PROFILE} element={<UserProfile toggleTheme={toggleTheme} />} />
-          <Route path="/edit-profile" element={<EditProfile toggleTheme={toggleTheme} />} />
-          <Route path={ROUTES.HOME.MESSAGE} element={<ChatApp toggleTheme={toggleTheme} />} />
-          <Route path={ROUTES.HOME.SETTING} element={<SettingPage toggleTheme={toggleTheme} />} />
-          <Route path={ROUTES.HOME.STORIES} element={<StoriesPage toggleTheme={toggleTheme} />} />
-        </Route>
+          {/* Admin Protected Routes (Fixed) */}
+          <Route
+            path={ROUTES.ADMIN.INDEX}
+            element={<AdminProtectedRoute><AdminLayout /></AdminProtectedRoute>}
+          >
+            <Route index element={<AdminDashboardContainer />} />
+            <Route path="location/country" element={<Country />} />
+            <Route path="location/state" element={<State />} />
+            <Route path="location/city" element={<City />} />
+          </Route>
+          <Route
+            path={ROUTES.COLLEGE.DASHBOARD}
+            element={<ProtectedRoute><CollegeLayout /></ProtectedRoute>}
+          >
+            <Route index element={<CollegeDashboard />} />
+            <Route path={ROUTES.COLLEGE.STUDENT} element={<StudentList />} />
 
-        {/* Admin Protected Routes (For Admin Dashboard) */}
-        <Route element={<AdminProtectedRoute><Outlet /></AdminProtectedRoute>}>
-          <Route path={ROUTES.ADMIN.INDEX} element={<AdminDashboard toggleTheme={toggleTheme} />} />
-        </Route>
+          </Route>
 
-        {/* Catch-All Route for 404 */}
-        <Route path="*" element={<NotFoundPage />} />
-
-      </Routes>
+          {/* Catch-All Route for 404 */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Suspense>
     </Router>
   );
 };

@@ -10,12 +10,6 @@ const FollowSchema = new mongoose.Schema(
       unique: true,
     },
 
-    userType: {
-      type: String,
-      enum: ["Student", "College"],
-      required: true,
-    },
-
     followers: [
       {
         user: {

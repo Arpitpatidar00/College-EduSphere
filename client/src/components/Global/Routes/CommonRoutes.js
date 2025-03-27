@@ -3,9 +3,10 @@ import { UserType } from "../../../enums/AuthConstants";
 
 export const ROUTES = {
   COLLEGE: {
-    INDEX: "/",
+    INDEX: "",
     LOGIN: "/college/login",
-    DETAILS: "/college",
+    DASHBOARD: "/college",
+    STUDENT: "/college/student",
   },
   USER: {
     LOGIN: "/user/login",
@@ -26,7 +27,11 @@ export const ROUTES = {
   ADMIN: {
     INDEX: `/sysopdmin/${ADMIN_SECRET}`,
     LOGIN: `/sysopdmin/login/${ADMIN_SECRET}`,
-    DASHBOARD: `/sysopdmin/dashboard/${ADMIN_SECRET}`,
+    LOCATION: {
+      COUNTRY: `/sysopdmin/${ADMIN_SECRET}/location/country`,
+      STATE: `/sysopdmin/${ADMIN_SECRET}/location/state`,
+      CITY: `/sysopdmin/${ADMIN_SECRET}/location/city`,
+    },
   },
 };
 

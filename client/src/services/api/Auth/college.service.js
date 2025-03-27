@@ -14,6 +14,13 @@ export const getCollegeAction = async (params, authToken, showSuccessToast) => {
     showSuccessToast,
   });
 };
+export const updateCollegeAction = async ({ body }) => {
+  return createServerAction({
+    method: MethodTypesEnum.PATCH,
+    url: `${apiEndPoints.updateCollege}`,
+    body,
+  });
+};
 
 export const useGetAllCollege = (params, initialData, paginationModel) =>
   useQuery({
@@ -28,3 +35,8 @@ export const useGetAllCollege = (params, initialData, paginationModel) =>
     initialData: () => initialData,
     placeholderData: keepPreviousData,
   });
+
+// Hook to use mutation for updating a college
+export const useUpdateCollege = () => {
+  return useGenericMutation(updateCollegeAction, ["colleges"]);
+};

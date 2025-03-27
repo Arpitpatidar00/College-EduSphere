@@ -14,7 +14,21 @@ export const getStudentAction = async (params, authToken, showSuccessToast) => {
     showSuccessToast,
   });
 };
+export const updateStudentAction = async ({ body }) => {
+  return createServerAction({
+    method: MethodTypesEnum.PATCH,
+    url: `${apiEndPoints.updateStudent}`,
+    body,
+  });
+};
 
+export const updateStudentStatusAction = async ({ body, _id }) => {
+  return createServerAction({
+    method: MethodTypesEnum.PATCH,
+    url: `${apiEndPoints.updateStudentStatus}/${_id}`,
+    body,
+  });
+};
 export const useGetAllStudents = (params, initialData, paginationModel) =>
   useQuery({
     queryKey: ["students", params, paginationModel],
@@ -28,3 +42,10 @@ export const useGetAllStudents = (params, initialData, paginationModel) =>
     initialData: () => initialData,
     placeholderData: keepPreviousData,
   });
+
+export const useUpdateStudent = () => {
+  return useGenericMutation(updateStudentAction, ["students"]);
+};
+export const useUpdateStatusStudent = () => {
+  return useGenericMutation(updateStudentStatusAction, ["students"]);
+};

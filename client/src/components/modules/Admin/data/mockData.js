@@ -116,5 +116,43 @@ const tasks = [
     type: "meeting",
   },
 ];
+const dataMapping = {
+  "Total Registered Colleges": [
+    { date: "Mar 1", value: 100 },
+    { date: "Mar 2", value: 150 },
+    { date: "Mar 3", value: 180 },
+    { date: "Mar 4", value: 200 },
+    { date: "Mar 5", value: 220 },
+    { date: "Mar 6", value: 250 },
+    { date: "Mar 7", value: 280 },
+  ],
+  "Total Students": [
+    { date: "Mar 1", value: 5000 },
+    { date: "Mar 2", value: 5200 },
+    { date: "Mar 3", value: 5400 },
+    { date: "Mar 4", value: 5600 },
+    { date: "Mar 5", value: 5800 },
+    { date: "Mar 6", value: 6000 },
+    { date: "Mar 7", value: 6200 },
+  ],
+  "Active Users Today": [
+    { date: "Mar 1", value: 4000 },
+    { date: "Mar 2", value: 4500 },
+    { date: "Mar 3", value: 4700 },
+    { date: "Mar 4", value: 4900 },
+    { date: "Mar 5", value: 5100 },
+    { date: "Mar 6", value: 5300 },
+    { date: "Mar 7", value: 5500 },
+  ],
+  "Posts Created": [
+    { date: "Mar 1", value: 200 },
+    { date: "Mar 2", value: 300 },
+    { date: "Mar 3", value: 350 },
+    { date: "Mar 4", value: 400 },
+    { date: "Mar 5", value: 450 },
+    { date: "Mar 6", value: 500 },
+    { date: "Mar 7", value: 550 },
+  ],
+};
 
-export { statsData, revenueData, collegeRequests, tasks };
+export { statsData, revenueData, collegeRequests, dataMapping, tasks };

@@ -8,9 +8,9 @@ export async function getAllCountriesController(req, res, next) {
     const queryParams = req.query;
     const matchQuery = {};
 
-    if (queryParams.searchTerm) {
+    if (queryParams.search) {
       matchQuery.$or = [
-        { name: { $regex: queryParams.searchTerm, $options: "i" } },
+        { name: { $regex: queryParams.search, $options: "i" } },
       ];
     }
 

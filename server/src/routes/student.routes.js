@@ -10,7 +10,6 @@ const upload = uploadFile();
 
 const uploadFields = upload.fields([{ name: "profilePicture", maxCount: 10 }]);
 
-//@ for Student Updates
 router.patch(
   "/update",
   authMiddleware,
@@ -22,5 +21,7 @@ router.get(
   authMiddleware,
   studentController.getAllStudentsController
 );
+
+router.patch("/toggle-field/:_id", studentController.toggleStudentField);
 
 export default router;

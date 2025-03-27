@@ -12,11 +12,6 @@ const MessageSchema = new mongoose.Schema(
       refPath: "senderType", // Use senderType to determine the ref model
       required: true,
     },
-    senderType: {
-      type: String,
-      enum: ["Student", "College"], // Restrict to valid model names
-      required: true,
-    },
     messageType: {
       type: String,
       enum: ["text", "image", "video", "file", "audio"],

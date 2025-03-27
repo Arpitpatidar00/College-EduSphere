@@ -16,14 +16,16 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     updateUserState: (state, action) => {
-      state.user = action.payload;
-    },
-    updateFollowState: (state, action) => {
-      if (state.user && state.user.user) {
-        state.user.user.follow = action.payload;
+      // Update the nested user object
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload };
       }
     },
-    // This reducer can be used for immediate logout if needed.
+    updateFollowState: (state, action) => {
+      if (state.user) {
+        state.user.follow = action.payload;
+      }
+    },
     logout: (state) => {
       state.isAuthenticated = false;
       state.token = "";
@@ -37,23 +39,19 @@ const authSlice = createSlice({
       .addCase(loginThunk.pending, (state) => {
         state.isLoading = true;
       })
-
       .addCase(loginThunk.fulfilled, (state, action) => {
-        console.log('state: ', state);
-
         state.error = null;
         state.isLoading = false;
         state.isAuthenticated = true;
-        const user = action.payload;
-        state.user = user;
-        state.token = user.token;
+        state.user = action.payload.user; // This includes both user and token
+        state.token = action.payload.token;
+        state.role = action.payload.user.role; // Set role from nested user
       })
       .addCase(loginThunk.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       })
       .addCase(logoutThunk.fulfilled, (state) => {
-        // Reset auth state on successful logout
         state.isAuthenticated = false;
         state.token = "";
         state.tokenExpiry = "";
@@ -65,11 +63,11 @@ const authSlice = createSlice({
 
 export const { updateUserState, updateFollowState, logout } = authSlice.actions;
 
-export const selectUserData = (state) => state.auth.user?.user;
+export const selectUserData = (state) => state.auth?.user;
 export const selectToken = (state) => state.auth.token;
 export const selectAuthData = (state) => state.auth;
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
-export const selectUserRole = (state) => state.auth.user?.user.role;
+export const selectUserRole = (state) => state.auth.user?.role;
 export const selectIsLoading = (state) => state.auth.isLoading;
 
 export default authSlice.reducer;
