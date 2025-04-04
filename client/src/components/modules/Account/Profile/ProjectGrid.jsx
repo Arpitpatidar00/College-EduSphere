@@ -1,7 +1,8 @@
 import { Grid, Typography } from "@mui/material";
 import ProjectCard from "./ProjectCard";
-import PostModal from '../../Post/PostModal/PostModal';
+
 import { useState } from 'react';
+import PostModal from '../../../Common/PostCard/PostModal/PostModal';
 
 const ProjectGrid = ({ postData }) => {
 

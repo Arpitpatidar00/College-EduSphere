@@ -7,6 +7,7 @@ export const ROUTES = {
     LOGIN: "/college/login",
     DASHBOARD: "/college",
     STUDENT: "/college/student",
+    POST: "/college/posts",
   },
   USER: {
     LOGIN: "/user/login",
@@ -27,10 +28,13 @@ export const ROUTES = {
   ADMIN: {
     INDEX: `/sysopdmin/${ADMIN_SECRET}`,
     LOGIN: `/sysopdmin/login/${ADMIN_SECRET}`,
+    COLLEGE: "colleges",
+    PENDING: "pending-approvals",
+    STUDENT: "students",
     LOCATION: {
-      COUNTRY: `/sysopdmin/${ADMIN_SECRET}/location/country`,
-      STATE: `/sysopdmin/${ADMIN_SECRET}/location/state`,
-      CITY: `/sysopdmin/${ADMIN_SECRET}/location/city`,
+      COUNTRY: "location/country",
+      STATE: "location/state",
+      CITY: "location/city",
     },
   },
 };

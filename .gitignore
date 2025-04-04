@@ -16,6 +16,7 @@ npm-debug.log*
 # Environment variables files (root, client, server)
 .env
 .env.local
+.env.development
 .env.*.local
 
 # IDE/Editor configurations (root, client, server)

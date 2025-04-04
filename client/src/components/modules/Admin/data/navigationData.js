@@ -37,11 +37,11 @@ export const navigationItems = [
     icon: SchoolIcon,
     label: "Colleges",
     subItems: [
-      { id: "all-colleges", label: "All Colleges", path: "/admin/colleges" },
+      { id: "all-colleges", label: "All Colleges", path: ROUTES.ADMIN.COLLEGE },
       {
         id: "pending-approvals",
         label: "Pending Approvals",
-        path: "/admin/colleges/approvals",
+        path: ROUTES.ADMIN.PENDING,
       },
     ],
   },
@@ -50,7 +50,7 @@ export const navigationItems = [
     icon: PeopleIcon,
     label: "Students",
     subItems: [
-      { id: "all-students", label: "All Students", path: "/admin/students" },
+      { id: "all-students", label: "All Students", path: ROUTES.ADMIN.STUDENT },
       {
         id: "pending-approvals",
         label: "Pending Approvals",

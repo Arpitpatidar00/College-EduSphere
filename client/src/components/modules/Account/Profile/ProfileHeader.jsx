@@ -13,6 +13,22 @@ import { useDispatch } from "react-redux";
 import { UserType } from "@/enums/AuthConstants";
 import { updateUserState } from "@/store/slices/auth.slice";
 
+
+const StyledDialog = {
+    '& .MuiDialog-paper': {
+        borderRadius: 8,
+        padding: '16px',
+        boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)',
+    },
+};
+
+const StyledAvatar = {
+    width: 200,
+    height: 200,
+    border: '4px solid #1976D2',
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.2)',
+};
+
 const ProfileHeader = ({ user, onProfileChange }) => {
     const dispatch = useDispatch();
     const { mutateAsync: updateStudent, isPending: isStudentPending } = useUpdateStudent();
@@ -262,21 +278,36 @@ const ProfileHeader = ({ user, onProfileChange }) => {
                 isStudentPending={isStudentPending}
             />
 
-            <Dialog open={isImageConfirmOpen} onClose={handleImageCancel}>
-                <DialogTitle>Confirm Profile Picture</DialogTitle>
+            <Dialog open={isImageConfirmOpen} onClose={handleImageCancel} sx={StyledDialog}>
+                <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold' }}>Confirm Profile Picture</DialogTitle>
                 <DialogContent>
-                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                        {previewImage && (
-                            <Avatar
-                                src={previewImage}
-                                sx={{ width: 200, height: 200 }}
-                            />
-                        )}
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
+                        {previewImage && <Avatar
+                            src={
+                                previewImage
+                            }
+                            alt={`${user?.firstName || user.institutionName} ${user?.lastName ?? ""}`}
+                            sx={{
+                                width: "300px",
+                                height: "300px",
+                                border: `10px solid ${APP_COLORS.accent?.[200] ?? "#ccc"}`,
+                                borderRadius: "20%",
+                                boxShadow: "0 4px 10px rgba(157, 157, 157, 0.1)",
+                            }}
+                            imgProps={{
+                                style: {
+                                    objectFit: "cover",
+                                    objectPosition: "top",
+                                },
+                            }}
+                        />}
                     </Box>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleImageCancel}>Cancel</Button>
-                    <Button onClick={handleImageConfirm} color="primary" variant="contained">
+                <DialogActions sx={{ justifyContent: 'center', gap: 2 }}>
+                    <Button onClick={handleImageCancel} variant="outlined" sx={{ borderRadius: '8px' }}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleImageConfirm} color="primary" variant="contained" sx={{ borderRadius: '8px', paddingX: 3 }}>
                         Confirm
                     </Button>
                 </DialogActions>

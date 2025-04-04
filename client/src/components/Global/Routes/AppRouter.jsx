@@ -7,7 +7,6 @@ import CollegeLayout from "@/components/modules/College/CollegeLayout.jsx"
 import CollegeDashboard from "@/components/modules/College/CollegeDashboard/index"
 // Lazy-loaded components (unchanged)
 const HomePage = lazy(() => import('../../../pages/Home.page'));
-const EditProfile = lazy(() => import('../../../pages/Edit.profile.page'));
 const NotFoundPage = lazy(() => import('../../../pages/NotFound.page.jsx'));
 const SettingPage = lazy(() => import('../../../pages/Setting.page.jsx'));
 const StoriesPage = lazy(() => import('../../../pages/StoriesPage'));
@@ -23,6 +22,10 @@ const AdminLayout = lazy(() => import('../../modules/Admin/AdminLayout'));
 const AdminDashboardContainer = lazy(() => import('../../modules/Admin/AdminDashboard/AdminDashboardContainer'));
 import NProgressBar from '../../../common/NProgressBar';
 import StudentList from '../../modules/College/StudentList/index';
+import CollegeList from '@/components/modules/Admin/CollegeList/index.jsx';
+import AdminStudentList from '@/components/modules/Admin/AdminStudentList/index.jsx';
+import CollegePostData from '../../modules/College/CollegePostData/index';
+
 
 const AppRouter = ({ toggleTheme }) => {
   return (
@@ -41,11 +44,9 @@ const AppRouter = ({ toggleTheme }) => {
             <Route path={ROUTES.ADMIN.LOGIN} element={<AdminLoginPage toggleTheme={toggleTheme} />} />
           </Route>
 
-          {/* Protected Routes (Authenticated Users) */}
           <Route element={<ProtectedRoute><Outlet /></ProtectedRoute>}>
             <Route path={ROUTES.HOME.INDEX} element={<HomePage toggleTheme={toggleTheme} />} />
             <Route path={ROUTES.HOME.PROFILE} element={<UserProfile toggleTheme={toggleTheme} />} />
-            <Route path="/edit-profile" element={<EditProfile toggleTheme={toggleTheme} />} />
             <Route path={ROUTES.HOME.MESSAGE} element={<ChatApp toggleTheme={toggleTheme} />} />
             <Route path={ROUTES.HOME.SETTING} element={<SettingPage toggleTheme={toggleTheme} />} />
             <Route path={ROUTES.HOME.STORIES} element={<StoriesPage toggleTheme={toggleTheme} />} />
@@ -56,17 +57,30 @@ const AppRouter = ({ toggleTheme }) => {
             path={ROUTES.ADMIN.INDEX}
             element={<AdminProtectedRoute><AdminLayout /></AdminProtectedRoute>}
           >
+            {/* Admin Dashboard */}
             <Route index element={<AdminDashboardContainer />} />
-            <Route path="location/country" element={<Country />} />
-            <Route path="location/state" element={<State />} />
-            <Route path="location/city" element={<City />} />
+
+            {/* College Management */}
+            <Route path={ROUTES.ADMIN.COLLEGE} element={<CollegeList />} />
+            <Route path={ROUTES.ADMIN.STUDENT} element={<AdminStudentList />} />
+
+            {/* Location Management */}
+            <Route path={ROUTES.ADMIN.LOCATION.COUNTRY} element={<Country />} />
+            <Route path={ROUTES.ADMIN.LOCATION.STATE} element={<State />} />
+            <Route path={ROUTES.ADMIN.LOCATION.CITY} element={<City />} />
+
+
           </Route>
+
+
+
           <Route
             path={ROUTES.COLLEGE.DASHBOARD}
             element={<ProtectedRoute><CollegeLayout /></ProtectedRoute>}
           >
             <Route index element={<CollegeDashboard />} />
             <Route path={ROUTES.COLLEGE.STUDENT} element={<StudentList />} />
+            <Route path={ROUTES.COLLEGE.POST} element={<CollegePostData />} />
 
           </Route>
 

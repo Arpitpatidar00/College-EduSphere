@@ -55,7 +55,7 @@ const navigationItems = [
     label: "Community Hub", path: ROUTES.COLLEGE.STUDENT, icon: <GroupIcon fontSize="large" />
   }, // Student Engagement
   { label: "Events & Promotions", path: "/events-promotions", icon: <CampaignIcon fontSize="large" /> }, // Promotions & Advertisements
-  { label: "Networking", path: "/networking", icon: <HubIcon fontSize="large" /> }, // Collaboration & Networking
+  { label: "Networking", path: ROUTES.COLLEGE.POST, icon: <HubIcon fontSize="large" /> }, // Collaboration & Networking
   { label: "Student Management", path: "/student-management", icon: <SchoolIcon fontSize="large" /> }, // Student Management
   { label: "Settings", path: "/settings", icon: <SettingsIcon fontSize="large" /> },
   { label: "Support", path: "/support", icon: <HeadsetMicIcon fontSize="large" /> },

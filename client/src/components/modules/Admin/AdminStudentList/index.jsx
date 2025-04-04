@@ -24,7 +24,7 @@ const filters = [
 ];
 
 
-const StudentList = () => {
+const AdminStudentList = () => {
     const { mutateAsync: updateStudent } = useUpdateStatusStudent();
 
     const [studentPagination, setStudentPagination] = useState({
@@ -81,10 +81,9 @@ const StudentList = () => {
         <Box
             sx={{
                 ml: 4,
-                height: "calc(100vh - 120px)",
-                position: "fixed",
-                width: "90%",
-
+                mt: 2,
+                height: "calc(100vh - 104px)",
+                width: "94%",
             }}
         >
             <TopSearchFilters
@@ -99,6 +98,7 @@ const StudentList = () => {
             <UserDataGrid
                 rows={studentData.data}
                 columns={StudentColumn(handleToggleCollegeVerified)} // Pass function correctly
+
                 totalRows={studentData.totalCount || 0}
                 rowsPerPage={studentPagination.pageSize}
                 currentPage={studentPagination.page}
@@ -108,4 +108,4 @@ const StudentList = () => {
     );
 };
 
-export default StudentList;
+export default AdminStudentList;

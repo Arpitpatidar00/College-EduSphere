@@ -5,13 +5,13 @@ import {
   Box,
   Avatar,
   Button,
-  InputBase,
   Badge,
 } from "@mui/material";
 import {
-  Search as SearchIcon,
+
   Notifications,
   Chat,
+  Menu as MenuIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -20,12 +20,15 @@ import { APP_IMAGES } from "../../Common/Images/index";
 import { transformImagePath } from "../../../utils/commonFn";
 import { selectUserData, selectIsAuthenticated } from "../../../store/slices/auth.slice";
 import { ROUTES } from '../../Global/Routes/CommonRoutes';
+import { useState } from "react";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const userData = useSelector(selectUserData);
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
+  const handleToggleMobileMenu = () => setMobileOpen(!mobileOpen);
   const handleAccountClick = () => navigate(ROUTES.HOME.PROFILE);
   const handleMessageClick = () => navigate(ROUTES.HOME.MESSAGE);
   const handleHomeClick = () => navigate(ROUTES.HOME.INDEX);
@@ -33,20 +36,14 @@ const Navbar = () => {
 
   return (
     <AppBar
-      position="static"
+      position="sticky"
       sx={{
-        backgroundColor: APP_COLORS.primary[500],
+        backgroundColor: APP_COLORS.primary[700],
         boxShadow: 3,
-        px: 2,
+        px: { xs: 1, sm: 2 },
       }}
     >
-      <Toolbar
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         {/* Logo */}
         <Box
           component="img"
@@ -54,50 +51,36 @@ const Navbar = () => {
           onClick={handleHomeClick}
           sx={{
             cursor: "pointer",
-            width: "160px",
+            width: { xs: "120px", sm: "160px" },
             height: "auto",
-            maxHeight: "80px",
             objectFit: "contain",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
           }}
         />
 
-        {/* Conditionally Render Navbar Based on Authentication */}
-        {isAuthenticated ? (
-          <>
-            {/* Search Bar */}
-            <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "flex-end" }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  borderRadius: 2,
-                  bgcolor: APP_COLORS.grey[800],
-                  px: 1,
-                  py: 0.5,
-                  width: "250px",
-                  border: `1px solid ${APP_COLORS.grey[500]}`,
-                }}
-              >
-                <InputBase
-                  placeholder="Search..."
-                  sx={{
-                    flex: 1,
-                    fontSize: 14,
-                    px: 1,
-                    color: APP_COLORS.common.white,
-                  }}
-                />
-                <IconButton sx={{ color: APP_COLORS.common.white }}>
-                  <SearchIcon />
-                </IconButton>
-              </Box>
-            </Box>
+        {/* Mobile Menu Icon */}
+        <IconButton sx={{ display: { sm: "none" } }} onClick={handleToggleMobileMenu}>
+          <MenuIcon sx={{ color: APP_COLORS.common.white }} />
+        </IconButton>
 
-            {/* User Actions */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+        <Box
+          sx={{
+            display: { xs: mobileOpen ? "flex" : "none", sm: "flex" },
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: "center",
+            gap: 2,
+            position: { xs: "absolute", sm: "static" },
+            top: 64,
+            right: 0,
+            width: { xs: "100%", sm: "auto" },
+            backgroundColor: { xs: APP_COLORS.primary[900], sm: "transparent" },
+            p: { xs: 2, sm: 0 },
+          }}
+        >
+          {isAuthenticated ? (
+            <>
+
+
+              {/* User Actions */}
               <IconButton sx={{ color: APP_COLORS.common.white }}>
                 <Badge badgeContent={2} color="error">
                   <Notifications />
@@ -110,36 +93,24 @@ const Navbar = () => {
               </IconButton>
               <Button
                 onClick={handleAccountClick}
-                sx={{
-                  p: 0,
-                  minWidth: "auto",
-                  borderRadius: "50%",
-                  transition: "0.3s",
-                  "&:hover": { transform: "scale(1.1)" },
-                }}
+                sx={{ p: 0, minWidth: "auto", borderRadius: "50%" }}
               >
                 <Avatar
                   src={userData?.profilePicture ? transformImagePath(userData.profilePicture) : "/assets/Student.login1.png"}
                   alt={userData?.firstName || userData.institutionName}
                 />
               </Button>
-            </Box>
-          </>
-        ) : (
-          <>
-            {/* If Not Authenticated, Show Login & Signup Buttons */}
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <Button
-                variant="outlined"
-                sx={{ color: APP_COLORS.common.white, borderColor: APP_COLORS.common.white }}
-                onClick={handleLoginClick}
-              >
-                Login
-              </Button>
-
-            </Box>
-          </>
-        )}
+            </>
+          ) : (
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: APP_COLORS.secondary[500] }}
+              onClick={handleLoginClick}
+            >
+              Login
+            </Button>
+          )}
+        </Box>
       </Toolbar>
     </AppBar>
   );

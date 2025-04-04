@@ -77,7 +77,6 @@ const CollegeDashboard = () => {
       <Header />
 
       <Grid container spacing={3}>
-        {/* First Row: Active Students, Upcoming Events, Collaborations, Students Managed */}
         <Grid item xs={12} sm={6} md={3}>
           <StatsCard
             icon={GroupIcon}

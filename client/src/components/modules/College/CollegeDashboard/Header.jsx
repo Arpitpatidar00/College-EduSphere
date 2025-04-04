@@ -9,7 +9,7 @@ const Header = () => {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                mb: 4,
+                mb: 1,
             }}
         >
             <Typography variant="h4">Good morning, EduSphere College!</Typography>

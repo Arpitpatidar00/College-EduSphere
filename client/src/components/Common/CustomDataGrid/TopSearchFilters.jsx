@@ -1,12 +1,8 @@
-import { useState } from "react";
 import { Box, TextField, Select, MenuItem, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { APP_COLORS } from "@/enums/Colors";
 
 const TopSearchFilters = ({ searchPlaceholder, filters, buttons, onFilterChange, setSearchTerm, searchTerm, setSelectedFilters, selectedFilters }) => {
-
-
-
   // Handle search input change
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -30,9 +26,11 @@ const TopSearchFilters = ({ searchPlaceholder, filters, buttons, onFilterChange,
           InputProps={{
             startAdornment: <SearchIcon sx={{ color: APP_COLORS.grey[500] }} />,
             sx: {
+              borderRadius: 4,
               "& .MuiInputBase-input::placeholder": {
                 color: APP_COLORS.grey[400],
                 opacity: 1,
+                borderRadius: 4,
               },
             },
           }}

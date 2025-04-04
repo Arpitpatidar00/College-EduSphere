@@ -8,6 +8,7 @@ export const apiEndPoints = {
   collegeLogin: "/auth/college/login",
   getAllCollege: "/college/get-all-colleges",
   updateCollege: "/college/update",
+  updateCollegeStatus: "/college/toggle-field",
 
   //@student
   studentLogin: "/auth/student/login",
