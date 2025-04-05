@@ -8,7 +8,7 @@ import {
 import { Edit as EditIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { APP_COLORS } from '../../../enums/Colors';
-import Sidebar from '../Sidebar/Sidebar';
+import Sidebar from '../Sidebar/HomeSidebar';
 import { transformImagePath } from '../../../utils/commonFn';
 import { useSelector } from 'react-redux';
 import { selectUserData } from '../../../store/slices/auth.slice'

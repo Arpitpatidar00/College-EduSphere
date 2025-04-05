@@ -27,7 +27,6 @@ import { selectUserData } from '@/store/slices/auth.slice';
 const PostCard = ({ post, index, onOpenModal }) => {
     const userData = useSelector(selectUserData);
     const [likedPosts, setLikedPosts] = useState({});
-
     const { mutateAsync: toggleLike } = useToggleLike();
 
     const isPostLikedByUser = () =>
@@ -47,97 +46,172 @@ const PostCard = ({ post, index, onOpenModal }) => {
     return (
         <Card
             sx={{
-                m: 1,
-                borderRadius: 5,
-                boxShadow: 3,
-                bgcolor: APP_COLORS.secondary[200],
-                border: `4px solid ${APP_COLORS.accent[50]}`
+                bgcolor: APP_COLORS.accent[50],
+                maxWidth: 700,
+                m: "auto",
+                mb: 3,
+                borderRadius: 3,
+                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+                overflow: "hidden",
+                transition: "transform 0.2s ease-in-out",
+                "&:hover": {
+                    transform: "translateY(-4px)",
+                    boxShadow: "0 6px 25px rgba(0, 0, 0, 0.15)",
+                }
             }}
             onClick={() => onOpenModal(index)}
         >
+            {/* Header Section */}
             <Box
                 sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
                     p: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    bgcolor: APP_COLORS.accent[50],
 
                 }}
             >
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                     <Avatar
                         src={transformImagePath(post?.user?.profilePicture)}
                         sx={{ width: 60, height: 60, borderRadius: "20%", objectPosition: "top center" }}
                     />
                     <Box>
-                        <Typography sx={{ fontWeight: "bold", color: "grey.900" }}>
+                        <Typography
+                            sx={{
+                                fontWeight: 600,
+                                color: APP_COLORS.grey[900],
+                                fontSize: 16,
+                            }}
+                        >
                             {post?.user?.firstName || post?.user?.institutionName} {post?.user?.lastName}
                         </Typography>
-                        <Typography sx={{ color: "grey.600", fontSize: 14 }}>
-                            {post?.user?.position} • {timeAgo(post?.createdAt)}
+                        <Typography
+                            sx={{
+                                color: APP_COLORS.grey[600],
+                                fontSize: 12,
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 0.5
+                            }}
+                        >
+                            {post?.user?.position}
+                            {timeAgo(post?.createdAt)}
                         </Typography>
                     </Box>
                 </Box>
+                <IconButton
+                    sx={{
+                        color: APP_COLORS.grey[600],
+                        "&:hover": { bgcolor: APP_COLORS.grey[100] }
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <MoreVert />
+                </IconButton>
+            </Box>
 
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <Button
-                        startIcon={<Share sx={{ fontSize: 28 }} />}
+            {/* Media Section */}
+            {(post.media?.length > 0 || post.coverImage) && (
+                <Box sx={{ position: "relative" }}>
+                    <ImageCarousel
+                        images={(post.coverImage ? [post.coverImage] : []).concat(post.media || [])}
+                        objectFit="cover"
+                        width="100%"
+                        height="450px"
+                    />
+                    <Box
                         sx={{
+                            position: "absolute",
+                            top: 10,
+                            right: 10,
+                            bgcolor: "rgba(0, 0, 0, 0.6)",
+                            borderRadius: 10,
+                            px: 1,
+                            py: 0.5,
+                            color: "white",
+                            fontSize: 12,
+                        }}
+                    >
+                        {post.media?.length || 1} media
+                    </Box>
+                </Box>
+            )}
+
+            {/* Content Section */}
+            <CardContent sx={{ py: 2, px: 3 }}>
+                <Typography
+                    sx={{
+                        color: APP_COLORS.grey[800],
+                        fontSize: 15,
+                        lineHeight: 1.6,
+                        wordBreak: "break-word",
+                    }}
+                >
+                    {post.projectDetails}
+                </Typography>
+            </CardContent>
+
+            {/* Actions Section */}
+
+            <CardActions sx={{ p: 1 }}>
+                <Box
+                    sx={{
+                        display: "flex",
+                        width: "100%",
+                        justifyContent: "space-around",
+                        gap: 1,
+                    }}
+                >
+                    <Button
+                        startIcon={
+                            isLiked ? (
+                                <Favorite sx={{ color: APP_COLORS.error }} />
+                            ) : (
+                                <FavoriteBorder sx={{ color: APP_COLORS.grey[600] }} />
+                            )
+                        }
+                        sx={{
+                            flex: 1,
                             textTransform: "none",
-                            color: APP_COLORS.primary,
-                            fontSize: 18,
-                            padding: "10px 16px",
+                            color: APP_COLORS.grey[700],
+                            "&:hover": { bgcolor: APP_COLORS.grey[100] },
+                            borderRadius: 2,
+                            py: 1,
+                        }}
+                        onClick={(e) => handleLikeClick(post._id, e)}
+                    >
+                        {likeCount}
+                    </Button>
+
+                    <Button
+                        startIcon={<ChatBubbleOutline sx={{ color: APP_COLORS.grey[600] }} />}
+                        sx={{
+                            flex: 1,
+                            textTransform: "none",
+                            color: APP_COLORS.grey[700],
+                            "&:hover": { bgcolor: APP_COLORS.grey[100] },
+                            borderRadius: 2,
+                            py: 1,
+                        }}
+                    >
+                        {commentCount}
+                    </Button>
+
+                    <Button
+                        startIcon={<Share sx={{ color: APP_COLORS.grey[600] }} />}
+                        sx={{
+                            flex: 1,
+                            textTransform: "none",
+                            color: APP_COLORS.grey[700],
+                            "&:hover": { bgcolor: APP_COLORS.grey[100] },
+                            borderRadius: 2,
+                            py: 1,
                         }}
                         onClick={(e) => e.stopPropagation()}
                     >
                         {post?.shareCount || 0}
-                    </Button>
-                    <IconButton sx={{ color: APP_COLORS.common.white }}>
-                        <MoreVert />
-                    </IconButton>
-                </Box>
-            </Box>
-
-            {(post.media?.length > 0 || post.coverImage) && (
-                <Box sx={{ cursor: "pointer", bgcolor: APP_COLORS.common.white }}>
-                    <ImageCarousel
-                        images={(post.coverImage ? [post.coverImage] : []).concat(post.media || [])}
-                        objectFit="contain"
-                        width="100%"
-                        height="400px"
-                    />
-                </Box>
-            )}
-
-            <CardContent>
-                <Typography sx={{ color: "grey.800" }}>{post.projectDetails}</Typography>
-            </CardContent>
-
-            <CardActions disableSpacing>
-                <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-                    <Button
-                        startIcon={isLiked ? <Favorite sx={{ fontSize: 28 }} /> : <FavoriteBorder sx={{ fontSize: 28 }} />}
-                        sx={{
-                            textTransform: "none",
-                            color: isLiked ? APP_COLORS.error : APP_COLORS.primary,
-                            fontSize: 18,
-                            padding: "10px 16px",
-                        }}
-                        onClick={(e) => handleLikeClick(post._id, e)}
-                    >
-                        {likeCount} Likes
-                    </Button>
-
-                    <Button
-                        startIcon={<ChatBubbleOutline sx={{ fontSize: 28 }} />}
-                        sx={{
-                            textTransform: "none",
-                            color: APP_COLORS.primary,
-                            fontSize: 18,
-                            padding: "10px 16px",
-                        }}
-                    >
-                        {commentCount} Comments
                     </Button>
                 </Box>
             </CardActions>

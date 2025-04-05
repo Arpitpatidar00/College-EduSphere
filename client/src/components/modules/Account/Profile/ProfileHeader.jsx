@@ -1,35 +1,41 @@
 import { useState, useRef } from "react";
-import { Box, Typography, Avatar, IconButton, Chip, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import {
+    Box,
+    Typography,
+    Avatar,
+    IconButton,
+    Chip,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+} from "@mui/material";
 import { APP_COLORS } from "../../../../enums/Colors";
 import { transformImagePath } from "../../../../utils/image.utils";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
-import SettingsIcon from "@mui/icons-material/Settings"; // Added Settings icon
-
+import SettingsIcon from "@mui/icons-material/Settings";
 import EditProfileModal from "./EditProfileModal";
 import { useUpdateCollege } from "@services/api/Auth/college.service";
 import { useUpdateStudent } from "@services/api/Auth/student.service";
 import { useDispatch } from "react-redux";
 import { UserType } from "@/enums/AuthConstants";
 import { updateUserState } from "@/store/slices/auth.slice";
-
+import { useTheme, useMediaQuery } from "@mui/material";
 
 const StyledDialog = {
-    '& .MuiDialog-paper': {
+    "& .MuiDialog-paper": {
         borderRadius: 8,
-        padding: '16px',
-        boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)',
+        padding: "16px",
+        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)",
+        maxWidth: { xs: "90%", sm: "500px" },
     },
 };
 
-const StyledAvatar = {
-    width: 200,
-    height: 200,
-    border: '4px solid #1976D2',
-    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.2)',
-};
-
 const ProfileHeader = ({ user, onProfileChange }) => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // xs (0-600px)
     const dispatch = useDispatch();
     const { mutateAsync: updateStudent, isPending: isStudentPending } = useUpdateStudent();
     const { mutateAsync: updateCollege, isPending: isCollegePending } = useUpdateCollege();
@@ -40,18 +46,14 @@ const ProfileHeader = ({ user, onProfileChange }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const fileInputRef = useRef(null);
 
-    const handleEditClick = () => {
-        setEditModalOpen(true);
-    };
-
+    const handleEditClick = () => setEditModalOpen(true);
     const handleSaveChanges = async (updatedData) => {
         try {
             let result;
             const formData = new FormData();
-
             Object.entries(updatedData).forEach(([key, value]) => {
-                if (key === 'profilePictureFile' && value) {
-                    formData.append('profilePicture', value);
+                if (key === "profilePictureFile" && value) {
+                    formData.append("profilePicture", value);
                 } else if (value !== undefined && value !== null) {
                     formData.append(key, value);
                 }
@@ -60,31 +62,18 @@ const ProfileHeader = ({ user, onProfileChange }) => {
             if (user.role === UserType.STUDENT) {
                 result = await updateStudent({ body: formData, id: user._id });
             } else if (user.role === UserType.COLLEGE) {
-
                 result = await updateCollege({ body: formData, id: user._id });
-
             }
 
-            if (result.result?.user && dispatch) {
-                dispatch(updateUserState(result.result.user));
-            }
-
-            if (onProfileChange && result.result?.user) {
-                onProfileChange(result.result.user);
-            }
-
+            if (result.result?.user && dispatch) dispatch(updateUserState(result.result.user));
+            if (onProfileChange && result.result?.user) onProfileChange(result.result.user);
             setEditModalOpen(false);
         } catch (error) {
             console.error("Error updating profile:", error);
         }
     };
 
-    const handleProfilePictureChange = () => {
-        if (fileInputRef.current) {
-            fileInputRef.current.click();
-        }
-    };
-
+    const handleProfilePictureChange = () => fileInputRef.current?.click();
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -98,21 +87,13 @@ const ProfileHeader = ({ user, onProfileChange }) => {
 
     const handleImageConfirm = async () => {
         if (selectedFile) {
-
             const formData = new FormData();
-            formData.append('profilePicture', selectedFile);
-
+            formData.append("profilePicture", selectedFile);
             try {
                 let result;
-
-                if (user.role === UserType.STUDENT) {
-                    result = await updateStudent({ body: formData });
-                } else if (user.role === UserType.COLLEGE) {
-
-                    result = await updateCollege({ body: formData });
-                }
+                if (user.role === UserType.STUDENT) result = await updateStudent({ body: formData });
+                else if (user.role === UserType.COLLEGE) result = await updateCollege({ body: formData });
                 if (result.result.user) {
-                    console.log('result.result.user: ', result.result.user);
                     dispatch(updateUserState(result.result.user));
                     onProfileChange(result.result.user);
                 }
@@ -132,18 +113,17 @@ const ProfileHeader = ({ user, onProfileChange }) => {
     };
 
     return (
-        <Box sx={{ position: "relative", width: "100%", pt: 12 }}>
+        <Box sx={{ position: "relative", width: "100%", pt: { xs: 4, sm: 6, md: 12 } }}>
             <Box
                 sx={{
                     position: "absolute",
                     top: 0,
                     left: 0,
                     width: "100%",
-                    height: 200,
-                    background:
-                        "linear-gradient(90deg, rgba(132, 161, 191, 0.5) 0%, rgba(255, 182, 217, 0.5) 100%)",
-                    borderTopLeftRadius: 20,
-                    borderTopRightRadius: 20,
+                    height: { xs: 100, sm: 150, md: 200 },
+                    background: "linear-gradient(90deg, rgba(132, 161, 191, 0.5) 0%, rgba(255, 182, 217, 0.5) 100%)",
+                    borderTopLeftRadius: { xs: 10, sm: 15, md: 20 },
+                    borderTopRightRadius: { xs: 10, sm: 15, md: 20 },
                     zIndex: -1,
                 }}
             />
@@ -151,56 +131,54 @@ const ProfileHeader = ({ user, onProfileChange }) => {
             <Box
                 sx={{
                     display: "flex",
+                    flexDirection: { xs: "column", md: "row" },
                     justifyContent: "space-between",
                     alignItems: "center",
-                    maxWidth: 1200,
+                    maxWidth: { xs: "100%", sm: "90%", md: "1200px" },
                     mx: "auto",
-                    p: 3,
+                    p: { xs: 1, sm: 2, md: 3 },
                 }}
             >
                 <Box
                     sx={{
                         position: "relative",
                         display: "inline-block",
-                        width: 350,
-                        height: 350,
+                        width: { xs: "150px", sm: "200px", md: "350px" },
+                        height: { xs: "150px", sm: "200px", md: "350px" },
+                        mb: { xs: 2, md: 0 },
                     }}
                 >
                     <Avatar
                         src={
                             previewImage ||
-                            (user?.profilePicture
-                                ? transformImagePath(user.profilePicture)
-                                : "https://via.placeholder.com/150")
+                            (user?.profilePicture ? transformImagePath(user.profilePicture) : "https://via.placeholder.com/150")
                         }
                         alt={`${user?.firstName || user.institutionName} ${user?.lastName ?? ""}`}
                         sx={{
                             width: "100%",
                             height: "100%",
-                            border: `10px solid ${APP_COLORS.accent?.[100] ?? "#ccc"}`,
+                            border: `4px solid ${APP_COLORS.accent?.[100] ?? "#ccc"}`,
                             borderRadius: "20%",
                             boxShadow: "0 4px 10px rgba(157, 157, 157, 0.1)",
                         }}
                         imgProps={{
-                            style: {
-                                objectFit: "cover",
-                                objectPosition: "top",
-                            },
+                            style: { objectFit: "cover", objectPosition: "top" },
                         }}
                     />
                     <IconButton
                         onClick={handleProfilePictureChange}
                         sx={{
                             position: "absolute",
-                            bottom: 10,
-                            right: 10,
+                            bottom: { xs: 0, sm: 5, md: 10 },
+                            right: { xs: 0, sm: 5, md: 10 },
                             backgroundColor: APP_COLORS.primary[500],
                             color: "#fff",
                             border: "2px solid white",
+                            padding: { xs: 0.5, sm: 1 },
                             "&:hover": { backgroundColor: APP_COLORS.primary[700] },
                         }}
                     >
-                        <AddIcon />
+                        <AddIcon sx={{ fontSize: { xs: 16, sm: 20, md: 24 } }} />
                     </IconButton>
                     <input
                         type="file"
@@ -211,9 +189,13 @@ const ProfileHeader = ({ user, onProfileChange }) => {
                     />
                 </Box>
 
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 1, flex: 1, px: 4 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <Typography variant="h4" component="h1" sx={{ fontWeight: "bold" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 1, sm: 2 }, px: { xs: 0, sm: 2, md: 4 } }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 0.5, sm: 1 }, flexWrap: "wrap" }}>
+                        <Typography
+                            variant={isMobile ? "h6" : "h4"}
+                            component="h1"
+                            sx={{ fontWeight: "bold", wordBreak: "break-word" }}
+                        >
                             {user?.firstName || user?.institutionName} {user?.lastName}
                         </Typography>
                         <IconButton
@@ -222,34 +204,33 @@ const ProfileHeader = ({ user, onProfileChange }) => {
                                 backgroundColor: APP_COLORS.grey[200],
                                 color: APP_COLORS.primary[500],
                                 borderRadius: "50%",
-                                padding: "4px",
+                                padding: { xs: 0.5, sm: 1 },
                                 "&:hover": { backgroundColor: APP_COLORS.grey[300] },
                             }}
                         >
-                            <EditIcon fontSize="small" />
+                            <EditIcon fontSize={isMobile ? "small" : "medium"} />
                         </IconButton>
                         <IconButton
-                            // onClick={handleSettingsClick}
                             sx={{
                                 backgroundColor: APP_COLORS.grey[200],
                                 color: APP_COLORS.primary[500],
                                 borderRadius: "50%",
-                                padding: "4px",
+                                padding: { xs: 0.5, sm: 1 },
                                 "&:hover": { backgroundColor: APP_COLORS.grey[300] },
                             }}
                         >
-                            <SettingsIcon fontSize="small" />
+                            <SettingsIcon fontSize={isMobile ? "small" : "medium"} />
                         </IconButton>
                     </Box>
 
-                    <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
+                    <Box sx={{ display: "flex", gap: { xs: 0.5, sm: 1 }, mt: { xs: 0.5, sm: 1 }, flexWrap: "wrap" }}>
                         <Chip
                             label={`Followers: ${user?.followers ?? 0}`}
                             sx={{
                                 backgroundColor: APP_COLORS.grey[200],
                                 color: APP_COLORS.primary[500],
-                                fontSize: "0.875rem",
-                                minHeight: "32px",
+                                fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                                minHeight: { xs: "28px", sm: "32px" },
                             }}
                         />
                         <Chip
@@ -257,13 +238,16 @@ const ProfileHeader = ({ user, onProfileChange }) => {
                             sx={{
                                 backgroundColor: APP_COLORS.grey[200],
                                 color: APP_COLORS.primary[500],
-                                fontSize: "0.875rem",
-                                minHeight: "32px",
+                                fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                                minHeight: { xs: "28px", sm: "32px" },
                             }}
                         />
                     </Box>
 
-                    <Typography color="text.secondary" sx={{ fontSize: "1rem", mt: 0.5 }}>
+                    <Typography
+                        color="text.secondary"
+                        sx={{ fontSize: { xs: "0.875rem", sm: "1rem" }, mt: { xs: 0.5, sm: 1 }, wordBreak: "break-word" }}
+                    >
                         {user?.bio ?? "No bio available"}
                     </Typography>
                 </Box>
@@ -279,35 +263,30 @@ const ProfileHeader = ({ user, onProfileChange }) => {
             />
 
             <Dialog open={isImageConfirmOpen} onClose={handleImageCancel} sx={StyledDialog}>
-                <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold' }}>Confirm Profile Picture</DialogTitle>
+                <DialogTitle sx={{ textAlign: "center", fontWeight: "bold" }}>Confirm Profile Picture</DialogTitle>
                 <DialogContent>
-                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
-                        {previewImage && <Avatar
-                            src={
-                                previewImage
-                            }
-                            alt={`${user?.firstName || user.institutionName} ${user?.lastName ?? ""}`}
-                            sx={{
-                                width: "300px",
-                                height: "300px",
-                                border: `10px solid ${APP_COLORS.accent?.[200] ?? "#ccc"}`,
-                                borderRadius: "20%",
-                                boxShadow: "0 4px 10px rgba(157, 157, 157, 0.1)",
-                            }}
-                            imgProps={{
-                                style: {
-                                    objectFit: "cover",
-                                    objectPosition: "top",
-                                },
-                            }}
-                        />}
+                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", padding: 2 }}>
+                        {previewImage && (
+                            <Avatar
+                                src={previewImage}
+                                alt={`${user?.firstName || user.institutionName} ${user?.lastName ?? ""}`}
+                                sx={{
+                                    width: { xs: "200px", sm: "300px" },
+                                    height: { xs: "200px", sm: "300px" },
+                                    border: `4px solid ${APP_COLORS.accent?.[200] ?? "#ccc"}`,
+                                    borderRadius: "20%",
+                                    boxShadow: "0 4px 10px rgba(157, 157, 157, 0.1)",
+                                }}
+                                imgProps={{ style: { objectFit: "cover", objectPosition: "top" } }}
+                            />
+                        )}
                     </Box>
                 </DialogContent>
-                <DialogActions sx={{ justifyContent: 'center', gap: 2 }}>
-                    <Button onClick={handleImageCancel} variant="outlined" sx={{ borderRadius: '8px' }}>
+                <DialogActions sx={{ justifyContent: "center", gap: 2 }}>
+                    <Button onClick={handleImageCancel} variant="outlined" sx={{ borderRadius: "8px" }}>
                         Cancel
                     </Button>
-                    <Button onClick={handleImageConfirm} color="primary" variant="contained" sx={{ borderRadius: '8px', paddingX: 3 }}>
+                    <Button onClick={handleImageConfirm} color="primary" variant="contained" sx={{ borderRadius: "8px", px: 3 }}>
                         Confirm
                     </Button>
                 </DialogActions>

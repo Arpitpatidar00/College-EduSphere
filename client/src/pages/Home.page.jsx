@@ -1,94 +1,133 @@
-import { Box, Grid, IconButton, Modal, Drawer, useMediaQuery, useTheme } from "@mui/material";
-import { AccountCircle } from "@mui/icons-material";
-import Sidebar from "../components/HomePage/Sidebar/Sidebar";
+import { Box, Grid, IconButton, Drawer, useMediaQuery, useTheme, BottomNavigation, BottomNavigationAction, Badge } from "@mui/material";
+import { AccountCircle, Add, Home, Explore, VideoLibrary, Chat, Person } from "@mui/icons-material";
+import HomeSidebar from "../components/HomePage/Sidebar/HomeSidebar";
 import WhoToFollow from "../components/HomePage/Right/FollowSuggestions";
-import AddPosts from '../components/HomePage/Posts/AddPosts';
 import { useState } from "react";
-import { APP_COLORS } from '../enums/Colors'; // Adjust the import path accordingly
+import { APP_COLORS } from '../enums/Colors';
 import HomePostStory from '../components/modules/Stories/Stories';
 import PostList from '@/components/Common/PostCard/index';
 import { useGetAllPosts } from '@services/api/main/post.service';
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from '@/components/Global/Routes/CommonRoutes';
+import AddPostModal from '../components/modules/Post/AddPost/AddPostModal';
+
+
 
 const HomePage = ({ toggleTheme }) => {
   const [openSidebar, setOpenSidebar] = useState(false);
   const [openWhoToFollow, setOpenWhoToFollow] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [openAddPost, setOpenAddPost] = useState(false);
+  const [bottomNavValue, setBottomNavValue] = useState(0);
+
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Small screens (e.g., phones)
-  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md')); // Tablet screens
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md')); // Medium and up (desktop)
-  const { data: postData } = useGetAllPosts(
+  const navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // xs to sm
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md')); // sm to md
+  const { data: postData = { data: [], totalCount: 0 } } = useGetAllPosts(
     { page: 0, limit: 20 },
     { data: [], totalCount: 0 }
   );
 
+  const handleScroll = (e) => {
+    e.target.style.scrollBehavior = 'smooth';
+  };
+
+  const navItems = [
+    { label: "Home", icon: <Home />, path: ROUTES.HOME },
+    { label: "Explore", icon: <Explore />, path: ROUTES.EXPLORE },
+    { label: "Reels", icon: <VideoLibrary />, path: ROUTES.REELS },
+    { label: "Add", icon: <Add />, path: ROUTES.CREATE_POST },
+    { label: "Messages", icon: <Chat />, path: ROUTES.MESSAGES, badge: 7 },
+  ];
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
     <>
+
       <Box
         sx={{
-          pl: { xs: 1, sm: 2 },
-          pr: { xs: 1, sm: 2 },
           height: "calc(100vh - 64px)",
           display: "flex",
           flexDirection: "column",
-          backgroundColor: APP_COLORS.common.white,
-          border: `1px solid ${APP_COLORS.common.black}`,
+          backgroundColor: theme.palette.mode === 'dark' ? APP_COLORS.grey[800] : APP_COLORS.common.white,
           overflow: "hidden",
+          pt: 2,
+
         }}
       >
-        <Grid container spacing={{ xs: 1, sm: 2 }} sx={{ flexGrow: 1, height: "100%" }}>
+        <Grid container sx={{ flexGrow: 1, height: "100%" }}>
           {/* Sidebar */}
           <Grid
             item
-            xs={12}
-            sm={3}
+            xs={0}
+            sm={0}
+            md={3}
             sx={{
               display: {
-                xs: isMobile ? 'none' : 'block',
-                sm: isTablet || isDesktop ? 'block' : 'none',
+                xs: 'none',
+                sm: 'none',
+                md: 'block',
               },
               height: "100%",
+              transition: 'width 0.3s ease',
             }}
           >
-            <Sidebar toggleTheme={toggleTheme} />
+            <HomeSidebar toggleTheme={toggleTheme} />
           </Grid>
 
-          {/* Main Content */}
           <Grid
             item
             xs={12}
-            sm={isTablet ? 9 : 6}
+            sm={12}
             md={6}
-            sx={{ height: "100%", display: "flex", flexDirection: "column" }}
+            lg={6}
+            sx={{
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              position: "relative",
+              pb: (isMobile || isTablet) ? 8 : 0,
+            }}
           >
             <HomePostStory />
             <Box
               sx={{
                 flex: 1,
                 overflowY: "auto",
-                "-ms-overflow-style": "none",
-                "scrollbar-width": "none",
-                "&::-webkit-scrollbar": { display: "none" },
-                p: { xs: 1, sm: 2 },
+                scrollBehavior: "smooth",
+                // Hide scrollbar
+                "&::-webkit-scrollbar": {
+                  display: "none", // Hides the scrollbar in Webkit browsers (Chrome, Safari)
+                },
+                // Fallback for Firefox (optional, as Firefox uses a different syntax)
+                "scrollbar-width": "none", // Firefox
+                "-ms-overflow-style": "none", // IE and Edge
+                p: { xs: 1, sm: 2, md: 2 },
+                transition: "all 0.3s ease",
               }}
+              onScroll={handleScroll}
             >
               <PostList postData={postData} />
             </Box>
           </Grid>
-
           {/* WhoToFollow Section */}
           <Grid
             item
-            xs={12}
-            sm={isTablet ? 3 : 3}
+            xs={0}
+            sm={0}
             md={3}
             sx={{
               display: {
-                xs: isMobile ? 'none' : 'block',
-                sm: isTablet || isDesktop ? 'block' : 'none',
+                xs: 'none',
+                sm: 'none',
+                md: 'block',
               },
               height: "100%",
               position: "relative",
+              transition: 'width 0.3s ease',
             }}
           >
             <WhoToFollow />
@@ -96,13 +135,86 @@ const HomePage = ({ toggleTheme }) => {
         </Grid>
       </Box>
 
+      {/* Bottom Navigation for Mobile and Tablet */}
+      {(isMobile || isTablet) && (
+        <BottomNavigation
+          value={bottomNavValue}
+          onChange={(event, newValue) => {
+            setBottomNavValue(newValue);
+            handleNavigation(navItems[newValue].path);
+          }}
+          showLabels={false}
+          sx={{
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            bgcolor: theme.palette.mode === 'dark' ? APP_COLORS.grey[900] : APP_COLORS.grey[100],
+            boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.1)",
+            height: 60,
+            zIndex: 1000,
+            borderTop: `1px solid ${theme.palette.mode === 'dark' ? APP_COLORS.grey[700] : APP_COLORS.grey[200]}`,
+          }}
+        >
+          {navItems.map((item, index) => (
+            <BottomNavigationAction
+              key={index}
+              icon={
+                item.badge ? (
+                  <Badge badgeContent={item.badge} color="error" overlap="circular">
+                    {item.icon}
+                  </Badge>
+                ) : (
+                  item.icon
+                )
+              }
+              sx={{
+                color: bottomNavValue === index ? APP_COLORS.primary[500] : APP_COLORS.grey[600],
+                "& .Mui-selected": {
+                  color: APP_COLORS.primary[500],
+                },
+                "&:hover": {
+                  color: APP_COLORS.primary[400],
+                  transform: "scale(1.1)",
+                  transition: "all 0.2s ease",
+                },
+                minWidth: "auto",
+                padding: "6px",
+              }}
+            />
+          ))}
+          <BottomNavigationAction
+            icon={<Person />}
+            onClick={() => handleNavigation(ROUTES.PROFILE)}
+            sx={{
+              color: bottomNavValue === navItems.length ? APP_COLORS.primary[500] : APP_COLORS.grey[600],
+              "&:hover": {
+                color: APP_COLORS.primary[400],
+                transform: "scale(1.1)",
+                transition: "all 0.2s ease",
+              },
+              minWidth: "auto",
+              padding: "6px",
+            }}
+          />
+        </BottomNavigation>
+      )}
+
       {/* Mobile Sidebar Toggle */}
       {isMobile && (
         <IconButton
           onClick={() => setOpenSidebar(true)}
-          sx={{ position: 'fixed', top: 16, left: 16, zIndex: 10 }}
+          sx={{
+            position: 'fixed',
+            top: 80,
+            left: 16,
+            zIndex: 1200,
+            color: APP_COLORS.primary[500],
+            transition: 'transform 0.3s ease',
+            '&:hover': { transform: 'scale(1.1)' },
+          }}
         >
-          <AccountCircle sx={{ fontSize: 30, color: APP_COLORS.primary[500] }} />
+          <AccountCircle sx={{ fontSize: 30 }} />
         </IconButton>
       )}
 
@@ -114,20 +226,29 @@ const HomePage = ({ toggleTheme }) => {
         PaperProps={{
           sx: {
             width: { xs: "70%", sm: "250px" },
-            backgroundColor: APP_COLORS.secondary[50],
+            backgroundColor: theme.palette.mode === 'dark' ? APP_COLORS.grey[900] : APP_COLORS.secondary[50],
+            borderRight: `1px solid ${theme.palette.mode === 'dark' ? APP_COLORS.grey[700] : APP_COLORS.grey[200]}`,
           },
         }}
       >
-        <Sidebar toggleTheme={toggleTheme} />
+        <HomeSidebar toggleTheme={toggleTheme} />
       </Drawer>
 
       {/* Mobile WhoToFollow Toggle */}
       {isMobile && (
         <IconButton
           onClick={() => setOpenWhoToFollow(true)}
-          sx={{ position: 'fixed', top: 80, right: 16, zIndex: 10 }}
+          sx={{
+            position: 'fixed',
+            top: 140,
+            right: 16,
+            zIndex: 1200,
+            color: APP_COLORS.primary[500],
+            transition: 'transform 0.3s ease',
+            '&:hover': { transform: 'scale(1.1)' },
+          }}
         >
-          <AccountCircle sx={{ fontSize: 30, color: APP_COLORS.primary[500] }} />
+          <AccountCircle sx={{ fontSize: 30 }} />
         </IconButton>
       )}
 
@@ -139,51 +260,43 @@ const HomePage = ({ toggleTheme }) => {
         PaperProps={{
           sx: {
             width: { xs: "70%", sm: "250px" },
-            background: "transparent",
+            background: theme.palette.mode === 'dark' ? APP_COLORS.grey[900] : 'transparent',
+            borderLeft: `1px solid ${theme.palette.mode === 'dark' ? APP_COLORS.grey[700] : APP_COLORS.grey[200]}`,
           },
         }}
       >
         <WhoToFollow />
       </Drawer>
 
-      {/* Add Post Button */}
+      {/* Add Post Button/Floating Action Button */}
       <IconButton
-        onClick={() => setOpen(true)}
+        onClick={() => setOpenAddPost(true)}
         sx={{
           position: "fixed",
-          bottom: { xs: 16, sm: 20 },
-          left: "50%",
-          transform: "translateX(-50%)",
-          backgroundColor: APP_COLORS.common.white,
-          boxShadow: "0px 4px 10px rgba(0,0,0,0.2)",
+          bottom: { xs: 80, sm: 80, md: 20 }, // Adjust for bottom nav on mobile/tablet
+          right: { xs: 16, sm: 20 },
+          backgroundColor: APP_COLORS.primary[500],
+          color: APP_COLORS.common.white,
+          boxShadow: "0px 4px 15px rgba(0,0,0,0.3)",
           borderRadius: "50%",
-          p: 1,
-          zIndex: 10,
+          p: 1.5,
+          zIndex: 1200,
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            backgroundColor: APP_COLORS.primary[700],
+            transform: 'scale(1.1)',
+          },
         }}
       >
-        <AccountCircle sx={{ fontSize: { xs: 40, sm: 50 }, color: APP_COLORS.primary[500] }} />
+        <Add sx={{ fontSize: { xs: 30, sm: 40 } }} />
       </IconButton>
 
-      {/* Add Post Modal */}
-      <Modal open={open} onClose={() => setOpen(false)}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: { xs: 1, sm: 2 },
-            borderRadius: 4,
-            width: { xs: "90%", sm: "500px" },
-            maxHeight: "80vh",
-            overflowY: "auto",
-          }}
-        >
-          <AddPosts />
-        </Box>
-      </Modal>
+      <AddPostModal
+        open={openAddPost}
+        onClose={() => setOpenAddPost(false)}
+        aria-labelledby="add-post-modal"
+        aria-describedby="modal-to-add-new-post"
+      />
     </>
   );
 };
