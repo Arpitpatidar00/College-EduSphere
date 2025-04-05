@@ -90,7 +90,7 @@ app.use("/student", studentRoutes);
 
 app.use("/location", locationRoutes);
 app.use("/post", postRoutes);
-app.use("/chat", chatRoutes); // Add chat routes
+app.use("/chat", chatRoutes);
 app.use("/stories", storiesRoutes);
 app.use("/likes", likesRoutes);
 app.use("/comments", commentsRoutes);
