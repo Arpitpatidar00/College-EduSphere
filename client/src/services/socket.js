@@ -38,6 +38,7 @@ class SocketService {
     this.socket = io(SOCKET_URL, {
       query: { userId },
       withCredentials: true,
+      transports: ["websocket"],
       reconnection: true,
       reconnectionAttempts: 10,
       reconnectionDelay: 2000,
