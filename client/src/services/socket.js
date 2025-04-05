@@ -21,8 +21,7 @@ export const SocketEvents = Object.freeze({
   ANSWER: "answer",
 });
 
-const SOCKET_URL = "http://localhost:4000";
-
+const SOCKET_URL = import.meta.env.VITE_BACKEND_URL;
 /**
  * Manages real-time socket interactions.
  */

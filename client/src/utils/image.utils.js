@@ -7,7 +7,7 @@
  */
 export function transformImagePath(dbPath) {
   if (dbPath) {
-    return `http://localhost:4000/${dbPath}`;
+    return `${import.meta.env.VITE_BACKEND_URL}/${dbPath}`;
   }
   return "/assets/images/errors/broken-image.png";
 }

@@ -12,11 +12,11 @@ export function transformImagePath(dbPath) {
     return "/assets/images/errors/broken-image.png";
   }
 
-  return `http://localhost:4000/${dbPath}`;
+  return `/${dbPath}`;
 }
 
 export function revertImagePath(sitePath) {
-  const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/`;
+  const baseUrl = `${import.meta.env.VITE_BACKEND_URL}/`;
 
   const path = sitePath.replace(baseUrl, "");
 
