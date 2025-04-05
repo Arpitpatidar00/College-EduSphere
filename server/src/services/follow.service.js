@@ -28,7 +28,6 @@ class FollowService {
     return followDoc;
   }
   async followUser(currentUserId, userId, status) {
-    console.log("status: ", status);
     if (currentUserId === userId) return null;
 
     const currentUserObjectId = new mongoose.Types.ObjectId(currentUserId);

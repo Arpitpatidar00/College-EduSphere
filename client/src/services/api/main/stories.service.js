@@ -1,95 +1,130 @@
-// services/api/stories.service.js
+import { MethodTypesEnum } from "../../../enums/ApiMethord";
+import { apiEndPoints } from "../../apiEndpoint";
+import { createServerAction } from "../../../hook/createServerAction";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useGenericMutation } from "../../../hook/useGenericMutation";
 
-// Mock API call (replace with your actual API endpoint)
-export const useGetAllStories = async () => {
-  try {
-    // Simulate API call with dummy data
-    const response = await new Promise((resolve) =>
-      setTimeout(() => {
-        resolve({
-          data: [
-            {
-              id: "1",
-              name: "Cristano",
-              username: "cristano_7",
-              image: "https://example.com/images/cristano.jpg",
-              time: "2h",
-            },
-            {
-              id: "2",
-              name: "Brahim Diaz",
-              username: "brahim_diaz",
-              image: "https://example.com/images/brahim.jpg",
-              time: "3h",
-            },
-            {
-              id: "3",
-              name: "Robin",
-              username: "robin_123",
-              image: "https://example.com/images/robin.jpg",
-              time: "1h",
-            },
-            {
-              id: "4",
-              name: "Georgina",
-              username: "georgina_g",
-              image: "https://example.com/images/georgina.jpg",
-              time: "4h",
-            },
-            {
-              id: "5",
-              name: "Wick",
-              username: "wick_john",
-              image: "https://example.com/images/wick.jpg",
-              time: "5h",
-            },
-            {
-              id: "6",
-              name: "Chris",
-              username: "chris_p",
-              image: "https://example.com/images/chris.jpg",
-              time: "2h",
-            },
-            {
-              id: "7",
-              name: "Amanda",
-              username: "amanda_lee",
-              image: "https://example.com/images/amanda.jpg",
-              time: "3h",
-            },
-            {
-              id: "8",
-              name: "Jennifer",
-              username: "jennifer_s",
-              image: "https://example.com/images/jennifer.jpg",
-              time: "1h",
-            },
-            {
-              id: "9",
-              name: "Wick",
-              username: "wick_john_2",
-              image: "https://example.com/images/wick2.jpg",
-              time: "6h",
-            },
-            {
-              id: "10",
-              name: "John Wick",
-              username: "john_wick",
-              image: "https://example.com/images/johnwick.jpg",
-              time: "7h",
-            },
-          ],
-        });
-      }, 1000)
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error("Failed to fetch stories: " + error.message);
-  }
+// ---- Story Actions ----
+
+export const getAllStoriesAction = async (params, showSuccessToast) => {
+  return createServerAction({
+    url: apiEndPoints.getAllStories,
+    body: params,
+    method: MethodTypesEnum.GET,
+    showSuccessToast,
+  });
 };
 
-// Replace the above with your actual API call, e.g.:
-// export const useGetAllStories = async () => {
-//   const response = await axios.get("https://your-api-endpoint/stories");
-//   return response.data;
-// };
+export const createOrUpdateStoryAction = async (body) => {
+  return createServerAction({
+    url: apiEndPoints.createOrUpdateStory,
+    body,
+    method: MethodTypesEnum.POST,
+  });
+};
+
+export const getStoryAction = async (id) => {
+  return createServerAction({
+    url: `${apiEndPoints.getStory}/${id}`,
+    method: MethodTypesEnum.GET,
+  });
+};
+
+export const deleteStoryAction = async (id) => {
+  return createServerAction({
+    url: `${apiEndPoints.deleteStory}/${id}`,
+    method: MethodTypesEnum.DELETE,
+  });
+};
+
+export const deleteMediaAction = async ({ id, mediaIndex }) => {
+  return createServerAction({
+    url: `${apiEndPoints.deleteMedia}/${id}/media/${mediaIndex}`,
+    method: MethodTypesEnum.DELETE,
+  });
+};
+
+export const addStoryViewAction = async ({ id, body }) => {
+  return createServerAction({
+    url: `${apiEndPoints.addStoryView}/${id}/view`,
+    body,
+    method: MethodTypesEnum.POST,
+  });
+};
+
+export const addStoryReactionAction = async ({ id, body }) => {
+  return createServerAction({
+    url: `${apiEndPoints.addStoryReaction}/${id}/reaction`,
+    body,
+    method: MethodTypesEnum.POST,
+  });
+};
+
+export const removeStoryReactionAction = async ({ id, body }) => {
+  return createServerAction({
+    url: `${apiEndPoints.removeStoryReaction}/${id}/reaction`,
+    body,
+    method: MethodTypesEnum.DELETE,
+  });
+};
+
+export const getStoryViewsAction = async (id) => {
+  return createServerAction({
+    url: `${apiEndPoints.getStoryViews}/${id}/views`,
+    method: MethodTypesEnum.GET,
+  });
+};
+
+// ---- Story Hooks ----
+
+export const useGetAllStories = (params, initialData, paginationModel) =>
+  useQuery({
+    queryKey: ["stories", params, paginationModel],
+    queryFn: async () => {
+      const response = await getAllStoriesAction(params);
+      if (!response.code) throw response;
+      return response.result;
+    },
+    initialData: () => initialData,
+    placeholderData: keepPreviousData,
+  });
+
+export const useGetStory = (id, enabled = true) =>
+  useQuery({
+    queryKey: ["story", id],
+    queryFn: async () => {
+      const response = await getStoryAction(id);
+      if (!response.code) throw response;
+      return response.result;
+    },
+    enabled: !!id && enabled,
+  });
+
+export const useCreateOrUpdateStory = () =>
+  useGenericMutation(createOrUpdateStoryAction, ["stories"]);
+
+export const useDeleteStory = () =>
+  useGenericMutation(deleteStoryAction, ["stories"]);
+
+export const useDeleteMedia = () =>
+  useGenericMutation(deleteMediaAction, ["stories"]);
+
+export const useAddStoryView = () =>
+  useGenericMutation(addStoryViewAction, ["stories"]);
+
+export const useAddStoryReaction = () =>
+  useGenericMutation(addStoryReactionAction, ["stories"]);
+
+export const useRemoveStoryReaction = () =>
+  useGenericMutation(removeStoryReactionAction, ["stories"]);
+
+export const useGetStoryViews = (id, enabled = true) =>
+  useQuery({
+    queryKey: ["storyViews", id],
+    queryFn: async () => {
+      const response = await getStoryViewsAction(id);
+      if (!response.code) throw response;
+      return response.result;
+    },
+    enabled: !!id && enabled,
+  });

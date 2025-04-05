@@ -12,7 +12,7 @@ const SettingPage = lazy(() => import('../../../pages/Setting.page.jsx'));
 const StoriesPage = lazy(() => import('../../../pages/StoriesPage'));
 const StudentAuthContainer = lazy(() => import('../../Auth/StudentAuth/StudentAuthContainer.jsx'));
 const CollegeAuthContainer = lazy(() => import('../../Auth/CollegeAuth/CollegeAuth.container.jsx'));
-const ChatApp = lazy(() => import('../../modules/ChatMain/index'));
+const MessagePage = lazy(() => import('../../modules/MessagePage/index'));
 const UserProfile = lazy(() => import('../../../pages/Profile.page'));
 const AdminLoginPage = lazy(() => import('../../Auth/AdminAuth/AdminLogin'));
 const Country = lazy(() => import('../../modules/Admin/Location/Country/index'));
@@ -47,7 +47,7 @@ const AppRouter = ({ toggleTheme }) => {
           <Route element={<ProtectedRoute><Outlet /></ProtectedRoute>}>
             <Route path={ROUTES.HOME.INDEX} element={<HomePage toggleTheme={toggleTheme} />} />
             <Route path={ROUTES.HOME.PROFILE} element={<UserProfile toggleTheme={toggleTheme} />} />
-            <Route path={ROUTES.HOME.MESSAGE} element={<ChatApp toggleTheme={toggleTheme} />} />
+            <Route path={ROUTES.HOME.MESSAGE} element={<MessagePage toggleTheme={toggleTheme} />} />
             <Route path={ROUTES.HOME.SETTING} element={<SettingPage toggleTheme={toggleTheme} />} />
             <Route path={ROUTES.HOME.STORIES} element={<StoriesPage toggleTheme={toggleTheme} />} />
           </Route>

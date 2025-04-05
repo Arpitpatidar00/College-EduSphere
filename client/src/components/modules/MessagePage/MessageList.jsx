@@ -48,15 +48,28 @@ const MessageList = ({ sx, onSelectConversation, ...props }) => {
 
     if (isFetching) {
         return (
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "calc(100vh - 200px)", ...sx }}>
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%", ...sx }}>
                 <CircularProgress />
             </Box>
         );
     }
 
     return (
-        <Box sx={{ p: 3, height: "calc(100vh - 200px)", backgroundColor: APP_COLORS.common.white, borderRadius: "12px", boxShadow: `0px 2px 5px ${APP_COLORS.primary[100]}`, overflowY: "auto", ...sx }} {...props}>
-            <Typography variant="h6" sx={{ mb: 1 }}>Messages</Typography>
+        <Box
+            sx={{
+                p: { xs: 1, md: 3 },
+                height: "100%",
+                backgroundColor: APP_COLORS.common.white,
+                borderRadius: "12px",
+                boxShadow: `0px 2px 5px ${APP_COLORS.primary[100]}`,
+                overflowY: "auto",
+                ...sx,
+            }}
+            {...props}
+        >
+            <Typography variant="h6" sx={{ mb: 1, fontSize: { xs: "1rem", md: "1.25rem" } }}>
+                Messages
+            </Typography>
             {studentData?.data?.map((user) => (
                 <Stack
                     key={user._id}
@@ -72,7 +85,11 @@ const MessageList = ({ sx, onSelectConversation, ...props }) => {
                     onClick={() => onSelectConversation(user)}
                 >
                     <Box sx={{ position: "relative" }}>
-                        <Avatar src={transformImagePath(user?.profilePicture)} alt={user?.firstName || user.institutionName} />
+                        <Avatar
+                            src={transformImagePath(user?.profilePicture)}
+                            alt={user?.firstName || user.institutionName}
+                            sx={{ width: { xs: 32, md: 40 }, height: { xs: 32, md: 40 } }}
+                        />
                         <Box
                             sx={{
                                 position: "absolute",
@@ -87,10 +104,13 @@ const MessageList = ({ sx, onSelectConversation, ...props }) => {
                         />
                     </Box>
                     <Box>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                        <Typography
+                            variant="subtitle2"
+                            sx={{ fontWeight: 600, fontSize: { xs: "0.9rem", md: "1rem" } }}
+                        >
                             {user.username || user.institutionName || `${user.firstName || user.institutionName} ${user.lastName || ""}`}
                         </Typography>
-                        <Typography variant="body2" color="textSecondary">
+                        <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: "0.8rem", md: "0.875rem" } }}>
                             {user.message || "Start a conversation"}
                         </Typography>
                     </Box>

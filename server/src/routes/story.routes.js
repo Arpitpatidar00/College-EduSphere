@@ -1,36 +1,67 @@
-// routes/story.routes.js
 import express from "express";
-import { storiesController } from "../controllers/index.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { uploadFile } from "../config/multer.config.js";
+import { storiesController } from "../controllers/index.js";
 
 const router = express.Router();
-
 const upload = uploadFile();
-const uploadFields = upload.fields([
-  { name: "media", maxCount: 5 }, // Limit to 5 media items per story
-]);
 
-// Apply authMiddleware to all story routes
-router.use(authMiddleware);
+const uploadFields = upload.fields([{ name: "media", maxCount: 1 }]);
 
-// Create a new story
+// Create or update story with new media
 router.post(
-  "/create-story",
+  "/create-or-update",
+  authMiddleware,
   uploadFields,
-  storiesController.createStoryController
+  storiesController.createOrUpdateStoryController
 );
 
-// Get all stories (e.g., from followed users or public)
-router.get("/get-all-stories", storiesController.getAllStoriesController);
+// Get all stories
+router.get(
+  "/get-all-stories",
+  authMiddleware,
+  storiesController.getAllStoriesController
+);
 
-// Get a single story by ID
-router.get("/:id", storiesController.getStoryController);
+// Get single story
+router.get("/:id", authMiddleware, storiesController.getStoryController);
 
-// Delete a story
-router.delete("/delete-story/:id", storiesController.deleteStoryController);
+// Delete entire story
+router.delete("/:id", authMiddleware, storiesController.deleteStoryController);
 
-// View a story (increment viewers)
-router.post("/view-story/:id", storiesController.viewStoryController);
+// Delete specific media from story
+router.delete(
+  "/:id/media/:mediaIndex",
+  authMiddleware,
+  storiesController.deleteMediaController
+);
+
+// Add view to specific media
+router.post(
+  "/:id/view",
+  authMiddleware,
+  storiesController.addStoryViewController
+);
+
+// Add reaction to specific media
+router.post(
+  "/:id/reaction",
+  authMiddleware,
+  storiesController.addStoryReactionController
+);
+
+// Remove reaction from specific media
+router.delete(
+  "/:id/reaction",
+  authMiddleware,
+  storiesController.removeStoryReactionController
+);
+
+// Get views for story
+router.get(
+  "/:id/views",
+  authMiddleware,
+  storiesController.getStoryViewsController
+);
 
 export default router;

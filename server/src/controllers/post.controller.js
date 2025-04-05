@@ -20,7 +20,7 @@ export async function createPostController(req, res, next) {
       userId,
     };
 
-    const post = await PostService.create(postData);
+    const [post] = await PostService.findAll(postData);
     return OK(res, post, "Post created successfully.");
   } catch (error) {
     next(error);

@@ -4,7 +4,7 @@ import HomeSidebar from "../components/HomePage/Sidebar/HomeSidebar";
 import WhoToFollow from "../components/HomePage/Right/FollowSuggestions";
 import { useState } from "react";
 import { APP_COLORS } from '../enums/Colors';
-import HomePostStory from '../components/modules/Stories/Stories';
+import HomePostStory from '../components/modules/Stories/HomePostStory';
 import PostList from '@/components/Common/PostCard/index';
 import { useGetAllPosts } from '@services/api/main/post.service';
 import { useNavigate } from "react-router-dom";

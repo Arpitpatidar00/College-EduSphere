@@ -64,4 +64,14 @@ export const apiEndPoints = {
   getFollowers: "/follow/followers",
   getFollowing: "/follow/following",
   blockUser: "/follow/block-user",
+
+  getAllStories: "/stories/get-all-stories",
+  createOrUpdateStory: "/stories/create-or-update",
+  getStory: "/stories",
+  deleteStory: "/stories",
+  deleteMedia: "/stories",
+  addStoryView: "/stories",
+  addStoryReaction: "/stories",
+  removeStoryReaction: "/stories",
+  getStoryViews: "/stories",
 };
