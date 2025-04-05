@@ -14,10 +14,11 @@ const server = createServer(app);
 // Initialize Socket.IO with CORS settings
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: process.env.BASE_URL || "http://localhost:3000", // or your deployed frontend
     methods: ["GET", "POST"],
     credentials: true,
   },
+  transports: ["websocket"], // Force WebSocket only for production
 });
 initializeSocket(io);
 
