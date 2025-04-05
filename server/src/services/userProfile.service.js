@@ -1,4 +1,5 @@
-import bcrypt from "bcrypt";
+import bcrypt from "@node-rs/bcrypt";
+
 import User from "../database/models/users.model.js";
 // import fs from "fs";
 // import path from "path";

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+import bcrypt from "@node-rs/bcrypt";
+
 import { UserType } from "../../constants/enum.js";
 
 const collegeSchema = new mongoose.Schema(

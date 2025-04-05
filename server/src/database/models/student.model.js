@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+import bcrypt from "@node-rs/bcrypt";
 
 const StudentModel = new mongoose.Schema(
   {
