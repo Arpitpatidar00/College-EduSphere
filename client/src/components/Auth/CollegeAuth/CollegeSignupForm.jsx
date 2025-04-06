@@ -168,6 +168,7 @@ function CollegeSignupForm({ onSubmit, signIn }) {
                 <Loader />
             ) : (
                 <Components.SignUpContainer signinIn={signIn}>
+
                     <Formik
                         initialValues={initialValues}
                         validationSchema={signUpValidationSchemas[step]}
@@ -182,7 +183,12 @@ function CollegeSignupForm({ onSubmit, signIn }) {
                         }}
                     >
                         {({ values, errors, touched, handleSubmit, setFieldValue }) => (
+
                             <Components.Form onSubmit={handleSubmit}>
+                                <Components.Title>
+                                    College /Institution Sign Up
+                                </Components.Title>
+
                                 <Stepper activeStep={step} alternativeLabel sx={{ mb: 3 }}>
                                     {[
                                         { label: "Institution Details", icon: <AccountCircle /> },
@@ -437,7 +443,14 @@ function CollegeSignupForm({ onSubmit, signIn }) {
                                     )}
                                 </Box>
 
-                                <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+                                <Box sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    mt: 2,
+                                    width: "100%",
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                }}>
                                     {step > 0 && (
                                         <Button onClick={() => setStep(step - 1)}>Back</Button>
                                     )}

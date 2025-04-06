@@ -24,7 +24,6 @@ import { useState } from "react";
 const Navbar = () => {
   const navigate = useNavigate();
   const userData = useSelector(selectUserData);
-
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -49,7 +48,8 @@ const Navbar = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          minHeight: { xs: 56, sm: 64 }, // Adjust height for mobile
+          minHeight: { xs: 56, sm: 64 }, // Adjusted height for mobile
+          width: "100%",
         }}
       >
         {/* Logo */}
@@ -80,14 +80,14 @@ const Navbar = () => {
             display: { xs: mobileOpen ? "flex" : "none", sm: "flex" },
             flexDirection: { xs: "column", sm: "row" },
             alignItems: "center",
-            gap: { xs: 1.5, sm: 2 },
+            gap: { xs: 2, sm: 2 },
             position: { xs: "fixed", sm: "static" },
-            top: { xs: 0, sm: "auto" },
+            top: { xs: 56, sm: "auto" }, // Start below AppBar on mobile
             left: { xs: 0, sm: "auto" },
             right: { xs: 0, sm: "auto" },
-            bottom: { xs: 0, sm: "auto" },
+            bottom: { xs: "auto", sm: "auto" },
             width: { xs: "100%", sm: "auto" },
-            height: { xs: "100vh", sm: "auto" },
+            maxHeight: { xs: "calc(100vh - 56px)", sm: "auto" }, // Adjust for AppBar height
             backgroundColor: {
               xs: APP_COLORS.primary[900],
               sm: "transparent",
@@ -101,19 +101,21 @@ const Navbar = () => {
             },
             "scrollbar-width": "none", // Firefox
             "-ms-overflow-style": "none", // IE and Edge
+            // Responsive padding and alignment for mobile
+            flexWrap: { xs: "wrap", sm: "nowrap" },
           }}
         >
           {isAuthenticated ? (
             <>
               {/* User Actions */}
-              <IconButton sx={{ color: APP_COLORS.common.white }}>
+              <IconButton sx={{ color: APP_COLORS.common.white, my: { xs: 1, sm: 0 } }}>
                 <Badge badgeContent={2} color="error">
                   <Notifications sx={{ fontSize: { xs: 20, sm: 24 } }} />
                 </Badge>
               </IconButton>
               <IconButton
                 onClick={handleMessageClick}
-                sx={{ color: APP_COLORS.common.white }}
+                sx={{ color: APP_COLORS.common.white, my: { xs: 1, sm: 0 } }}
               >
                 <Badge badgeContent={2} color="error">
                   <Chat sx={{ fontSize: { xs: 20, sm: 24 } }} />
@@ -125,13 +127,13 @@ const Navbar = () => {
                   p: 0,
                   minWidth: "auto",
                   borderRadius: "50%",
+                  my: { xs: 1, sm: 0 },
                 }}
               >
                 <Avatar
                   sx={{ width: { xs: 30, sm: 40 }, height: { xs: 30, sm: 40 } }}
                   src={
-                    transformImagePath(userData.profilePicture
-                    )
+                    transformImagePath(userData.profilePicture)
                       ? transformImagePath(userData.profilePicture)
                       : "/assets/Student.login1.png"
                   }
@@ -150,6 +152,7 @@ const Navbar = () => {
                 },
                 fontSize: { xs: 12, sm: 14 },
                 px: { xs: 1.5, sm: 2 },
+                my: { xs: 1, sm: 0 }, // Margin on mobile
               }}
               onClick={handleLoginClick}
             >

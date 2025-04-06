@@ -2,6 +2,7 @@ import styled, { keyframes } from "styled-components";
 import { APP_COLORS } from "../../../enums/Colors";
 import { Autocomplete } from "@mui/material";
 
+// Main Container
 export const Container = styled.div`
   font-family: Georgia, "Times New Roman", Times, serif;
   display: flex;
@@ -9,42 +10,47 @@ export const Container = styled.div`
   justify-content: center;
   width: calc(100% - 80px);
   height: calc(100vh - 150px);
-  padding: 10px;
+
+  padding: 20px;
   overflow: auto;
   transition: all 0.3s ease;
   position: relative;
-  margin: 40px !important;
+  margin: 40px;
 
   @media (max-width: 1024px) {
+    margin: 30px;
     padding: 15px;
     font-size: 14px;
   }
+
   @media (max-width: 768px) {
+    width: calc(100% - 10px);
+    height: calc(100vh -100px);
+    flex-direction: column;
+    margin: 20px 10px;
     padding: 10px;
-    width: 100%;
-    margin: 20px;
   }
+
   @media (max-width: 480px) {
-    height: auto;
-    margin: 10px;
+    width: calc(100% - 10px);
+    height: calc(100vh -100px);
   }
 `;
 
+// SignUp Container
 export const SignUpContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   position: absolute;
   top: 0;
-  height: 100%;
-  transition:
-    transform 0.6s ease,
-    opacity 0.6s ease;
   left: 0;
   width: 50%;
+  height: 100%;
+  padding: 30px;
   opacity: 0;
   z-index: 1;
-  padding: 30px;
+  transition: transform 0.6s ease, opacity 0.3s ease;
 
   ${({ signinIn }) =>
     signinIn !== true &&
@@ -55,62 +61,76 @@ export const SignUpContainer = styled.div`
   `}
 
   @media (max-width: 768px) {
+    position: static; /* Stacks naturally on mobile */
     width: 100%;
-    transform: translateX(0);
+    transform: none;
     opacity: 1;
-    z-index: 5;
-    flex-direction: column;
-    font-size: 14px;
-    padding: 15px;
-  }
-  @media (max-width: 480px) {
-    padding: 10px;
-    font-size: 12px;
-  }
-`;
-
-// Container for SignIn
-export const SignInContainer = styled.div`
-  position: absolute;
-  top: 0;
-  height: 100%;
-  transition: all 0.6s ease-in-out;
-  left: 0;
-  width: 50%;
-  z-index: 2;
-  padding: 30px;
-
-  ${({ signinIn }) => signinIn !== true && `transform: translateX(100%);`}
-
-  @media (max-width: 768px) {
-    width: 100%;
-    transform: translateX(0);
-  }
-`;
-
-// Form styling – using common.white for background
-export const Form = styled.form`
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  padding: 40px 50px;
-  border-radius: 20px;
-  height: 100%;
-  text-align: center;
-  width: 100%;
-  max-width: 100%;
-
-  @media (max-width: 1024px) {
     padding: 20px;
   }
-  @media (max-width: 768px) {
-    padding: 15px;
-  }
+
   @media (max-width: 480px) {
-    padding: 10px;
+    padding: 15px;
   }
 `;
 
+// SignIn Container
+export const SignInContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  padding: 30px;
+  z-index: 2;
+  transition: transform 0.6s ease-in-out;
+
+  ${({ signinIn }) =>
+    signinIn !== true &&
+    `
+    transform: translateX(100%);
+  `}
+
+  @media (max-width: 768px) {
+    position: static; /* Stacks naturally on mobile */
+    width: 100%;
+    transform: none;
+    padding: 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 15px;
+  }
+`;
+
+// Form
+export const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Better centering for form elements */
+  justify-content: center;
+  padding: 40px;
+  width: 100%;
+  max-width: 500px; /* Prevents form from becoming too wide */
+  height: auto; /* Allows natural growth */
+  text-align: center;
+
+  @media (max-width: 1024px) {
+    padding: 30px;
+    max-width: 450px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 20px;
+    max-width: 100%;
+  }
+
+  @media (max-width: 480px) {
+    padding: 15px;
+  }
+`;
 // Title styling
 export const Title = styled.h1`
   font-weight: bold;
@@ -229,9 +249,7 @@ export const Button = styled.button`
   padding: 12px 45px;
   letter-spacing: 1px;
   cursor: pointer;
-  transition:
-    background-color 0.3s ease,
-    transform 80ms ease-in,
+  transition: background-color 0.3s ease, transform 80ms ease-in,
     box-shadow 0.3s ease;
 
   &:hover {
@@ -463,9 +481,7 @@ export const CheckpointSlider = styled.input`
     border-radius: 50%;
     background: ${APP_COLORS.accent[500]};
     cursor: pointer;
-    transition:
-      background 0.3s ease,
-      transform 0.2s ease;
+    transition: background 0.3s ease, transform 0.2s ease;
 
     &:hover {
       background: ${APP_COLORS.accent[600]};
@@ -479,9 +495,7 @@ export const CheckpointSlider = styled.input`
     border-radius: 50%;
     background: ${APP_COLORS.accent[500]};
     cursor: pointer;
-    transition:
-      background 0.3s ease,
-      transform 0.2s ease;
+    transition: background 0.3s ease, transform 0.2s ease;
 
     &:hover {
       background: ${APP_COLORS.accent[600]};
@@ -495,9 +509,7 @@ export const CheckpointSlider = styled.input`
     border-radius: 50%;
     background: ${APP_COLORS.accent[500]};
     cursor: pointer;
-    transition:
-      background 0.3s ease,
-      transform 0.2s ease;
+    transition: background 0.3s ease, transform 0.2s ease;
 
     &:hover {
       background: ${APP_COLORS.accent[600]};

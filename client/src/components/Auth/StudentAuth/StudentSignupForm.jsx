@@ -124,7 +124,11 @@ function StudentSignupForm({ onSubmit, signIn }) {
                         }}
                     >
                         {({ values, errors, touched, handleSubmit, setFieldValue }) => (
+
                             <Components.Form onSubmit={handleSubmit}>
+                                <Components.Title>
+                                    Student Sign Up
+                                </Components.Title>
                                 <Stepper activeStep={step} alternativeLabel sx={{ mb: 3 }}>
                                     {steps.map((item, index) => (
                                         <Step key={index}>
@@ -307,8 +311,11 @@ function StudentSignupForm({ onSubmit, signIn }) {
                                 <Box
                                     sx={{
                                         display: "flex",
-                                        justifyContent: "space-between",
+                                        justifyContent: "space-between", // Distributes space between buttons
                                         mt: 2,
+                                        width: "100%", // Ensures the Box takes full width of its parent
+                                        flexDirection: "row", // Explicitly sets flex direction to row
+                                        alignItems: "center", // Vertically centers the buttons if needed
                                     }}
                                 >
                                     <Button
