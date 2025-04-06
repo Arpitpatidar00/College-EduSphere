@@ -9,10 +9,17 @@ import MessageInput from "./MessageInput";
 import VideoCall from "../VideoCall/VideoCall.jsx";
 import ringtone from "/assets/alarme_motiva_o.mp3"; // Ensure correct path
 
+// Helper: Compute conversation ID for one-to-one chats
+const roomId = (userId, conversationUser) => {
+    // If it’s a group chat, assume conversationUser._id is the group ID
+    if (conversationUser.isGroupChat) return conversationUser._id;
+    // Otherwise, generate a unique conversation id by sorting the user IDs
+    return [userId, conversationUser._id].sort().join("_");
+};
+
 const Chat = ({ conversationUser }) => {
     const user = useSelector(selectUserData);
     const userId = user?._id;
-
     const chatContainerRef = useRef(null);
     const localStreamRef = useRef(null);
     const remoteStreamRef = useRef(null);
@@ -25,16 +32,22 @@ const Chat = ({ conversationUser }) => {
     const [isInCall, setIsInCall] = useState(false);
     const [callRequest, setCallRequest] = useState(null);
     const [callType, setCallType] = useState("video");
+    const [typingIndicator, setTypingIndicator] = useState(false);
+
+    // Compute conversation ID (works for both one-to-one and group chats)
+    const conversationId = roomId(userId, conversationUser);
 
     useEffect(() => {
         if (!userId || !conversationUser?._id) return;
 
         const socket = createSocketService(userId);
         setSocketService(socket);
-        socket.joinChat([conversationUser._id]);
+        // Join the conversation room with the computed conversationId
+        socket.joinChat([roomId]);
+
 
         socket.socket.on(SocketEvents.MESSAGE_RECEIVED, ({ message }) => {
-            console.log('message: ', message);
+            console.log("Received message:", message);
             setMessages((prev) => [...prev, message]);
             scrollToBottom();
         });
@@ -45,10 +58,20 @@ const Chat = ({ conversationUser }) => {
         socket.socket.on(SocketEvents.CALL_REJECTED, handleCallRejected);
         socket.socket.on(SocketEvents.CALL_ENDED, handleCallEnded);
 
+        // Subscribe to typing events
+        socket.listenToTyping(({ conversationId: roomId, userId: typingUserId }) => {
+            // Only show typing if the event is for this conversation and not from self
+            if (roomId.toString() === conversationId.toString() && typingUserId !== userId) {
+                setTypingIndicator(true);
+                // Remove typing indicator after a delay (e.g., 3 seconds)
+                setTimeout(() => setTypingIndicator(false), 3000);
+            }
+        });
+
         return () => {
             socket.disconnect();
         };
-    }, [userId, conversationUser._id]);
+    }, [userId, conversationUser._id, conversationId]);
 
     const handleIncomingOffer = ({ from, offer, type }) => {
         if (from !== userId) {
@@ -96,9 +119,10 @@ const Chat = ({ conversationUser }) => {
             const offer = await peerConnectionRef.current.createOffer();
             await peerConnectionRef.current.setLocalDescription(offer);
 
+            // Use conversationId to emit the call event
             socketService.socket.emit(SocketEvents.CALL_USER, {
                 from: userId,
-                to: conversationUser._id,
+                to: conversationUser._id, // For one-to-one, this remains the same; for group call, handle separately if needed
                 offer,
                 type,
             });
@@ -146,6 +170,7 @@ const Chat = ({ conversationUser }) => {
         peerConnectionRef.current.onicecandidate = (event) => {
             if (event.candidate) {
                 socketService.socket.emit(SocketEvents.ICE_CANDIDATE, {
+                    // For ICE, use the conversation partner’s id (for one-to-one) or handle group ICE candidate exchange as needed
                     to: conversationUser._id,
                     candidate: event.candidate,
                 });
@@ -213,36 +238,91 @@ const Chat = ({ conversationUser }) => {
 
     const handleSendMessage = () => {
         if (!input.trim() || !socketService) return;
+
         const messageData = {
-            _id: Date.now().toString(),
-            conversationId: conversationUser._id,
+            _id: Date.now().toString(), // use UUID in production
+            conversationId, // use the computed conversationId
             content: input,
             messageType: "text",
             senderId: userId,
             status: "sent",
         };
 
-        socketService.sendMessage(messageData, conversationUser._id);
-        setMessages((prev) => [...prev, { ...messageData, sender: "self" }]);
+        // Optimistically add message locally
+        setMessages((prev) => [...prev, messageData]);
+
+        // Send through socket
+        socketService.sendMessage(messageData, conversationId);
+
         setInput("");
         scrollToBottom();
     };
 
+    // Handle input change with typing notification
+    const handleInputChange = (e) => {
+        setInput(e.target.value);
+        if (socketService && conversationId) {
+            socketService.sendTypingNotification(roomId, !!conversationUser.conversationId);
+
+        }
+    };
+
     return (
-        <Box sx={{ flex: 1, display: "flex", flexDirection: "column", padding: 2 }}>
-            <ChatHeader conversationUser={conversationUser} handleCall={startCall} />
+        <Box
+            sx={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                height: "calc(100vh - 64px)",
+                maxHeight: { xs: "calc(100vh - 70px)", md: "calc(100vh - 64px)" },
+                overflow: "hidden",
+                bgcolor: "background.default",
+            }}
+        >
+            <ChatHeader
+                conversationUser={conversationUser}
+                handleCall={startCall}
+                sx={{ px: { xs: 0, md: 2 } }} // Responsive padding for header
+            />
 
             {isInCall ? (
-                <VideoCall localStreamRef={localStreamRef} remoteStreamRef={remoteStreamRef} onEndCall={endCall} />
+                <VideoCall
+                    localStreamRef={localStreamRef}
+                    remoteStreamRef={remoteStreamRef}
+                    onEndCall={endCall}
+                    sx={{
+                        flex: 1,
+                        overflow: "hidden",
+                        height: { xs: "50vh", sm: "60vh", md: "70vh", lg: "80vh" }, // Responsive height
+                    }}
+                />
             ) : (
                 <>
-                    <Box sx={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-                        <MessageList messages={messages} chatContainerRef={chatContainerRef} />
-                    </Box>
-                    <MessageInput input={input} setInput={setInput} handleSendMessage={handleSendMessage} />
+                    <MessageList
+                        messages={messages}
+                        chatContainerRef={chatContainerRef}
+                        typingIndicator={typingIndicator}
+                        conversationUser={conversationUser}
+                        userId={userId}
+                        sx={{
+                            flex: 1,
+                            overflowY: "auto",
+                            p: { xs: 1, md: 2 }, // Responsive padding
+                            maxHeight: { xs: "calc(100vh - 200px)", sm: "calc(100vh - 180px)", md: "calc(100vh - 150px)" }, // Adjust for smaller screens
+                        }}
+                    />
+                    <MessageInput
+                        input={input}
+                        setInput={setInput}
+                        handleSendMessage={handleSendMessage}
+                        handleTyping={handleInputChange}
+                        sx={{
+                            p: { xs: 1, md: 2 }, // Responsive padding
+                            minHeight: { xs: "60px", md: "80px" }, // Minimum height for input area
+                        }}
+                    />
                 </>
             )}
-
 
             <Dialog
                 open={!!callRequest}
