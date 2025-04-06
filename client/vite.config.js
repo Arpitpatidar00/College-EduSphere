@@ -13,6 +13,7 @@ export default defineConfig({
       "@pages": path.resolve(__dirname, "src/pages"), // Alias for pages
       "@utils": path.resolve(__dirname, "src/utils"), // Alias for utilities
       "@services": path.resolve(__dirname, "src/services"), // Alias for API services
+      "@context": path.resolve(__dirname, "src/context"), // Alias for API services
     },
   },
   server: {

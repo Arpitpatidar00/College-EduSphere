@@ -41,8 +41,7 @@ const VideoCall = ({ localStreamRef, remoteStreamRef, onEndCall }) => {
             <Box
                 sx={{
                     width: { xs: "100%", md: "80%", lg: "60%" }, // Responsive width
-                    maxHeight: { xs: "60vh", md: "70vh", lg: "80vh" }, // Responsive height
-                    aspectRatio: "16/9", // Maintain aspect ratio
+                    maxHeight: { xs: "100%" }, // Responsive height
                     borderRadius: 2,
                     overflow: "hidden",
                     boxShadow: 3,
