@@ -24,6 +24,7 @@ import { useState } from "react";
 const Navbar = () => {
   const navigate = useNavigate();
   const userData = useSelector(selectUserData);
+
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -129,7 +130,8 @@ const Navbar = () => {
                 <Avatar
                   sx={{ width: { xs: 30, sm: 40 }, height: { xs: 30, sm: 40 } }}
                   src={
-                    userData?.profilePicture
+                    transformImagePath(userData.profilePicture
+                    )
                       ? transformImagePath(userData.profilePicture)
                       : "/assets/Student.login1.png"
                   }

@@ -101,7 +101,6 @@ class SocketService {
     this.socket.off(SocketEvents.MESSAGE_RECEIVED);
     this.socket.on(SocketEvents.MESSAGE_RECEIVED, callback);
   }
-
   /**
    * ✅ Listen for typing indicator.
    */
@@ -112,27 +111,28 @@ class SocketService {
   }
 
   /**
-   * ✅ Notify other users when typing.
+   * Notify other users when typing.
+   * @param {string} conversationId - The room or userId.
+   * @param {boolean} isGroup - Set to true if this is a group chat.
    */
-  sendTypingNotification(conversationId) {
+  sendTypingNotification(conversationId, isGroup = false) {
     if (!conversationId) return;
     this.socket.emit(SocketEvents.TYPING, {
       conversationId,
       userId: this.userId,
+      isGroup,
     });
   }
-
   /**
-   * ✅ Send a new message.
+   * Send a new message.
    */
   sendMessage(message, conversationId) {
     if (!message || !conversationId) return;
     console.log(`📩 Sending message to ${conversationId}:`, message);
     this.socket.emit(SocketEvents.NEW_MESSAGE, { message, conversationId });
   }
-
   /**
-   * ✅ Disconnect the socket and remove listeners.
+   * Disconnect the socket and remove listeners.
    */
   disconnect() {
     console.log("🔌 Disconnecting socket...");

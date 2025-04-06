@@ -1,4 +1,7 @@
 import { Suspense, lazy } from 'react';
+
+
+
 import { Outlet, Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 import Navbar from '../../layout/Navbar/Navbar.jsx';
 import ROUTES from './CommonRoutes.js';
@@ -12,7 +15,8 @@ const SettingPage = lazy(() => import('../../../pages/Setting.page.jsx'));
 const StoriesPage = lazy(() => import('../../../pages/StoriesPage'));
 const StudentAuthContainer = lazy(() => import('../../Auth/StudentAuth/StudentAuthContainer.jsx'));
 const CollegeAuthContainer = lazy(() => import('../../Auth/CollegeAuth/CollegeAuth.container.jsx'));
-const MessagePage = lazy(() => import('../../modules/MessagePage/index'));
+const MessagePage = lazy(() => import("../../modules/MessagePage/index.jsx"));
+
 const UserProfile = lazy(() => import('../../../pages/Profile.page'));
 const AdminLoginPage = lazy(() => import('../../Auth/AdminAuth/AdminLogin'));
 const Country = lazy(() => import('../../modules/Admin/Location/Country/index'));

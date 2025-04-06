@@ -38,14 +38,11 @@ const HomePostStory = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: storiesResponse, isPending } = useGetAllStories({});
-  console.log("storiesResponse: ", storiesResponse);
 
   // Flatten the stories data to handle nested structure and debug time
   const stories = storiesResponse?.data?.flatMap((user) =>
     user.stories.map((story, storyIndex) => {
       const timeValue = timeShort(story.createdAt);
-      console.log(`User ${user._id}, Story ${story._id}: Calculated time = ${timeValue}`); // Debug log
-      // Use the first media item, or cycle through media if multiple
       const mediaIndex = storyIndex % story.media.length; // Cycle through media for multiple stories
       return {
         ...story,

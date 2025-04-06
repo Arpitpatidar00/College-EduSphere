@@ -51,11 +51,10 @@ export function initializeSocket(io) {
     socket.on(SocketEvents.JOIN_CHAT, ({ conversationIds }) => {
       if (!Array.isArray(conversationIds)) return;
       conversationIds.forEach((id) => {
-        socket.join(id.toString());
-        console.log(`✅ User ${userId} joined room: ${id}`);
+        // socket.join(id.toString());
+        // console.log(`✅ User ${userId} joined room: ${id}`);
       });
     });
-
     socket.on(SocketEvents.NEW_MESSAGE, ({ message, conversationId }) => {
       if (!message || !conversationId) {
         console.log("❌ Missing message or conversationId");
@@ -64,18 +63,31 @@ export function initializeSocket(io) {
       console.log(
         `📩 Backend received message in ${conversationId}: ${message.content}`
       );
-      io.to(conversationId).emit(SocketEvents.MESSAGE_RECEIVED, {
+      // Broadcast the message to everyone in the room (except the sender)
+      socket.to(conversationId.toString()).emit(SocketEvents.MESSAGE_RECEIVED, {
         message,
         conversationId,
       });
     });
 
-    // Added typing event handler for one-to-one communication
-    socket.on(SocketEvents.TYPING, ({ conversationId, userId }) => {
-      socket
-        .to(conversationId.toString())
-        .emit(SocketEvents.TYPING, { conversationId, userId });
-    });
+    socket.on(
+      SocketEvents.TYPING,
+      ({ conversationId, userId, isGroup = false }) => {
+        if (isGroup) {
+          socket
+            .to(conversationId.toString())
+            .emit(SocketEvents.TYPING, { conversationId, userId });
+        } else {
+          const recipientSocketId = activeUsers.get(conversationId);
+          if (recipientSocketId) {
+            io.to(recipientSocketId).emit(SocketEvents.TYPING, {
+              conversationId,
+              userId,
+            });
+          }
+        }
+      }
+    );
 
     // Added message read (seen) event handler
     socket.on(
