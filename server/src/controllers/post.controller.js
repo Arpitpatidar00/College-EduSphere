@@ -6,21 +6,43 @@ import { generatePostAggregationPipeline } from "../lib/common/postAggregationPi
 
 export async function createPostController(req, res, next) {
   try {
-    var postData = req.body;
+    let postData = req.body;
     const userId = req.user._id;
 
-    if (req.files && req.files.coverImage) {
+    // ✅ Parse booleans from strings
+    postData.hideComments = postData.hideComments === "true";
+    postData.hideLikes = postData.hideLikes === "true";
+
+    // ✅ Parse tags string -> array
+    if (typeof postData.tags === "string") {
+      postData.tags = postData.tags
+        .split("#")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0);
+    }
+
+    // ✅ Handle file uploads (Multer)
+    if (req.files?.coverImage) {
       postData.coverImage = req.files.coverImage[0].path;
     }
-    if (req.files && req.files.media) {
+
+    if (req.files?.media) {
       postData.media = req.files.media.map((file) => file.path);
     }
+
+    // ✅ Ensure media is always an array
+    if (!Array.isArray(postData.media)) {
+      postData.media = postData.media ? [postData.media] : [];
+    }
+
+    // ✅ Attach userId from auth middleware
     postData = {
       ...postData,
       userId,
     };
 
-    const [post] = await PostService.findAll(postData);
+    // ✅ Create post
+    const post = await PostService.create(postData); // remove [ ] destructuring
     return OK(res, post, "Post created successfully.");
   } catch (error) {
     next(error);

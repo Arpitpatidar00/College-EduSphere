@@ -25,7 +25,6 @@ export function initializeSocket(io) {
   const activeUsers = new Map();
 
   io.on(SocketEvents.CONNECT, (socket) => {
-    console.log(`✅ Socket connected: ${socket.id}`);
     const userId = socket.handshake.query.userId;
     if (!userId) {
       console.warn("❌ No userId provided, disconnecting socket.");

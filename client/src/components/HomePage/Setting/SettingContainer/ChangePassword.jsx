@@ -22,7 +22,6 @@ const ChangePassword = () => {
         }
 
         // Proceed with password update logic (API call)
-        console.log("Password updated successfully!");
         setError("");
     };
 

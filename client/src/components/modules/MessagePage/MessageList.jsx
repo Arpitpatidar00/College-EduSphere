@@ -57,65 +57,92 @@ const MessageList = ({ sx, onSelectConversation, ...props }) => {
     return (
         <Box
             sx={{
-                p: { xs: 1, md: 3 },
+                display: "flex",
+                flexDirection: "column",
                 height: "100%",
+                maxHeight: "100vh",
                 backgroundColor: APP_COLORS.common.white,
                 borderRadius: "12px",
                 boxShadow: `0px 2px 5px ${APP_COLORS.primary[100]}`,
-                overflowY: "auto",
                 ...sx,
             }}
             {...props}
         >
-            <Typography variant="h6" sx={{ mb: 1, fontSize: { xs: "1rem", md: "1.25rem" } }}>
-                Messages
-            </Typography>
-            {studentData?.data?.map((user) => (
-                <Stack
-                    key={user._id}
-                    direction="row"
-                    alignItems="center"
-                    spacing={2}
-                    sx={{
-                        p: 1,
-                        borderBottom: `1px solid ${APP_COLORS.grey[200]}`,
-                        cursor: "pointer",
-                        "&:hover": { backgroundColor: APP_COLORS.grey[100] },
-                    }}
-                    onClick={() => onSelectConversation(user)}
-                >
-                    <Box sx={{ position: "relative" }}>
-                        <Avatar
-                            src={transformImagePath(user?.profilePicture)}
-                            alt={user?.firstName || user.institutionName}
-                            sx={{ width: { xs: 32, md: 40 }, height: { xs: 32, md: 40 } }}
-                        />
-                        <Box
-                            sx={{
-                                position: "absolute",
-                                bottom: 0,
-                                right: 0,
-                                width: 12,
-                                height: 12,
-                                borderRadius: "50%",
-                                backgroundColor: activeStudents.has(user._id) ? "green" : "red",
-                                border: `2px solid ${APP_COLORS.common.white}`,
-                            }}
-                        />
-                    </Box>
-                    <Box>
-                        <Typography
-                            variant="subtitle2"
-                            sx={{ fontWeight: 600, fontSize: { xs: "0.9rem", md: "1rem" } }}
-                        >
-                            {user.username || user.institutionName || `${user.firstName || user.institutionName} ${user.lastName || ""}`}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: "0.8rem", md: "0.875rem" } }}>
-                            {user.message || "Start a conversation"}
-                        </Typography>
-                    </Box>
-                </Stack>
-            ))}
+            {/* Fixed Header */}
+            <Box sx={{ p: { xs: 1, md: 3 }, borderBottom: `1px solid ${APP_COLORS.grey[200]}` }}>
+                <Typography variant="h6" sx={{ fontSize: { xs: "1rem", md: "1.25rem" } }}>
+                    Messages
+                </Typography>
+            </Box>
+
+            {/* Scrollable student list */}
+            <Box
+                sx={{
+                    flex: 1,
+                    overflowY: "auto",
+                    maxHeight: { xs: "calc(100vh - 160px)", md: "calc(100vh - 100px)" },
+
+                    scrollBehavior: "smooth",
+                    "&::-webkit-scrollbar": {
+                        display: "none",
+                    },
+                    "scrollbar-width": "none",
+                    "-ms-overflow-style": "none",
+
+                    p: { xs: 1, md: 3 },
+                }}
+            >
+                {studentData?.data?.map((user) => (
+                    <Stack
+                        key={user._id}
+                        direction="row"
+                        alignItems="center"
+                        spacing={2}
+                        sx={{
+                            p: 1,
+                            borderBottom: `1px solid ${APP_COLORS.grey[200]}`,
+                            cursor: "pointer",
+                            "&:hover": { backgroundColor: APP_COLORS.grey[100] },
+                        }}
+                        onClick={() => onSelectConversation(user)}
+                    >
+                        <Box sx={{ position: "relative" }}>
+                            <Avatar
+                                src={transformImagePath(user?.profilePicture)}
+                                alt={user?.firstName || user.institutionName}
+                                sx={{ width: { xs: 32, md: 40 }, height: { xs: 32, md: 40 } }}
+                            />
+                            <Box
+                                sx={{
+                                    position: "absolute",
+                                    bottom: 0,
+                                    right: 0,
+                                    width: 12,
+                                    height: 12,
+                                    borderRadius: "50%",
+                                    backgroundColor: activeStudents.has(user._id) ? "green" : "red",
+                                    border: `2px solid ${APP_COLORS.common.white}`,
+                                }}
+                            />
+                        </Box>
+                        <Box>
+                            <Typography
+                                variant="subtitle2"
+                                sx={{ fontWeight: 600, fontSize: { xs: "0.9rem", md: "1rem" } }}
+                            >
+                                {user.username || user.institutionName || `${user.firstName || user.institutionName} ${user.lastName || ""}`}
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                color="textSecondary"
+                                sx={{ fontSize: { xs: "0.8rem", md: "0.875rem" } }}
+                            >
+                                {user.message || "Start a conversation"}
+                            </Typography>
+                        </Box>
+                    </Stack>
+                ))}
+            </Box>
         </Box>
     );
 };

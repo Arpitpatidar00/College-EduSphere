@@ -51,8 +51,8 @@ const HomeSidebar = ({ toggleTheme }) => {
 
   // Navigation items for sidebar
   const navItems = [
-    { label: "Home", icon: <Home />, path: ROUTES.HOME },
-    { label: "Explore", icon: <Explore />, path: ROUTES.EXPLORE },
+    { label: "Home", icon: <Home />, path: ROUTES.HOME.INDEX },
+    { label: "Explore", icon: <Explore />, path: ROUTES.HOME.LOCATION },
     { label: "Reels", icon: <VideoLibrary />, path: ROUTES.REELS },
     { label: "Add", icon: <Add />, path: ROUTES.CREATE_POST },
     { label: "Messages", icon: <Chat />, path: ROUTES.MESSAGES, badge: 7 },

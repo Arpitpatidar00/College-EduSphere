@@ -5,7 +5,6 @@ import { FOLLOW_STATUS } from "../constants/enum.js";
 export async function toggleFollowController(req, res, next) {
   try {
     const { userId, status } = req.body;
-    console.log("userId, status: ", userId, status);
     const currentUserId = req.user._id;
 
     if (userId === currentUserId) {

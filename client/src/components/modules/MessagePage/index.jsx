@@ -28,7 +28,7 @@ function MessagePage() {
                     <Groups
                         sx={{
                             maxWidth: { xs: "400px", md: "400px" },
-                            maxHeight: { xs: "270px", md: "350px" },
+                            maxHeight: { xs: "275px", md: "350px" },
                             overflowY: "auto",
                             transition: "max-height 0.5s ease",
                             scrollBehavior: "smooth",
@@ -42,7 +42,7 @@ function MessagePage() {
                     />
                     <People
                         sx={{
-                            maxHeight: { xs: "270px", md: "350px" },
+                            maxHeight: { xs: "275px", md: "350px" },
                             maxWidth: { xs: "400px", md: "400px" },
 
                             overflowY: "auto",
@@ -64,17 +64,12 @@ function MessagePage() {
                     <SearchBar />
                     <MessageList
                         sx={{
-                            maxHeight: { xs: "calc(100vh - 160px)", md: "calc(100vh - 100px)" },
+                            maxHeight: { xs: "calc(100vh - 160px)", md: "calc(100vh - 100px)", lg: "calc(100vh - 200px)" },
                             maxWidth: { xs: "600px", md: "600px" },
-                            overflowY: "auto",
+
                             marginTop: 2,
                             transition: "max-height 0.5s ease",
-                            scrollBehavior: "smooth",
-                            "&::-webkit-scrollbar": {
-                                display: "none",
-                            },
-                            "scrollbar-width": "none",
-                            "-ms-overflow-style": "none",
+
                         }}
                         onSelectConversation={setSelectedConversationId}
                     />
@@ -148,7 +143,9 @@ function MessagePage() {
                         display: "flex",
                         flexDirection: "column",
                         margin: { xs: "0px", md: "16px" },
-                        height: { xs: "50vh", md: "auto" },
+                        height: {
+                            xs: "50vh", md: "auto",
+                        },
                         overflowY: "auto",
                         ml: { md: sidebarOpen ? "50px" : "16px" },
                         transition: "margin-left 0.3s ease-in-out",

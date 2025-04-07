@@ -1,7 +1,12 @@
 import { Box, Typography, Grid, Avatar, Button } from '@mui/material';
 import { APP_COLORS } from '../../../enums/Colors';
+import { selectUserData } from '@/store/slices/auth.slice';
+import { useSelector } from 'react-redux';
+import { transformImagePath } from '@/utils/image.utils';
 
 const ProfileCard = () => {
+    const user = useSelector(selectUserData);
+
     return (
         <Box
             sx={{
@@ -41,7 +46,7 @@ const ProfileCard = () => {
 
             <Avatar
                 alt="Alita Dizzouza"
-                src="/assets/fray-bekele-_BAaXJC2xKQ-unsplash.jpg"
+                src={transformImagePath(user.profilePicture)}
                 sx={{ width: 100, height: 100, mb: 1 }}
             />
 

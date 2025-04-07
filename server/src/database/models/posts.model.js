@@ -21,7 +21,6 @@ const PostSchema = new mongoose.Schema(
         "report",
         "other",
       ],
-      required: true,
     },
     media: [
       {

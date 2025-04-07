@@ -24,6 +24,7 @@ export const ROUTES = {
     MESSAGE: "/message",
     STORIES: "/stories",
     SETTING: "/setting",
+    LOCATION: "/location",
   },
   ADMIN: {
     INDEX: `/sysopdmin/${ADMIN_SECRET}`,

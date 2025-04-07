@@ -68,12 +68,10 @@ export async function updateProfilePictureService(req) {
       }
 
       const filePath = req.file.path;
-      console.log(filePath);
       const result = await cloudinary.uploader.upload(filePath, {
         folder: "profile_pictures",
         public_id: `profile_picture_${req.body.userId}`,
       });
-      console.log(result);
       resolve({ data: result.secure_url, error: null });
     });
   } catch (error) {

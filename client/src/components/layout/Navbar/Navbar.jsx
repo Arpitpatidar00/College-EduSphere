@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { APP_COLORS } from "../../../enums/Colors";
 import { APP_IMAGES } from "../../Common/Images/index";
-import { transformImagePath } from "../../../utils/commonFn";
+import { transformImagePath } from "../../../utils/image.utils";
 import { selectUserData, selectIsAuthenticated } from "../../../store/slices/auth.slice";
 import { ROUTES } from "../../Global/Routes/CommonRoutes";
 import { useState } from "react";

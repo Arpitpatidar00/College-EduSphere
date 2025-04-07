@@ -12,6 +12,7 @@ import * as likesController from "./like.controller.js";
 import * as commentsController from "./comment.controller.js";
 import * as followController from "./follow.controller.js";
 import * as studentController from "./student.controller.js";
+import * as locationController from "./student.location.controller.js";
 
 export {
   authStudentController,
@@ -28,4 +29,5 @@ export {
   commentsController,
   followController,
   studentController,
+  locationController,
 };

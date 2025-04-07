@@ -74,4 +74,7 @@ export const apiEndPoints = {
   addStoryReaction: "/stories",
   removeStoryReaction: "/stories",
   getStoryViews: "/stories",
+
+  updateLocation: "/active-location/update-location",
+  getNearbyStudents: "/active-location/nearby",
 };

@@ -25,7 +25,6 @@ class SmsService {
         from: this.sender,
         to,
       });
-      console.log(`SMS sent successfully to: ${to}`);
     } catch (error) {
       console.error(`Failed to send SMS to ${to}:`, error.message);
       throw new Error("Failed to send SMS");

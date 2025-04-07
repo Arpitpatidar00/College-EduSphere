@@ -57,11 +57,7 @@ export const useDataGrid = ({
   const { data, isLoading, error } = useFetchHook(updatedParams, initialData);
 
   // Default handlers (can be overridden)
-  const handleEdit =
-    editHandler ||
-    ((row) => {
-      console.log(`Edit ${entityType.slice(0, -1)}:`, row);
-    });
+  const handleEdit = editHandler || ((row) => {});
 
   const handleConfirmAction = (item) => {
     setSelectedItem(item);
@@ -80,7 +76,6 @@ export const useDataGrid = ({
         }
         await toggleAction(id);
         queryClient.invalidateQueries([entityType]);
-        console.log(`Toggled status for ${entityType.slice(0, -1)} ${id}`);
       } catch (err) {
         console.error(`Error toggling status for ${entityType}:`, err);
       }

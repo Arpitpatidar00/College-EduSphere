@@ -29,6 +29,7 @@ import storiesRoutes from "./routes/story.routes.js";
 import likesRoutes from "./routes/like.routes.js";
 import commentsRoutes from "./routes/comment.routes.js";
 import followRoutes from "./routes/follow.routes.js";
+import activeLocation from "./routes/student.location.route.js";
 
 // @Start App
 const app = express();
@@ -95,5 +96,6 @@ app.use("/stories", storiesRoutes);
 app.use("/likes", likesRoutes);
 app.use("/comments", commentsRoutes);
 app.use("/follow", followRoutes);
+app.use("/active-location", activeLocation);
 
 export default app;

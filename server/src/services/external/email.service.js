@@ -58,7 +58,6 @@ class EmailService {
   }
 
   async sendTemplatedEmail(to, templateId, dynamicTemplateData) {
-    console.log(to, templateId, dynamicTemplateData);
     const msg = {
       to,
       from: process.env.SENDGRID_SENDER_EMAIL || "arpittestemail007@gmail.com",

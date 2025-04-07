@@ -9,6 +9,8 @@ import AppToastContainer from "./utils/toastify.utils";
 import "react-toastify/dist/ReactToastify.css";
 import ThemeProvider from "./themes/ThemeProvider";
 import "./styles/global.css";
+import 'leaflet/dist/leaflet.css';
+
 // import GlobalLoader from './common/GlobalLoader';
 
 const App = () => {

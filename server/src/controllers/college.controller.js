@@ -7,7 +7,6 @@ export async function updateCollegeController(req, res, next) {
   try {
     const collegeId = req.user._id;
     const updateData = { ...req.body };
-    console.log("updateData: ", updateData);
 
     if (req.files?.profilePicture) {
       updateData.profilePicture = req.files.profilePicture[0].path;

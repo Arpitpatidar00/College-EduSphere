@@ -47,7 +47,6 @@ const Chat = ({ conversationUser }) => {
 
 
         socket.socket.on(SocketEvents.MESSAGE_RECEIVED, ({ message }) => {
-            console.log("Received message:", message);
             setMessages((prev) => [...prev, message]);
             scrollToBottom();
         });

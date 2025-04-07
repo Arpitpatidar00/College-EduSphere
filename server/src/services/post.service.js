@@ -22,6 +22,7 @@ class PostService {
   }
 
   async create(postData) {
+    console.log("postData: ", postData);
     const post = new PostModel(postData);
     return post.save();
   }

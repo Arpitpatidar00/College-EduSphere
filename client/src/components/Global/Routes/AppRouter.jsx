@@ -29,6 +29,9 @@ import StudentList from '../../modules/College/StudentList/index';
 import CollegeList from '@/components/modules/Admin/CollegeList/index.jsx';
 import AdminStudentList from '@/components/modules/Admin/AdminStudentList/index.jsx';
 import CollegePostData from '../../modules/College/CollegePostData/index';
+const ActiveUserNear = lazy(() => import('../../../pages/ActiveUserNear'));
+
+
 
 
 const AppRouter = ({ toggleTheme }) => {
@@ -52,6 +55,7 @@ const AppRouter = ({ toggleTheme }) => {
             <Route path={ROUTES.HOME.INDEX} element={<HomePage toggleTheme={toggleTheme} />} />
             <Route path={ROUTES.HOME.PROFILE} element={<UserProfile toggleTheme={toggleTheme} />} />
             <Route path={ROUTES.HOME.MESSAGE} element={<MessagePage toggleTheme={toggleTheme} />} />
+            <Route path={ROUTES.HOME.LOCATION} element={<ActiveUserNear toggleTheme={toggleTheme} />} />
             <Route path={ROUTES.HOME.SETTING} element={<SettingPage toggleTheme={toggleTheme} />} />
             <Route path={ROUTES.HOME.STORIES} element={<StoriesPage toggleTheme={toggleTheme} />} />
           </Route>
