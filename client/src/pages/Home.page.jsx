@@ -33,11 +33,11 @@ const HomePage = ({ toggleTheme }) => {
   };
 
   const navItems = [
-    { label: "Home", icon: <Home />, path: ROUTES.HOME },
-    { label: "Explore", icon: <Explore />, path: ROUTES.EXPLORE },
+    { label: "Home", icon: <Home />, path: ROUTES.HOME.INDEX },
+    { label: "Explore", icon: <Explore />, path: ROUTES.HOME.LOCATION },
     { label: "Reels", icon: <VideoLibrary />, path: ROUTES.REELS },
     { label: "Add", icon: <Add />, path: ROUTES.CREATE_POST },
-    { label: "Messages", icon: <Chat />, path: ROUTES.MESSAGES, badge: 7 },
+    { label: "Messages", icon: <Chat />, path: ROUTES.HOME.MESSAGE, badge: 7 },
   ];
 
   const handleNavigation = (path) => {
@@ -185,7 +185,7 @@ const HomePage = ({ toggleTheme }) => {
           ))}
           <BottomNavigationAction
             icon={<Person />}
-            onClick={() => handleNavigation(ROUTES.PROFILE)}
+            onClick={() => handleNavigation(ROUTES.HOME.PROFILE)}
             sx={{
               color: bottomNavValue === navItems.length ? APP_COLORS.primary[500] : APP_COLORS.grey[600],
               "&:hover": {
@@ -259,13 +259,12 @@ const HomePage = ({ toggleTheme }) => {
         onClose={() => setOpenWhoToFollow(false)}
         PaperProps={{
           sx: {
-            width: { xs: "70%", sm: "250px" },
+            width: { xs: "100%", sm: "250px" },
             background: theme.palette.mode === 'dark' ? APP_COLORS.grey[900] : 'transparent',
-            borderLeft: `1px solid ${theme.palette.mode === 'dark' ? APP_COLORS.grey[700] : APP_COLORS.grey[200]}`,
           },
         }}
       >
-        <WhoToFollow />
+        <WhoToFollow closeDrawer={() => setOpenWhoToFollow(false)} />
       </Drawer>
 
       {/* Add Post Button/Floating Action Button */}
@@ -279,7 +278,7 @@ const HomePage = ({ toggleTheme }) => {
           color: APP_COLORS.common.white,
           boxShadow: "0px 4px 15px rgba(0,0,0,0.3)",
           borderRadius: "50%",
-          p: 1.5,
+          p: { xs: 0, sm: 0, md: 1.5 },
           zIndex: 1200,
           transition: 'all 0.3s ease',
           '&:hover': {

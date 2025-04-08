@@ -50,10 +50,12 @@ const HomeSidebar = ({ toggleTheme }) => {
   };
 
   // Navigation items for sidebar
+  // Navigation items for sidebar
   const navItems = [
     { label: "Home", icon: <Home />, path: ROUTES.HOME.INDEX },
     { label: "Explore", icon: <Explore />, path: ROUTES.HOME.LOCATION },
     { label: "Reels", icon: <VideoLibrary />, path: ROUTES.REELS },
+    { label: "Stories", icon: <Archive />, path: ROUTES.STORIES }, // 👈 Added Stories
     { label: "Add", icon: <Add />, path: ROUTES.CREATE_POST },
     { label: "Messages", icon: <Chat />, path: ROUTES.MESSAGES, badge: 7 },
   ];
