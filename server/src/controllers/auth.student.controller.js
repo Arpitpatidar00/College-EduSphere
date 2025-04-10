@@ -17,7 +17,6 @@ export async function signupController(req, res, next) {
       courseId,
       collegeId,
       enrollmentId,
-      interest,
     } = req.body;
 
     if (
@@ -28,11 +27,10 @@ export async function signupController(req, res, next) {
       !courseId ||
       !collegeId ||
       !enrollmentId ||
-      !interest
     ) {
       return BAD(
         res,
-        "All fields (firstName, lastName, email, password, courseId, collegeId, enrollmentId,interest) are required."
+        "All fields (firstName, lastName, email, password, courseId, collegeId, enrollmentId) are required."
       );
     }
 
@@ -56,7 +54,6 @@ export async function signupController(req, res, next) {
         ? new mongoose.Types.ObjectId(collegeId)
         : null,
       enrollmentId,
-      interest,
     };
 
     if (!userData.courseId || !userData.collegeId) {

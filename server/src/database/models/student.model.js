@@ -23,7 +23,6 @@ const StudentModel = new mongoose.Schema(
     },
     interest: {
       type: String,
-      required: true,
     },
     password: {
       type: String,
