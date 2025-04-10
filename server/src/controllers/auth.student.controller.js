@@ -26,7 +26,7 @@ export async function signupController(req, res, next) {
       !password ||
       !courseId ||
       !collegeId ||
-      !enrollmentId ||
+      !enrollmentId
     ) {
       return BAD(
         res,

@@ -15,6 +15,7 @@ export const loginThunk = createAsyncThunk(
       const endpoint = endpointMapping[role];
 
       const result = await LoginApi({ email, password }, endpoint);
+      console.log("result: ", result);
 
       if (!result) {
         throw new Error("Login failed!");
@@ -40,6 +41,7 @@ export const signupThunk = createAsyncThunk(
       const endpoint = endpointMapping[role] || "studentSignup";
 
       const result = await SignupApi({ ...additionalData }, endpoint);
+      console.log("result: ", result);
 
       if (!result) {
         throw new Error("Signup failed!");

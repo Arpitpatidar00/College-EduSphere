@@ -13,6 +13,7 @@ export const LoginApi = async (body, endpoint) => {
 
     if (code) {
       ErrorService.sendOkMessage(message);
+
       return result;
     }
   } catch (error) {
