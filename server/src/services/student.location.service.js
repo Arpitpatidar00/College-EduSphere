@@ -63,7 +63,8 @@ class LocationService {
           key: "location",
           distanceMultiplier: 1,
           query: {
-            updatedAt: { $gt: new Date(Date.now() - 1000 * 60 * 1000) },
+            updatedAt: { $gt: new Date(Date.now() - 1000 * 60 * 1000) }, // updated within last hour
+            studentId: { $ne: new mongoose.Types.ObjectId(studentId) }, // exclude self
           },
         },
       },
@@ -89,7 +90,7 @@ class LocationService {
       },
     ]);
 
-    const mappedStudents = nearbyStudents.map((student) => ({
+    return nearbyStudents.map((student) => ({
       studentId: student.studentId.toString(),
       name: student.username,
       profilePicture: student.profilePicture,
@@ -98,8 +99,6 @@ class LocationService {
       lat: student.lat,
       lng: student.lng,
     }));
-
-    return mappedStudents;
   }
 }
 

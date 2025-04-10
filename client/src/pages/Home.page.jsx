@@ -1,7 +1,7 @@
 import { Box, Grid, IconButton, Drawer, useMediaQuery, useTheme, BottomNavigation, BottomNavigationAction, Badge } from "@mui/material";
 import { AccountCircle, Add, Home, Explore, VideoLibrary, Chat, Person } from "@mui/icons-material";
 import HomeSidebar from "../components/HomePage/Sidebar/HomeSidebar";
-import WhoToFollow from "../components/HomePage/Right/FollowSuggestions";
+import WhoToFollow from '../components/modules/Follow/FollowSuggestions';
 import { useState } from "react";
 import { APP_COLORS } from '../enums/Colors';
 import HomePostStory from '../components/modules/Stories/HomePostStory';
@@ -206,12 +206,23 @@ const HomePage = ({ toggleTheme }) => {
           onClick={() => setOpenSidebar(true)}
           sx={{
             position: 'fixed',
-            top: 80,
+            top: 570,
             left: 16,
             zIndex: 1200,
-            color: APP_COLORS.primary[500],
-            transition: 'transform 0.3s ease',
-            '&:hover': { transform: 'scale(1.1)' },
+            color: APP_COLORS.secondary[50],
+            borderTopLeftRadius: '1000px',
+            borderBottomLeftRadius: '1000px',
+            bgcolor: APP_COLORS.primary[900], // Added background for better visibility
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)', // Subtle shadow
+            transition: 'all 0.3s ease', // Smoother transition
+            '&:hover': {
+              transform: 'scale(1.1)',
+              bgcolor: APP_COLORS.primary[50], // Light background on hover
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)', // Enhanced shadow on hover
+            },
+            '&:active': {
+              transform: 'scale(0.95)', // Slight press effect
+            },
           }}
         >
           <AccountCircle sx={{ fontSize: 30 }} />
@@ -225,7 +236,7 @@ const HomePage = ({ toggleTheme }) => {
         onClose={() => setOpenSidebar(false)}
         PaperProps={{
           sx: {
-            width: { xs: "70%", sm: "250px" },
+            width: { xs: "100%", sm: "250px" },
             backgroundColor: theme.palette.mode === 'dark' ? APP_COLORS.grey[900] : APP_COLORS.secondary[50],
             borderRight: `1px solid ${theme.palette.mode === 'dark' ? APP_COLORS.grey[700] : APP_COLORS.grey[200]}`,
           },
@@ -240,15 +251,29 @@ const HomePage = ({ toggleTheme }) => {
           onClick={() => setOpenWhoToFollow(true)}
           sx={{
             position: 'fixed',
-            top: 140,
+            top: 570,
             right: 16,
             zIndex: 1200,
-            color: APP_COLORS.primary[500],
-            transition: 'transform 0.3s ease',
-            '&:hover': { transform: 'scale(1.1)' },
+            color: APP_COLORS.secondary[50],
+            borderTopLeftRadius: '1000px',
+            borderBottomLeftRadius: '1000px',
+            bgcolor: APP_COLORS.primary[900], // Added background for better visibility
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)', // Subtle shadow
+            transition: 'all 0.3s ease', // Smoother transition
+            '&:hover': {
+              transform: 'scale(1.1)',
+              bgcolor: APP_COLORS.primary[50], // Light background on hover
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)', // Enhanced shadow on hover
+            },
+            '&:active': {
+              transform: 'scale(0.95)', // Slight press effect
+            },
           }}
         >
-          <AccountCircle sx={{ fontSize: 30 }} />
+          <Person sx={{
+            fontSize: 32, // Slightly larger icon
+            filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1))', // Subtle icon shadow
+          }} />
         </IconButton>
       )}
 

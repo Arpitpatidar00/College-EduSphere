@@ -4,17 +4,17 @@ import path, { extname, join } from "path";
 
 export function getImageSavePath(url, file) {
   let modulePath = "";
-
-  if (/\/post\/(create-post|update-post)/.test(url)) {
+  if (/^\/post\/(create-post|update-post)/.test(url)) {
     modulePath = `Posts/${file.fieldname}`;
-  } else if (/\/api\/brand\/(create|update)/.test(url)) {
-    modulePath = `brand/${file.fieldname}`;
-  } else if (/\/api\/category\/(create|update)/.test(url)) {
-    modulePath = `category/${file.fieldname}`;
+  } else if (/^\/college\/update$/.test(url)) {
+    modulePath = `userProfile/college/${file.fieldname}`;
+  } else if (/^\/student\/update$/.test(url)) {
+    modulePath = `userProfile/student/${file.fieldname}`;
+  } else if (/^\/stories\/create-or-update$/.test(url)) {
+    modulePath = `stories/${file.fieldname}`;
   } else {
-    modulePath = "others";
+    modulePath = `others/${file.fieldname}`;
   }
-
   return modulePath;
 }
 
@@ -46,7 +46,7 @@ export const uploadFile = () => {
 
   return multer({
     storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB limit
+    limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter(_req, file, cb) {
       const fileTypes =
         /jpeg|jpg|png|gif|bmp|webp|tiff|svg|mp4|avi|mov|wmv|flv|mkv|webm/;

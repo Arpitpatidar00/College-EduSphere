@@ -25,13 +25,14 @@ import {
   Brightness7,
   Info,
   ExitToApp,
+  Close,
 } from "@mui/icons-material";
 import ProfileCard from "./ProfileCard.jsx";
 import { APP_COLORS } from "../../../enums/Colors.js";
 import { logoutThunk } from "../../../store/thunk/auth.thunk.js";
 import { ROUTES } from '@/components/Global/Routes/CommonRoutes';
 
-const HomeSidebar = ({ toggleTheme }) => {
+const HomeSidebar = ({ toggleTheme, onClose }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -54,10 +55,8 @@ const HomeSidebar = ({ toggleTheme }) => {
   const navItems = [
     { label: "Home", icon: <Home />, path: ROUTES.HOME.INDEX },
     { label: "Explore", icon: <Explore />, path: ROUTES.HOME.LOCATION },
-    { label: "Reels", icon: <VideoLibrary />, path: ROUTES.REELS },
-    { label: "Stories", icon: <Archive />, path: ROUTES.STORIES }, // 👈 Added Stories
     { label: "Add", icon: <Add />, path: ROUTES.CREATE_POST },
-    { label: "Messages", icon: <Chat />, path: ROUTES.MESSAGES, badge: 7 },
+    { label: "Messages", icon: <Chat />, path: ROUTES.HOME.MESSAGE, badge: 7 },
   ];
 
   // Additional sidebar items
@@ -83,6 +82,20 @@ const HomeSidebar = ({ toggleTheme }) => {
         position: "relative",
       }}
     >
+      {/* 👇 Add this Close button at the top-right */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 8,
+          right: 8,
+          zIndex: 10,
+        }}
+      >
+        <IconButton onClick={onClose} size="small">
+          <Close sx={{ fontSize: 22, color: isDarkMode ? APP_COLORS.grey[200] : APP_COLORS.grey[800] }} />
+        </IconButton>
+      </Box>
+
       <Box
         sx={{
           mb: 2,
@@ -98,7 +111,7 @@ const HomeSidebar = ({ toggleTheme }) => {
       <CardContent
         sx={{
           flex: 1,
-          maxHeight: "calc(100vh - 200px)",
+          maxHeight: "calc(100vh - 64px)",
           overflowY: "auto",
           overflowX: "hidden",
           width: "100%",

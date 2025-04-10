@@ -7,10 +7,6 @@ const MapWrapperWithData = lazy(() => import('./MapWrapperWithData'));
 const NearStudentsConnect = () => {
     const [userLocation, setUserLocation] = useState(null);
 
-    const handleLocationUpdate = (newLocation) => {
-        setUserLocation(newLocation);
-    };
-
     return (
         <Box sx={{ position: 'relative', width: '100vw', height: '100vh' }}>
             {userLocation && (
@@ -18,7 +14,7 @@ const NearStudentsConnect = () => {
                     <MapWrapperWithData userLocation={userLocation} />
                 </Suspense>
             )}
-            <LocationTracker onLocationUpdate={handleLocationUpdate} />
+            <LocationTracker onLocationUpdate={setUserLocation} />
         </Box>
     );
 };

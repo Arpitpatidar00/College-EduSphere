@@ -10,10 +10,9 @@ import MessageList from "./MessageList";
 import SidebarWrapper from "./SidebarWrapper";
 
 function MessagePage() {
-    const [activeView, setActiveView] = useState("home");
+    const [activeView, setActiveView] = useState("message");
     const [selectedConversationId, setSelectedConversationId] = useState(null);
-    const [sidebarOpen, setSidebarOpen] = useState(true); // Track sidebar state
-
+    const [sidebarOpen, setSidebarOpen] = useState(true);
     const renderLeftPanel = () => {
         if (activeView === "home") {
             return (

@@ -2,7 +2,7 @@ import { useGetNearbyStudents } from '@services/api/Global/activeLocation';
 import MapWrapper from './MapWrapper';
 
 const MapWrapperWithData = ({ userLocation }) => {
-    const { data: nearbyStudents = [] } = useGetNearbyStudents(
+    const { data: nearbyStudents = [], isLoading, isError } = useGetNearbyStudents(
         userLocation.lat,
         userLocation.lng,
         {
@@ -11,7 +11,14 @@ const MapWrapperWithData = ({ userLocation }) => {
         }
     );
 
-    return <MapWrapper userLocation={userLocation} nearbyStudents={nearbyStudents} />;
+    return (
+        <MapWrapper
+            userLocation={userLocation}
+            nearbyStudents={nearbyStudents}
+            isLoading={isLoading}
+            isError={isError}
+        />
+    );
 };
 
 export default MapWrapperWithData;
